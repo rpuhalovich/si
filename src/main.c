@@ -1,5 +1,4 @@
 #include "raylib.h"
-
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 #include "style_dark.h"
@@ -15,17 +14,18 @@ int main()
     while (!WindowShouldClose())
     {
         BeginDrawing();
-            ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
 
-            if (GuiButton((Rectangle){ 24, 24, 120, 30 }, "#191#Show Message")) showMessageBox = true;
+        ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
 
-            if (showMessageBox)
-            {
-                int result = GuiMessageBox((Rectangle){ 85, 70, 250, 100 },
-                    "#191#Message Box", "Hi! This is a message!", "Nice;Cool");
+        if (GuiButton((Rectangle){ 24, 24, 120, 30 }, "#191#Show Message")) showMessageBox = true;
 
-                if (result >= 0) showMessageBox = false;
-            }
+        if (showMessageBox)
+        {
+            int result = GuiMessageBox((Rectangle){ 85, 70, 250, 100 },
+                "#191#Message Box", "Hi! This is a message!", "Nice;Cool");
+
+            if (result >= 0) showMessageBox = false;
+        }
 
         EndDrawing();
     }
