@@ -1,12 +1,15 @@
 #include "raylib.h"
+
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
-#include "style_dark.h"
+#include "dark/style_dark.h"
 
 int main()
 {
-    InitWindow(400, 200, "raygui - controls test suite");
+    SetConfigFlags(FLAG_WINDOW_MAXIMIZED | FLAG_WINDOW_RESIZABLE);
+    InitWindow(1280, 720, "raygui - controls test suite");
     SetTargetFPS(60);
+    MaximizeWindow();
 
     bool showMessageBox = false;
     GuiLoadStyleDark();
