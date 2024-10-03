@@ -42,3 +42,6 @@ tags
 *.exe
 *.out
 *.app
+
+# exceptions
+!libraylib.*
