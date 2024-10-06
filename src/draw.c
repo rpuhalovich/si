@@ -5,26 +5,50 @@
 #include "draw.h"
 #include "state.h"
 
+static int textLineSpacing = 2;
+
+void drawText(Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint);
+
 void draw(State* state) {
     ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
 
-    if (GuiButton((Rectangle) { 24, 24, 120, 30 }, "#191#Show Message")) {
-        state->showMessageBox = true;
+    char* text[100];
+    text[0] = "blahblahblah";
+    text[1] = "foofoofoooooooooo";
+    text[2] = "testing";
+
+    for (int i = 0; i < 3; i++) {
+        float fontSize = state->font.baseSize / 2;
+        float textOffsetY = fontSize + textLineSpacing;
+
+        Vector2 pos = {
+            0,
+            (fontSize + textLineSpacing) * i
+        };
+
+        drawText(state->font, text[i], pos, fontSize, 1.f, WHITE);
     }
+}
 
-    if (state->showMessageBox) {
-        char message[32];
-        snprintf(message, sizeof(message), "count: %d", state->count);
-        int result = GuiMessageBox(
-            (Rectangle){ 85, 70, 250, 100 },
-            "#191#Message Box",
-            message,
-            "Nice;Cool");
+void drawText(Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint)
+{
+    if (font.texture.id == 0)
+        font = GetFontDefault();
 
-        if (result >= 0)
-            state->showMessageBox = false;
+    int size = TextLength(text);
+
+    float textOffsetX = 0.0f;
+
+    float scaleFactor = fontSize/font.baseSize;
+
+    for (int i = 0; i < size; i++) {
+        int codepointByteCount = 0;
+        int codepoint = GetCodepointNext(&text[i], &codepointByteCount);
+        int index = GetGlyphIndex(font, codepoint);
+
+        Vector2 pos = { position.x + textOffsetX, position.y };
+        DrawTextCodepoint(font, codepoint, pos, fontSize, tint);
+
+        textOffsetX += ((float)font.glyphs[index].advanceX*scaleFactor + spacing);
     }
-
-    int score = 10;
-    DrawText(TextFormat("Score: %08i", score), 200, 80, 20, WHITE);
 }

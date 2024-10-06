@@ -18,10 +18,8 @@ int main()
     State* state = init();
     while (!WindowShouldClose()) {
         BeginDrawing();
-
         run(state);
         draw(state);
-
         EndDrawing();
     }
     freeState(state);

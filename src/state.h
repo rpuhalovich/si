@@ -1,13 +1,13 @@
 #ifndef STATE_H
 #define STATE_H
 
+#include "raylib.h"
 #include "types.h"
 
 typedef struct {
     i32 count;
     bool showMessageBox;
+    Font font;
 } State;
-
-void freeState(State* state);
 
 #endif // STATE_H
