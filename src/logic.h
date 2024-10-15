@@ -5,7 +5,6 @@
 
 State* init();
 
-// NOTE: mutates state
 void run(State* state);
 
 void freeState(State* state);

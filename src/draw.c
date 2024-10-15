@@ -7,18 +7,29 @@
 
 static int textLineSpacing = 2;
 
-void drawText(Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint);
+typedef struct {
+    int lines;
+    char** text;
+} Text;
 
-void draw(State* state) {
+void drawText(Font font, char** text, Vector2 position, float fontSize, float spacing, Color tint);
+
+void draw(State* state)
+{
     ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
 
-    char* text[100];
+    char** text;
+    text = malloc(sizeof(char*) * 3);
     text[0] = "blahblahblah";
     text[1] = "foofoofoooooooooo";
     text[2] = "testing";
 
+    drawText(state->font, text, (Vector2) { 0, 0 }, state->font.baseSize / 2, 1.0f, WHITE);
+}
+
+void drawText(Font font, char** text, Vector2 position, float fontSize, float spacing, Color tint)
+{
     for (int i = 0; i < 3; i++) {
-        float fontSize = state->font.baseSize / 2;
         float textOffsetY = fontSize + textLineSpacing;
 
         Vector2 pos = {
@@ -26,29 +37,24 @@ void draw(State* state) {
             (fontSize + textLineSpacing) * i
         };
 
-        drawText(state->font, text[i], pos, fontSize, 1.f, WHITE);
-    }
-}
+        if (font.texture.id == 0)
+            font = GetFontDefault();
 
-void drawText(Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint)
-{
-    if (font.texture.id == 0)
-        font = GetFontDefault();
+        int size = TextLength(text[i]);
 
-    int size = TextLength(text);
+        float textOffsetX = 0.0f;
 
-    float textOffsetX = 0.0f;
+        float scaleFactor = fontSize/font.baseSize;
 
-    float scaleFactor = fontSize/font.baseSize;
+        for (int j = 0; j < size; j++) {
+            int codepointByteCount = 0;
+            int codepoint = GetCodepointNext(&text[i][j], &codepointByteCount);
+            int index = GetGlyphIndex(font, codepoint);
 
-    for (int i = 0; i < size; i++) {
-        int codepointByteCount = 0;
-        int codepoint = GetCodepointNext(&text[i], &codepointByteCount);
-        int index = GetGlyphIndex(font, codepoint);
+            Vector2 pos = { position.x + textOffsetX, position.y + textOffsetY * i };
+            DrawTextCodepoint(font, codepoint, pos, fontSize, tint);
 
-        Vector2 pos = { position.x + textOffsetX, position.y };
-        DrawTextCodepoint(font, codepoint, pos, fontSize, tint);
-
-        textOffsetX += ((float)font.glyphs[index].advanceX*scaleFactor + spacing);
+            textOffsetX += ((float)font.glyphs[index].advanceX*scaleFactor + spacing);
+        }
     }
 }
