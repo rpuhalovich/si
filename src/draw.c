@@ -1,60 +1,59 @@
+#include <raylib.h>
 #include <stdio.h>
-#include "raylib.h"
-#include "raygui.h"
+#include <string.h>
 
 #include "draw.h"
 #include "state.h"
 
-static int textLineSpacing = 2;
-
-typedef struct {
-    int lines;
-    char** text;
-} Text;
-
-void drawText(Font font, char** text, Vector2 position, float fontSize, float spacing, Color tint);
-
 void draw(State* state)
 {
-    ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
+    ClearBackground(BLACK);
 
-    char** text;
-    text = malloc(sizeof(char*) * 3);
-    text[0] = "blahblahblah";
-    text[1] = "foofoofoooooooooo";
-    text[2] = "testing";
+    // font
+    {
+        Vector2 position = (Vector2){0, 0};
+        f32 fontSize = state->font.size;
+        f32 fontBaseSize = state->font.font.baseSize;
+        f32 fontSpacing = 1.0f;
+        i32 textLineSpacing = state->font.textLineSpacing;
 
-    drawText(state->font, text, (Vector2) { 0, 0 }, state->font.baseSize / 2, 1.0f, WHITE);
-}
+        for (i32 r = 0; r < state->buffer.lines; r++) {
+            f32 textOffsetY = fontSize + state->font.textLineSpacing;
 
-void drawText(Font font, char** text, Vector2 position, float fontSize, float spacing, Color tint)
-{
-    for (int i = 0; i < 3; i++) {
-        float textOffsetY = fontSize + textLineSpacing;
+            Vector2 pos = { 0, (fontSize + state->font.textLineSpacing) * r };
 
-        Vector2 pos = {
-            0,
-            (fontSize + textLineSpacing) * i
-        };
+            if (state->font.font.texture.id == 0)
+                state->font.font = GetFontDefault();
 
-        if (font.texture.id == 0)
-            font = GetFontDefault();
+            i32 size = TextLength(state->buffer.text[r]);
+            f32 textOffsetX = 0.0f;
+            f32 scaleFactor = fontSize / fontBaseSize;
 
-        int size = TextLength(text[i]);
+            for (i32 c = 0; c < size; c++) {
+                i32 codepointByteCount = 0;
+                i32 codepoint = GetCodepointNext(&state->buffer.text[r][c], &codepointByteCount);
+                i32 index = GetGlyphIndex(state->font.font, codepoint);
 
-        float textOffsetX = 0.0f;
+                Vector2 pos = { position.x + textOffsetX, position.y + textOffsetY * r };
 
-        float scaleFactor = fontSize/font.baseSize;
+                textOffsetX += ((f32)state->font.font.glyphs[index].advanceX * scaleFactor + fontSpacing);
 
-        for (int j = 0; j < size; j++) {
-            int codepointByteCount = 0;
-            int codepoint = GetCodepointNext(&text[i][j], &codepointByteCount);
-            int index = GetGlyphIndex(font, codepoint);
+                i32 cursorPositionR = state->buffer.cursorPosition.x;
+                i32 cursorPositionC = state->buffer.cursorPosition.y;
+                if (state->buffer.cursorPosition.x == r && state->buffer.cursorPosition.y == c) {
+                    Rectangle rect = {
+                        .x = state->buffer.cursorPosition.x,
+                        .y = state->buffer.cursorPosition.y,
+                        .width = textOffsetX,
+                        .height = fontSize
+                    };
+                    DrawRectangleRec(rect, WHITE);
 
-            Vector2 pos = { position.x + textOffsetX, position.y + textOffsetY * i };
-            DrawTextCodepoint(font, codepoint, pos, fontSize, tint);
-
-            textOffsetX += ((float)font.glyphs[index].advanceX*scaleFactor + spacing);
+                    DrawTextCodepoint(state->font.font, codepoint, pos, fontSize, BLACK);
+                } else {
+                    DrawTextCodepoint(state->font.font, codepoint, pos, fontSize, WHITE);
+                }
+            }
         }
     }
 }

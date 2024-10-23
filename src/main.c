@@ -1,19 +1,14 @@
+#include <raylib.h>
 #include <stdio.h>
 
-#include "raylib.h"
-#define RAYGUI_IMPLEMENTATION
-#include "raygui.h"
-#include "dark/style_dark.h"
-
-#include "logic.h"
 #include "draw.h"
+#include "logic.h"
 
-int main()
+i32 main()
 {
     SetConfigFlags(FLAG_WINDOW_MAXIMIZED | FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_HIGHDPI);
     InitWindow(1280, 720, "test-raylib");
     SetTargetFPS(60);
-    GuiLoadStyleDark();
 
     State* state = init();
     while (!WindowShouldClose()) {
