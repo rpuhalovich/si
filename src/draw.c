@@ -24,13 +24,14 @@ void draw(State* state)
 
             for (i32 c = 0; c < length; c++) {
                 f32 textOffsetX = ((f32)state->font.font.glyphs[r].advanceX * scaleFactor + fontSpacing);
+                Vector2 pos = { origin.x + textOffsetX * c, origin.y + textOffsetY * r };
 
                 Color backgroundColor = WHITE;
-                if (b.cursorPosition.x == r && b.cursorPosition.y == c) {
+                if (b.cursorPosition.y == r && b.cursorPosition.x == c) {
 
                     Rectangle rect = {
-                        .x = state->buffer.cursorPosition.x,
-                        .y = state->buffer.cursorPosition.y,
+                        .x = pos.x,
+                        .y = pos.y,
                         .width = textOffsetX,
                         .height = state->font.size
                     };
@@ -39,7 +40,6 @@ void draw(State* state)
                     backgroundColor = BLACK;
                 }
 
-                Vector2 pos = { origin.x + textOffsetX * c, origin.y + textOffsetY * r };
 
                 i32 codepointByteCount = 0;
                 i32 codepoint = GetCodepointNext(&state->buffer.text[r][c], &codepointByteCount);

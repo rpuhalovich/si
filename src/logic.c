@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include "logic.h"
 #include "raylib.h"
@@ -40,6 +41,15 @@ State* init()
 void run(State* state)
 {
     if (IsKeyPressed(KEY_RIGHT))
+        state->buffer.cursorPosition.x++;
+
+    if (IsKeyPressed(KEY_LEFT))
+        state->buffer.cursorPosition.x--;
+
+    if (IsKeyPressed(KEY_UP))
+        state->buffer.cursorPosition.y--;
+
+    if (IsKeyPressed(KEY_DOWN))
         state->buffer.cursorPosition.y++;
 }
 
