@@ -8,7 +8,7 @@
 typedef struct {
     i32 lines;
     char** text;
-    Vector2i cursorPosition;
+    Vector2 cursorPosition;
 } Buffer;
 
 // used for drawing

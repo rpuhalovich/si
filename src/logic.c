@@ -31,7 +31,7 @@ State* init()
         state->buffer.text[1] = "foofoofoooooooooo";
         // state->buffer.text[2] = "testing";
 
-        state->buffer.cursorPosition = (Vector2i) { 0, 0 };
+        state->buffer.cursorPosition = (Vector2) { 0, 0 };
     }
 
     return state;
