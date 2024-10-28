@@ -4,24 +4,24 @@
 #include "raylib.h"
 #include "types.h"
 
+// used for logic
 typedef struct {
-    i32 count;
-    bool showMessageBox;
+    i32 lines;
+    char** text;
+    Vector2i cursorPosition;
+} Buffer;
 
-    // used for drawing
-    struct {
-        Font font;
-        f32 size;
-        f32 spacing;
-        i32 textLineSpacing;
-    } font;
+// used for drawing
+typedef struct {
+    Font font;
+    f32 size;
+    f32 spacing;
+    i32 textLineSpacing;
+} trl_Font;
 
-    // used for logic
-    struct {
-        i32 lines;
-        char** text;
-        Vector2 cursorPosition;
-    } buffer;
+typedef struct {
+    trl_Font font;
+    Buffer buffer;
 } State;
 
 #endif // STATE_H
