@@ -22,6 +22,6 @@ typedef struct {
 typedef struct {
     trl_Font font;
     Buffer buffer;
-} State;
+} trl_State;
 
 #endif // STATE_H

@@ -5,45 +5,44 @@
 #include "draw.h"
 #include "state.h"
 
-void draw(State* state)
+void draw(trl_State* state)
 {
     ClearBackground(BLACK);
 
-    // text
+    // grid
     {
         trl_Font f = state->font;
         Buffer b = state->buffer;
-
-        Vector2 origin = (Vector2) { 0, 0 };
         f32 scaleFactor = state->font.size / state->font.font.baseSize;
-        f32 fontSpacing = 1.0f;
+        Vector2 monospaceCharDimensions = MeasureTextEx(state->font.font, "x", state->font.size, 1.0f);
 
-        for (i32 r = 0; r < state->buffer.lines; r++) {
-            f32 textOffsetY = f.size + f.textLineSpacing;
-            i32 length = TextLength(state->buffer.text[r]);
+        f32 cellWidth = monospaceCharDimensions.x;
+        f32 cellHeight = f.size + f.textLineSpacing;
 
-            for (i32 c = 0; c < length; c++) {
-                f32 textOffsetX = ((f32)state->font.font.glyphs[r].advanceX * scaleFactor + fontSpacing);
-                Vector2 pos = { origin.x + textOffsetX * c, origin.y + textOffsetY * r };
+        i32 numCellCols = GetRenderWidth() / cellWidth;
+        i32 numCellRows = GetRenderHeight() / cellHeight;
 
-                Color backgroundColor = WHITE;
+        for (i32 r = 0; r < numCellRows; r++) {
+            i32 rowLen;
+            if (r < state->buffer.lines)
+                rowLen = TextLength(state->buffer.text[r]);
+
+            for (i32 c = 0; c < numCellCols; c++) {
+                Vector2 pos = {c * cellWidth, r * cellHeight};
+                Color color = WHITE;
                 if (b.cursorPosition.y == r && b.cursorPosition.x == c) {
-
-                    Rectangle rect = {
-                        .x = pos.x,
-                        .y = pos.y,
-                        .width = textOffsetX,
-                        .height = state->font.size
-                    };
+                    Rectangle rect = {.x = pos.x, .y = pos.y, .width = cellWidth, .height = cellHeight};
                     DrawRectangleRec(rect, WHITE);
-
-                    backgroundColor = BLACK;
+                    color = BLACK;
                 }
 
-
-                i32 codepointByteCount = 0;
-                i32 codepoint = GetCodepointNext(&state->buffer.text[r][c], &codepointByteCount);
-                DrawTextCodepoint(state->font.font, codepoint, pos, state->font.size, backgroundColor);
+                // cursor assumed not to go below { 0, 0 }
+                if (r < state->buffer.lines && c < rowLen) {
+                    i32 codepointByteCount = 0;
+                    char character = state->buffer.text[r][c];
+                    i32 codepoint = GetCodepointNext(&character, &codepointByteCount);
+                    DrawTextCodepoint(state->font.font, codepoint, pos, state->font.size, color);
+                }
             }
         }
     }

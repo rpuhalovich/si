@@ -1,18 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
+// #include <math.h>
 
 #include "logic.h"
 #include "raylib.h"
 #include "state.h"
 
-State* init()
+trl_State* init()
 {
     SetTextureFilter(GetFontDefault().texture, TEXTURE_FILTER_POINT);
 
-    State* state = malloc(sizeof(State));
-    memset(state, 0, sizeof(State));
+    trl_State* state = malloc(sizeof(trl_State));
+    memset(state, 0, sizeof(trl_State));
 
     // font
     {
@@ -26,19 +26,19 @@ State* init()
 
     // buffer
     {
-        state->buffer.lines = 2;
+        state->buffer.lines = 3;
         state->buffer.text = malloc(sizeof(char*) * state->buffer.lines);
         state->buffer.text[0] = "blahblahblah";
         state->buffer.text[1] = "foofoofoooooooooo";
-        // state->buffer.text[2] = "testing";
+        state->buffer.text[2] = "testing";
 
-        state->buffer.cursorPosition = (Vector2) { 0, 0 };
+        state->buffer.cursorPosition = (Vector2){0, 0};
     }
 
     return state;
 }
 
-void run(State* state)
+void run(trl_State* state)
 {
     if (IsKeyPressed(KEY_RIGHT))
         state->buffer.cursorPosition.x++;
@@ -53,7 +53,7 @@ void run(State* state)
         state->buffer.cursorPosition.y++;
 }
 
-void freeState(State* state)
+void freeState(trl_State* state)
 {
     UnloadFont(state->font.font);
     free(state->buffer.text);

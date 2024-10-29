@@ -6,11 +6,11 @@
 
 i32 main()
 {
-    SetConfigFlags(FLAG_WINDOW_MAXIMIZED | FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_HIGHDPI);
-    InitWindow(1280, 720, "test-raylib");
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    InitWindow(1280, 720, "");
     SetTargetFPS(60);
 
-    State* state = init();
+    trl_State* state = init();
     while (!WindowShouldClose()) {
         BeginDrawing();
         run(state);
