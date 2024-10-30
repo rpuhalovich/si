@@ -17,9 +17,9 @@ AppState* init()
 
     // color
     {
-        state->color.background = BLACK;
-        state->color.foreground = WHITE;
-        state->color.foregroundHighlight = BLACK;
+        state->color.background = BEIGE;
+        state->color.foreground = BLACK;
+        state->color.foregroundHighlight = BEIGE;
     }
 
     // font

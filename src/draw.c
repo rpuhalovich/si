@@ -7,7 +7,7 @@
 
 void draw(AppState* state)
 {
-    ClearBackground(COLOR_BACKGROUND);
+    ClearBackground(state->color.background);
 
     // grid
     {
@@ -23,11 +23,11 @@ void draw(AppState* state)
 
             for (i32 c = 0; c < state->grid.numCellCols; c++) {
                 Vector2 pos = {c * state->grid.cellWidth, r * state->grid.cellHeight};
-                Color color = COLOR_FOREGROUND;
+                Color color = state->color.foreground;
                 if (b.cursorPosition.y == r && b.cursorPosition.x == c) {
                     Rectangle rect = {.x = pos.x, .y = pos.y, .width = state->grid.cellWidth, .height = state->grid.cellHeight};
-                    DrawRectangleRec(rect, COLOR_FOREGROUND);
-                    color = COLOR_FOREGROUND_HIGHLIGHT;
+                    DrawRectangleRec(rect, state->color.foreground);
+                    color = state->color.foregroundHighlight;
                 }
 
                 // cursor assumed not to go below { 0, 0 }
