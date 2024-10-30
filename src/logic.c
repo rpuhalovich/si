@@ -1,9 +1,10 @@
+#include <raylib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "appmath.h"
 #include "logic.h"
-#include "raylib.h"
 #include "state.h"
 
 AppState* init()
@@ -50,22 +51,25 @@ void run(AppState* state)
     state->numCellCols = GetScreenWidth() / state->cellWidth;
     state->numCellRows = GetScreenHeight() / state->cellHeight;
 
-    if (IsKeyPressed(KEY_RIGHT)) {
+    state->buffer.cursorPosition.x = iclamp(state->buffer.cursorPosition.x, 0, state->numCellCols - 1);
+    state->buffer.cursorPosition.y = iclamp(state->buffer.cursorPosition.y, 0, state->numCellRows - 1);
+
+    if (IsKeyPressed(KEY_RIGHT) || IsKeyPressedRepeat(KEY_RIGHT)) {
         if (state->buffer.cursorPosition.x < state->numCellCols - 1)
             state->buffer.cursorPosition.x++;
     }
 
-    if (IsKeyPressed(KEY_LEFT)) {
+    if (IsKeyPressed(KEY_LEFT) || IsKeyPressedRepeat(KEY_LEFT)) {
         if (state->buffer.cursorPosition.x > 0)
             state->buffer.cursorPosition.x--;
     }
 
-    if (IsKeyPressed(KEY_UP)) {
+    if (IsKeyPressed(KEY_UP) || IsKeyPressedRepeat(KEY_UP)) {
         if (state->buffer.cursorPosition.y > 0)
             state->buffer.cursorPosition.y--;
     }
 
-    if (IsKeyPressed(KEY_DOWN)) {
+    if (IsKeyPressed(KEY_DOWN) || IsKeyPressedRepeat(KEY_DOWN)) {
         if (state->buffer.cursorPosition.y < state->numCellRows - 1)
             state->buffer.cursorPosition.y++;
     }
