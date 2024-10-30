@@ -10,7 +10,7 @@ i32 main()
     InitWindow(1280, 720, "");
     SetTargetFPS(60);
 
-    trl_State* state = init();
+    AppState* state = init();
     while (!WindowShouldClose()) {
         BeginDrawing();
         run(state);

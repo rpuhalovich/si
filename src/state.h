@@ -20,8 +20,14 @@ typedef struct {
 } trl_Font;
 
 typedef struct {
+    i32 numCellCols;
+    i32 numCellRows;
+
+    i32 cellWidth;
+    i32 cellHeight;
+
     trl_Font font;
     Buffer buffer;
-} trl_State;
+} AppState;
 
 #endif // STATE_H

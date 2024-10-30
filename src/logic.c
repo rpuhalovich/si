@@ -1,18 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-// #include <math.h>
 
 #include "logic.h"
 #include "raylib.h"
 #include "state.h"
 
-trl_State* init()
+AppState* init()
 {
     SetTextureFilter(GetFontDefault().texture, TEXTURE_FILTER_POINT);
 
-    trl_State* state = malloc(sizeof(trl_State));
-    memset(state, 0, sizeof(trl_State));
+    // TODO: arena?
+    AppState* state = malloc(sizeof(AppState));
+    memset(state, 0, sizeof(AppState));
 
     // font
     {
@@ -22,6 +22,13 @@ trl_State* init()
         state->font.size = state->font.font.baseSize / 2;
         state->font.spacing = 1.0f;
         state->font.textLineSpacing = 2;
+
+        // cell dimensions
+        f32 scaleFactor = state->font.size / state->font.font.baseSize;
+        Vector2 monospaceCharDimensions = MeasureTextEx(state->font.font, "x", state->font.size, 1.0f);
+
+        state->cellWidth = monospaceCharDimensions.x;
+        state->cellHeight = state->font.size + state->font.textLineSpacing;
     }
 
     // buffer
@@ -38,22 +45,33 @@ trl_State* init()
     return state;
 }
 
-void run(trl_State* state)
+void run(AppState* state)
 {
-    if (IsKeyPressed(KEY_RIGHT))
-        state->buffer.cursorPosition.x++;
+    state->numCellCols = GetScreenWidth() / state->cellWidth;
+    state->numCellRows = GetScreenHeight() / state->cellHeight;
 
-    if (IsKeyPressed(KEY_LEFT))
-        state->buffer.cursorPosition.x--;
+    if (IsKeyPressed(KEY_RIGHT)) {
+        if (state->buffer.cursorPosition.x < state->numCellCols - 1)
+            state->buffer.cursorPosition.x++;
+    }
 
-    if (IsKeyPressed(KEY_UP))
-        state->buffer.cursorPosition.y--;
+    if (IsKeyPressed(KEY_LEFT)) {
+        if (state->buffer.cursorPosition.x > 0)
+            state->buffer.cursorPosition.x--;
+    }
 
-    if (IsKeyPressed(KEY_DOWN))
-        state->buffer.cursorPosition.y++;
+    if (IsKeyPressed(KEY_UP)) {
+        if (state->buffer.cursorPosition.y > 0)
+            state->buffer.cursorPosition.y--;
+    }
+
+    if (IsKeyPressed(KEY_DOWN)) {
+        if (state->buffer.cursorPosition.y < state->numCellRows - 1)
+            state->buffer.cursorPosition.y++;
+    }
 }
 
-void freeState(trl_State* state)
+void freeState(AppState* state)
 {
     UnloadFont(state->font.font);
     free(state->buffer.text);

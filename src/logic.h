@@ -3,10 +3,10 @@
 
 #include "state.h"
 
-trl_State* init();
+AppState* init();
 
-void run(trl_State* state);
+void run(AppState* state);
 
-void freeState(trl_State* state);
+void freeState(AppState* state);
 
 #endif // LOGIC_H

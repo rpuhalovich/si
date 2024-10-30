@@ -3,6 +3,6 @@
 
 #include "state.h"
 
-void draw(trl_State* state);
+void draw(AppState* state);
 
 #endif // DRAW_H

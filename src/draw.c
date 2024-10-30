@@ -5,7 +5,7 @@
 #include "draw.h"
 #include "state.h"
 
-void draw(trl_State* state)
+void draw(AppState* state)
 {
     ClearBackground(BLACK);
 
@@ -16,22 +16,16 @@ void draw(trl_State* state)
         f32 scaleFactor = state->font.size / state->font.font.baseSize;
         Vector2 monospaceCharDimensions = MeasureTextEx(state->font.font, "x", state->font.size, 1.0f);
 
-        f32 cellWidth = monospaceCharDimensions.x;
-        f32 cellHeight = f.size + f.textLineSpacing;
-
-        i32 numCellCols = GetRenderWidth() / cellWidth;
-        i32 numCellRows = GetRenderHeight() / cellHeight;
-
-        for (i32 r = 0; r < numCellRows; r++) {
+        for (i32 r = 0; r < state->numCellRows; r++) {
             i32 rowLen;
             if (r < state->buffer.lines)
                 rowLen = TextLength(state->buffer.text[r]);
 
-            for (i32 c = 0; c < numCellCols; c++) {
-                Vector2 pos = {c * cellWidth, r * cellHeight};
+            for (i32 c = 0; c < state->numCellCols; c++) {
+                Vector2 pos = {c * state->cellWidth, r * state->cellHeight};
                 Color color = WHITE;
                 if (b.cursorPosition.y == r && b.cursorPosition.x == c) {
-                    Rectangle rect = {.x = pos.x, .y = pos.y, .width = cellWidth, .height = cellHeight};
+                    Rectangle rect = {.x = pos.x, .y = pos.y, .width = state->cellWidth, .height = state->cellHeight};
                     DrawRectangleRec(rect, WHITE);
                     color = BLACK;
                 }
