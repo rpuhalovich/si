@@ -20,11 +20,18 @@ typedef struct {
 } trl_Font;
 
 typedef struct {
-    i32 numCellCols;
-    i32 numCellRows;
+    struct {
+        i32 numCellCols;
+        i32 numCellRows;
+        i32 cellWidth;
+        i32 cellHeight;
+    } grid;
 
-    i32 cellWidth;
-    i32 cellHeight;
+    struct {
+        Color background;
+        Color foreground;
+        Color foregroundHighlight;
+    } color;
 
     trl_Font font;
     Buffer buffer;

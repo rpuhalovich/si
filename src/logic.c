@@ -11,9 +11,15 @@ AppState* init()
 {
     SetTextureFilter(GetFontDefault().texture, TEXTURE_FILTER_POINT);
 
-    // TODO: arena?
     AppState* state = malloc(sizeof(AppState));
     memset(state, 0, sizeof(AppState));
+
+    // color
+    {
+        state->color.background = BLACK;
+        state->color.foreground = WHITE;
+        state->color.foregroundHighlight = BLACK;
+    }
 
     // font
     {
@@ -28,8 +34,8 @@ AppState* init()
         f32 scaleFactor = state->font.size / state->font.font.baseSize;
         Vector2 monospaceCharDimensions = MeasureTextEx(state->font.font, "x", state->font.size, 1.0f);
 
-        state->cellWidth = monospaceCharDimensions.x;
-        state->cellHeight = state->font.size + state->font.textLineSpacing;
+        state->grid.cellWidth = monospaceCharDimensions.x;
+        state->grid.cellHeight = state->font.size + state->font.textLineSpacing;
     }
 
     // buffer
@@ -48,14 +54,16 @@ AppState* init()
 
 void run(AppState* state)
 {
-    state->numCellCols = GetScreenWidth() / state->cellWidth;
-    state->numCellRows = GetScreenHeight() / state->cellHeight;
+    state->grid.numCellCols = GetScreenWidth() / state->grid.cellWidth;
+    state->grid.numCellRows = GetScreenHeight() / state->grid.cellHeight;
 
-    state->buffer.cursorPosition.x = iclamp(state->buffer.cursorPosition.x, 0, state->numCellCols - 1);
-    state->buffer.cursorPosition.y = iclamp(state->buffer.cursorPosition.y, 0, state->numCellRows - 1);
+    state->buffer.cursorPosition.x = iclamp(state->buffer.cursorPosition.x, 0, state->grid.numCellCols - 1);
+    state->buffer.cursorPosition.y = iclamp(state->buffer.cursorPosition.y, 0, state->grid.numCellRows - 1);
 
     if (IsKeyPressed(KEY_RIGHT) || IsKeyPressedRepeat(KEY_RIGHT)) {
-        if (state->buffer.cursorPosition.x < state->numCellCols - 1)
+        bool isInWindow = state->buffer.cursorPosition.x < state->grid.numCellCols - 1;
+        bool isInLine = state->buffer.cursorPosition.x < state->grid.numCellCols - 1;
+        if (isInWindow || isInLine)
             state->buffer.cursorPosition.x++;
     }
 
@@ -70,7 +78,7 @@ void run(AppState* state)
     }
 
     if (IsKeyPressed(KEY_DOWN) || IsKeyPressedRepeat(KEY_DOWN)) {
-        if (state->buffer.cursorPosition.y < state->numCellRows - 1)
+        if (state->buffer.cursorPosition.y < state->grid.numCellRows - 1)
             state->buffer.cursorPosition.y++;
     }
 }
