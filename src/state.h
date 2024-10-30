@@ -17,7 +17,7 @@ typedef struct {
     f32 size;
     f32 spacing;
     i32 textLineSpacing;
-} trl_Font;
+} AppFont;
 
 typedef struct {
     struct {
@@ -33,7 +33,7 @@ typedef struct {
         Color foregroundHighlight;
     } color;
 
-    trl_Font font;
+    AppFont font;
     Buffer buffer;
 } AppState;
 

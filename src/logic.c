@@ -1,3 +1,4 @@
+#include <math.h>
 #include <raylib.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -57,13 +58,13 @@ void run(AppState* state)
     state->grid.numCellCols = GetScreenWidth() / state->grid.cellWidth;
     state->grid.numCellRows = GetScreenHeight() / state->grid.cellHeight;
 
-    state->buffer.cursorPosition.x = iclamp(state->buffer.cursorPosition.x, 0, state->grid.numCellCols - 1);
-    state->buffer.cursorPosition.y = iclamp(state->buffer.cursorPosition.y, 0, state->grid.numCellRows - 1);
+    state->buffer.cursorPosition.y = iclamp(state->buffer.cursorPosition.y, 0, state->buffer.lines);
 
     if (IsKeyPressed(KEY_RIGHT) || IsKeyPressedRepeat(KEY_RIGHT)) {
-        bool isInWindow = state->buffer.cursorPosition.x < state->grid.numCellCols - 1;
-        bool isInLine = state->buffer.cursorPosition.x < state->grid.numCellCols - 1;
-        if (isInWindow || isInLine)
+        i32 curline = (i32)state->buffer.cursorPosition.y;
+        i32 len = TextLength(state->buffer.text[curline]);
+
+        if (state->buffer.cursorPosition.x < len)
             state->buffer.cursorPosition.x++;
     }
 
@@ -75,11 +76,19 @@ void run(AppState* state)
     if (IsKeyPressed(KEY_UP) || IsKeyPressedRepeat(KEY_UP)) {
         if (state->buffer.cursorPosition.y > 0)
             state->buffer.cursorPosition.y--;
+
+        i32 curline = (i32)state->buffer.cursorPosition.y;
+        i32 len = TextLength(state->buffer.text[curline]);
+        state->buffer.cursorPosition.x = fmin(state->buffer.cursorPosition.x, len);
     }
 
     if (IsKeyPressed(KEY_DOWN) || IsKeyPressedRepeat(KEY_DOWN)) {
-        if (state->buffer.cursorPosition.y < state->grid.numCellRows - 1)
+        if (state->buffer.cursorPosition.y < state->buffer.lines - 1)
             state->buffer.cursorPosition.y++;
+
+        i32 curline = (i32)state->buffer.cursorPosition.y;
+        i32 len = TextLength(state->buffer.text[curline]);
+        state->buffer.cursorPosition.x = fmin(state->buffer.cursorPosition.x, len);
     }
 }
 

@@ -11,7 +11,7 @@ void draw(AppState* state)
 
     // grid
     {
-        trl_Font f = state->font;
+        AppFont f = state->font;
         Buffer b = state->buffer;
         f32 scaleFactor = state->font.size / state->font.font.baseSize;
         Vector2 monospaceCharDimensions = MeasureTextEx(state->font.font, "x", state->font.size, 1.0f);
