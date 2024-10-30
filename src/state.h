@@ -1,15 +1,10 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include "raylib.h"
-#include "types.h"
+#include <raylib.h>
 
-// used for logic
-typedef struct {
-    i32 lines;
-    char** text;
-    Vector2 cursorPosition;
-} Buffer;
+#include "buffer.h"
+#include "types.h"
 
 // used for drawing
 typedef struct {

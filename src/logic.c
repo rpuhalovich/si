@@ -41,11 +41,11 @@ AppState* init()
 
     // buffer
     {
-        state->buffer.lines = 3;
-        state->buffer.text = malloc(sizeof(char*) * state->buffer.lines);
-        state->buffer.text[0] = "blahblahblah";
-        state->buffer.text[1] = "foofoofoooooooooo";
-        state->buffer.text[2] = "testing";
+        state->buffer.lineCount = 3;
+        state->buffer.lines = malloc(sizeof(Line*) * state->buffer.lineCount);
+        state->buffer.lines[0].line = "blahblahblah";
+        state->buffer.lines[1].line = "foofoofoooooooooo";
+        state->buffer.lines[2].line = "testing";
 
         state->buffer.cursorPosition = (Vector2){0, 0};
     }
@@ -58,11 +58,11 @@ void run(AppState* state)
     state->grid.numCellCols = GetScreenWidth() / state->grid.cellWidth;
     state->grid.numCellRows = GetScreenHeight() / state->grid.cellHeight;
 
-    state->buffer.cursorPosition.y = iclamp(state->buffer.cursorPosition.y, 0, state->buffer.lines);
+    state->buffer.cursorPosition.y = iclamp(state->buffer.cursorPosition.y, 0, state->buffer.lineCount);
 
     if (IsKeyPressed(KEY_RIGHT) || IsKeyPressedRepeat(KEY_RIGHT)) {
         i32 curline = (i32)state->buffer.cursorPosition.y;
-        i32 len = TextLength(state->buffer.text[curline]);
+        i32 len = TextLength(state->buffer.lines[curline].line);
 
         if (state->buffer.cursorPosition.x < len)
             state->buffer.cursorPosition.x++;
@@ -78,16 +78,16 @@ void run(AppState* state)
             state->buffer.cursorPosition.y--;
 
         i32 curline = (i32)state->buffer.cursorPosition.y;
-        i32 len = TextLength(state->buffer.text[curline]);
+        i32 len = TextLength(state->buffer.lines[curline].line);
         state->buffer.cursorPosition.x = fmin(state->buffer.cursorPosition.x, len);
     }
 
     if (IsKeyPressed(KEY_DOWN) || IsKeyPressedRepeat(KEY_DOWN)) {
-        if (state->buffer.cursorPosition.y < state->buffer.lines - 1)
+        if (state->buffer.cursorPosition.y < state->buffer.lineCount - 1)
             state->buffer.cursorPosition.y++;
 
         i32 curline = (i32)state->buffer.cursorPosition.y;
-        i32 len = TextLength(state->buffer.text[curline]);
+        i32 len = TextLength(state->buffer.lines[curline].line);
         state->buffer.cursorPosition.x = fmin(state->buffer.cursorPosition.x, len);
     }
 }
@@ -95,6 +95,6 @@ void run(AppState* state)
 void freeState(AppState* state)
 {
     UnloadFont(state->font.font);
-    free(state->buffer.text);
+    free(state->buffer.lines); // probs need to free each char*?
     free(state);
 }
