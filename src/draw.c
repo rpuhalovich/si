@@ -25,7 +25,11 @@ void draw(AppState* state)
                 Vector2 pos = {c * state->grid.cellWidth, r * state->grid.cellHeight};
                 Color color = state->color.foreground;
                 if (b.cursorPosition.y == r && b.cursorPosition.x == c) {
-                    Rectangle rect = {.x = pos.x, .y = pos.y, .width = state->grid.cellWidth, .height = state->grid.cellHeight};
+                    Rectangle rect = {
+                        .x = pos.x,
+                        .y = pos.y,
+                        .width = state->grid.cellWidth,
+                        .height = state->grid.cellHeight};
                     DrawRectangleRec(rect, state->color.foreground);
                     color = state->color.foregroundHighlight;
                 }
