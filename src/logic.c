@@ -42,7 +42,7 @@ AppState* init()
     // buffer
     {
         state->buffer.lineCount = 3;
-        state->buffer.lines = malloc(sizeof(Line*) * state->buffer.lineCount);
+        state->buffer.lines = malloc(sizeof(Line) * state->buffer.lineCount);
         state->buffer.lines[0].line = "blahblahblah";
         state->buffer.lines[1].line = "foofoofoooooooooo";
         state->buffer.lines[2].line = "testing";
@@ -60,36 +60,35 @@ void run(AppState* state)
 
     state->buffer.cursorPosition.y = iclamp(state->buffer.cursorPosition.y, 0, state->buffer.lineCount);
 
-    if (IsKeyPressed(KEY_RIGHT) || IsKeyPressedRepeat(KEY_RIGHT)) {
-        i32 curline = (i32)state->buffer.cursorPosition.y;
-        i32 len = TextLength(state->buffer.lines[curline].line);
+    if (IsKeyPressed(KEY_RIGHT) || IsKeyPressedRepeat(KEY_RIGHT))
+        moveCursorRight(&state->buffer);
 
-        if (state->buffer.cursorPosition.x < len)
-            state->buffer.cursorPosition.x++;
-    }
+    if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_F) || IsKeyPressedRepeat(KEY_F)))
+        moveCursorRight(&state->buffer);
 
-    if (IsKeyPressed(KEY_LEFT) || IsKeyPressedRepeat(KEY_LEFT)) {
-        if (state->buffer.cursorPosition.x > 0)
-            state->buffer.cursorPosition.x--;
-    }
+    if (IsKeyPressed(KEY_LEFT) || IsKeyPressedRepeat(KEY_LEFT))
+        moveCursorLeft(&state->buffer);
 
-    if (IsKeyPressed(KEY_UP) || IsKeyPressedRepeat(KEY_UP)) {
-        if (state->buffer.cursorPosition.y > 0)
-            state->buffer.cursorPosition.y--;
+    if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_B) || IsKeyPressedRepeat(KEY_B)))
+        moveCursorLeft(&state->buffer);
 
-        i32 curline = (i32)state->buffer.cursorPosition.y;
-        i32 len = TextLength(state->buffer.lines[curline].line);
-        state->buffer.cursorPosition.x = fmin(state->buffer.cursorPosition.x, len);
-    }
+    if (IsKeyPressed(KEY_UP) || IsKeyPressedRepeat(KEY_UP))
+        moveCursorUp(&state->buffer);
 
-    if (IsKeyPressed(KEY_DOWN) || IsKeyPressedRepeat(KEY_DOWN)) {
-        if (state->buffer.cursorPosition.y < state->buffer.lineCount - 1)
-            state->buffer.cursorPosition.y++;
+    if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_P) || IsKeyPressedRepeat(KEY_P)))
+        moveCursorUp(&state->buffer);
 
-        i32 curline = (i32)state->buffer.cursorPosition.y;
-        i32 len = TextLength(state->buffer.lines[curline].line);
-        state->buffer.cursorPosition.x = fmin(state->buffer.cursorPosition.x, len);
-    }
+    if (IsKeyPressed(KEY_DOWN) || IsKeyPressedRepeat(KEY_DOWN))
+        moveCursorDown(&state->buffer);
+
+    if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_N) || IsKeyPressedRepeat(KEY_N)))
+        moveCursorDown(&state->buffer);
+
+    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_E))
+        moveCursorEndOfLine(&state->buffer);
+
+    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_A))
+        moveCursorBeginningOfLine(&state->buffer);
 }
 
 void freeState(AppState* state)
