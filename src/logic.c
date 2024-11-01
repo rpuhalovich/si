@@ -43,7 +43,7 @@ AppState* init()
     {
         state->buffer.lineCount = 1;
         state->buffer.lines = malloc(sizeof(Line));
-        state->buffer.lines[0].capacity = 256;
+        state->buffer.lines[0].capacity = 16;
         state->buffer.lines[0].len = 0;
         state->buffer.lines[0].line = malloc(sizeof(char) * state->buffer.lines[0].capacity);
 
@@ -92,17 +92,22 @@ void run(AppState* state)
 
     char c;
     while ((c = GetCharPressed())) {
-        Buffer b = state->buffer;
+        i32 curLine = (i32)state->buffer.cursorPosition.y;
+        i32 curCol = (i32)state->buffer.cursorPosition.x;
 
-        i32 curLine = (i32)b.cursorPosition.y;
-        i32 curCol = (i32)b.cursorPosition.x;
-        i32 len = TextLength(b.lines[curLine].line);
+        state->buffer.lines[curLine].len++;
 
-        for (int i = len; i > curCol; i--)
-            b.lines[curLine].line[i] = b.lines[curLine].line[i - 1];
+        // TODO: use arena
+        if (state->buffer.lines[curLine].len > state->buffer.lines[curLine].capacity) {
+            state->buffer.lines[curLine].line =
+                realloc(state->buffer.lines[curLine].line, state->buffer.lines[curLine].capacity * 2);
+            state->buffer.lines[curLine].capacity *= 2;
+        }
 
-        b.lines[curLine].line[curCol] = c;
-        b.lines[curLine].len++;
+        for (int i = state->buffer.lines[curLine].len; i > curCol; i--)
+            state->buffer.lines[curLine].line[i] = state->buffer.lines[curLine].line[i - 1];
+
+        state->buffer.lines[curLine].line[curCol] = c;
         state->buffer.cursorPosition.x++;
     }
 }
