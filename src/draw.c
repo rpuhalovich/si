@@ -14,13 +14,10 @@ void draw(AppState* state)
         Buffer b = state->buffer;
 
         for (i32 r = 0; r < state->grid.numCellRows; r++) {
-            i32 rowLen;
-            if (r < state->buffer.lineCount)
-                rowLen = TextLength(state->buffer.lines[r].line);
-
             for (i32 c = 0; c < state->grid.numCellCols; c++) {
                 Vector2 pos = {c * state->grid.cellWidth, r * state->grid.cellHeight};
                 Color color = state->color.foreground;
+
                 if (b.cursorPosition.y == r && b.cursorPosition.x == c) {
                     Rectangle rect = {
                         .x = pos.x,
@@ -31,8 +28,7 @@ void draw(AppState* state)
                     color = state->color.foregroundHighlight;
                 }
 
-                // cursor assumed not to go below { 0, 0 }
-                if (r < state->buffer.lineCount && c < rowLen) {
+                if (r < state->buffer.lineCount && c < state->buffer.lines[r].len) {
                     i32 codepointByteCount = 0;
                     char character = state->buffer.lines[r].line[c];
                     i32 codepoint = GetCodepointNext(&character, &codepointByteCount);

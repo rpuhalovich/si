@@ -9,6 +9,7 @@ i32 main()
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(1280, 720, "");
     SetTargetFPS(60);
+    SetExitKey(0);
 
     AppState* state = init();
     while (!WindowShouldClose()) {
@@ -18,6 +19,8 @@ i32 main()
         EndDrawing();
     }
     freeState(state);
+
+    printf("QUIT APP\n");
 
     CloseWindow();
     return 0;

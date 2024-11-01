@@ -41,11 +41,11 @@ AppState* init()
 
     // buffer
     {
-        state->buffer.lineCount = 3;
-        state->buffer.lines = malloc(sizeof(Line) * state->buffer.lineCount);
-        state->buffer.lines[0].line = "blahblahblah";
-        state->buffer.lines[1].line = "foofoofoooooooooo";
-        state->buffer.lines[2].line = "testing";
+        state->buffer.lineCount = 1;
+        state->buffer.lines = malloc(sizeof(Line));
+        state->buffer.lines[0].capacity = 256;
+        state->buffer.lines[0].len = 0;
+        state->buffer.lines[0].line = malloc(sizeof(char) * state->buffer.lines[0].capacity);
 
         state->buffer.cursorPosition = (Vector2){0, 0};
     }
@@ -89,11 +89,29 @@ void run(AppState* state)
 
     if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_A))
         moveCursorBeginningOfLine(&state->buffer);
+
+    char c;
+    while ((c = GetCharPressed())) {
+        Buffer b = state->buffer;
+
+        i32 curLine = (i32)b.cursorPosition.y;
+        i32 curCol = (i32)b.cursorPosition.x;
+        i32 len = TextLength(b.lines[curLine].line);
+
+        for (int i = len; i > curCol; i--)
+            b.lines[curLine].line[i] = b.lines[curLine].line[i - 1];
+
+        b.lines[curLine].line[curCol] = c;
+        b.lines[curLine].len++;
+        state->buffer.cursorPosition.x++;
+    }
 }
 
 void freeState(AppState* state)
 {
     UnloadFont(state->font.font);
+    for (int i = 0; i < state->buffer.lineCount; i++)
+        free(state->buffer.lines[i].line);
     free(state->buffer.lines); // probs need to free each char*?
     free(state);
 }

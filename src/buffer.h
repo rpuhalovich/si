@@ -8,6 +8,7 @@
 typedef struct {
     char* line;
     i32 len;
+    i32 capacity;
 } Line;
 
 // used for logic
