@@ -26,4 +26,7 @@ void moveCursorRight(Buffer* b);
 void moveCursorBeginningOfLine(Buffer* b);
 void moveCursorEndOfLine(Buffer* b);
 
+void typeChar(char c, Buffer* b);
+void backspace(Buffer* b);
+
 #endif // BUFFER_H

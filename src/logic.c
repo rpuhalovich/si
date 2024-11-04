@@ -90,25 +90,12 @@ void run(AppState* state)
     if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_A))
         moveCursorBeginningOfLine(&state->buffer);
 
+    if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressedRepeat(KEY_BACKSPACE))
+        backspace(&state->buffer);
+
     char c;
     while ((c = GetCharPressed())) {
-        i32 curLine = (i32)state->buffer.cursorPosition.y;
-        i32 curCol = (i32)state->buffer.cursorPosition.x;
-
-        state->buffer.lines[curLine].len++;
-
-        // TODO: use arena
-        if (state->buffer.lines[curLine].len > state->buffer.lines[curLine].capacity) {
-            state->buffer.lines[curLine].line =
-                realloc(state->buffer.lines[curLine].line, state->buffer.lines[curLine].capacity * 2);
-            state->buffer.lines[curLine].capacity *= 2;
-        }
-
-        for (int i = state->buffer.lines[curLine].len; i > curCol; i--)
-            state->buffer.lines[curLine].line[i] = state->buffer.lines[curLine].line[i - 1];
-
-        state->buffer.lines[curLine].line[curCol] = c;
-        state->buffer.cursorPosition.x++;
+        typeChar(c, &state->buffer);
     }
 }
 
