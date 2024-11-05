@@ -76,11 +76,9 @@ void backspace(Buffer* b)
     if (curCol == 0)
         return;
 
-    int i;
-    for (i = curCol; i < lineLen; i++) {
+    for (int i = curCol; i < lineLen; i++)
         b->lines[curLine].line[i - 1] = b->lines[curLine].line[i];
-    }
 
-    b->lines[curLine].length--; // reference not state
+    b->lines[curLine].length--;
     b->cursorPosition.x--;
 }
