@@ -10,9 +10,13 @@ xcode:
 
 release:
 	cmake -S . -B release -DCMAKE_BUILD_TYPE=Release
-	cmake --build release
+	cmake --build release --config Release
 
 format:
 	find src -iname "*.h" -o -iname "*.c" | xargs clang-format -i --style=file
 
-.PHONY: format xcode makefile build release
+clean:
+	rm -rf build release xcode
+
+.PHONY: format xcode makefile build release clean
+.SILENT:
