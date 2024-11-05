@@ -8,7 +8,11 @@ makefile:
 xcode:
 	cmake -S . -B xcode -GXcode
 
+release:
+	cmake -S . -B release -DCMAKE_BUILD_TYPE=Release
+	cmake --build release
+
 format:
 	find src -iname "*.h" -o -iname "*.c" | xargs clang-format -i --style=file
 
-.PHONY: format xcode makefile build
+.PHONY: format xcode makefile build release

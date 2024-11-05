@@ -60,7 +60,7 @@ void typeChar(Buffer* b, char c)
         b->lines[curLine].characters = newLine;
     }
 
-    for (int i = b->lines[curLine].length; i > curCol; i--)
+    for (int i = b->lines[curLine].length - 1; i > curCol; i--)
         b->lines[curLine].characters[i] = b->lines[curLine].characters[i - 1];
 
     b->lines[curLine].characters[curCol] = c;

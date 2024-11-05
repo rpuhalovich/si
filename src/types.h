@@ -15,9 +15,10 @@
 #define f32 float
 #define f64 double
 
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
-
+#ifdef DEBUG
 #define LOG(...) printf(__VA_ARGS__)
+#else
+#define LOG(...)
+#endif
 
 #endif // TYPES_H

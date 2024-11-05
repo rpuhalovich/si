@@ -1,4 +1,5 @@
 build/
+release/
 xcode/
 cmake-debug-build/
 .idea/
