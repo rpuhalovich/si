@@ -28,7 +28,7 @@ void draw(AppState* state)
                     color = state->color.foregroundHighlight;
                 }
 
-                if (r < state->buffer.lineCount && c < state->buffer.lines[r].len) {
+                if (r < state->buffer.lineCount && c < state->buffer.lines[r].length) {
                     i32 codepointByteCount = 0;
                     char character = state->buffer.lines[r].line[c];
                     i32 codepoint = GetCodepointNext(&character, &codepointByteCount);

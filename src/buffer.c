@@ -8,7 +8,7 @@ void moveCursorDown(Buffer* b)
         b->cursorPosition.y++;
 
     i32 curline = (i32)b->cursorPosition.y;
-    i32 len = TextLength(b->lines[curline].line);
+    i32 len = b->lines[curline].length;
     b->cursorPosition.x = fmin(b->cursorPosition.x, len);
 }
 
@@ -18,7 +18,7 @@ void moveCursorUp(Buffer* b)
         b->cursorPosition.y--;
 
     i32 curline = (i32)b->cursorPosition.y;
-    i32 len = TextLength(b->lines[curline].line);
+    i32 len = b->lines[curline].length;
     b->cursorPosition.x = fmin(b->cursorPosition.x, len);
 }
 
@@ -31,9 +31,7 @@ void moveCursorLeft(Buffer* b)
 void moveCursorRight(Buffer* b)
 {
     i32 curline = (i32)b->cursorPosition.y;
-    i32 len = TextLength(b->lines[curline].line);
-
-    if (b->cursorPosition.x < len)
+    if (b->cursorPosition.x < b->lines[curline].length)
         b->cursorPosition.x++;
 }
 
@@ -45,8 +43,7 @@ void moveCursorBeginningOfLine(Buffer* b)
 void moveCursorEndOfLine(Buffer* b)
 {
     i32 curline = (i32)b->cursorPosition.y;
-    i32 len = TextLength(b->lines[curline].line);
-    b->cursorPosition.x = len;
+    b->cursorPosition.x = b->lines[curline].length;
 }
 
 void typeChar(char c, Buffer* b)
@@ -54,15 +51,16 @@ void typeChar(char c, Buffer* b)
     i32 curLine = (i32)b->cursorPosition.y;
     i32 curCol = (i32)b->cursorPosition.x;
 
-    b->lines[curLine].len++;
+    b->lines[curLine].length++;
 
     // TODO: use arena
-    if (b->lines[curLine].len > b->lines[curLine].capacity) {
-        b->lines[curLine].line = realloc(b->lines[curLine].line, b->lines[curLine].capacity * 2);
+    if (b->lines[curLine].length > b->lines[curLine].capacity) {
         b->lines[curLine].capacity *= 2;
+        char* newLine = realloc(b->lines[curLine].line, b->lines[curLine].capacity);
+        b->lines[curLine].line = newLine;
     }
 
-    for (int i = b->lines[curLine].len; i > curCol; i--)
+    for (int i = b->lines[curLine].length; i > curCol; i--)
         b->lines[curLine].line[i] = b->lines[curLine].line[i - 1];
 
     b->lines[curLine].line[curCol] = c;
@@ -73,7 +71,7 @@ void backspace(Buffer* b)
 {
     i32 curLine = (i32)b->cursorPosition.y;
     i32 curCol = (i32)b->cursorPosition.x;
-    i32 lineLen = b->lines[curLine].len;
+    i32 lineLen = b->lines[curLine].length;
 
     if (curCol == 0)
         return;
@@ -83,6 +81,6 @@ void backspace(Buffer* b)
         b->lines[curLine].line[i - 1] = b->lines[curLine].line[i];
     }
 
-    b->lines[curLine].len--; // reference not state
+    b->lines[curLine].length--; // reference not state
     b->cursorPosition.x--;
 }

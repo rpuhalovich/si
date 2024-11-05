@@ -18,4 +18,6 @@
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
+#define LOG(...) printf(__VA_ARGS__)
+
 #endif // TYPES_H

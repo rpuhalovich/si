@@ -43,8 +43,8 @@ AppState* init()
     {
         state->buffer.lineCount = 1;
         state->buffer.lines = malloc(sizeof(Line));
+        state->buffer.lines[0].length = 0;
         state->buffer.lines[0].capacity = 16;
-        state->buffer.lines[0].len = 0;
         state->buffer.lines[0].line = malloc(sizeof(char) * state->buffer.lines[0].capacity);
 
         state->buffer.cursorPosition = (Vector2){0, 0};
@@ -57,8 +57,6 @@ void run(AppState* state)
 {
     state->grid.numCellCols = GetScreenWidth() / state->grid.cellWidth;
     state->grid.numCellRows = GetScreenHeight() / state->grid.cellHeight;
-
-    state->buffer.cursorPosition.y = iclamp(state->buffer.cursorPosition.y, 0, state->buffer.lineCount);
 
     if (IsKeyPressed(KEY_RIGHT) || IsKeyPressedRepeat(KEY_RIGHT))
         moveCursorRight(&state->buffer);
@@ -94,9 +92,8 @@ void run(AppState* state)
         backspace(&state->buffer);
 
     char c;
-    while ((c = GetCharPressed())) {
+    while ((c = GetCharPressed()))
         typeChar(c, &state->buffer);
-    }
 }
 
 void freeState(AppState* state)

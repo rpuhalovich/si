@@ -7,7 +7,7 @@
 
 typedef struct {
     char* line;
-    i32 len;
+    i32 length;
     i32 capacity;
 } Line;
 
