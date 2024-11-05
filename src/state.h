@@ -6,7 +6,6 @@
 #include "buffer.h"
 #include "types.h"
 
-// used for drawing
 typedef struct {
     Font font;
     f32 size;
@@ -16,6 +15,7 @@ typedef struct {
 
 typedef struct {
     struct {
+        // TODO: move to buffer struct
         i32 numCellCols;
         i32 numCellRows;
         i32 cellWidth;

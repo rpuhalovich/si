@@ -6,15 +6,16 @@
 #include "types.h"
 
 typedef struct {
-    char* line;
+    char* characters;
     i32 length;
     i32 capacity;
 } Line;
 
-// used for logic
 typedef struct {
-    i32 lineCount;
     Line* lines;
+    i32 length;
+    i32 capacity;
+
     Vector2 cursorPosition;
 } Buffer;
 

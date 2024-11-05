@@ -4,7 +4,7 @@
 
 void moveCursorDown(Buffer* b)
 {
-    if (b->cursorPosition.y < b->lineCount - 1)
+    if (b->cursorPosition.y < b->length - 1)
         b->cursorPosition.y++;
 
     i32 curline = (i32)b->cursorPosition.y;
@@ -56,14 +56,14 @@ void typeChar(Buffer* b, char c)
     // TODO: use arena
     if (b->lines[curLine].length > b->lines[curLine].capacity) {
         b->lines[curLine].capacity *= 2;
-        char* newLine = realloc(b->lines[curLine].line, b->lines[curLine].capacity);
-        b->lines[curLine].line = newLine;
+        char* newLine = realloc(b->lines[curLine].characters, b->lines[curLine].capacity);
+        b->lines[curLine].characters = newLine;
     }
 
     for (int i = b->lines[curLine].length; i > curCol; i--)
-        b->lines[curLine].line[i] = b->lines[curLine].line[i - 1];
+        b->lines[curLine].characters[i] = b->lines[curLine].characters[i - 1];
 
-    b->lines[curLine].line[curCol] = c;
+    b->lines[curLine].characters[curCol] = c;
     b->cursorPosition.x++;
 }
 
@@ -77,8 +77,13 @@ void backspace(Buffer* b)
         return;
 
     for (int i = curCol; i < lineLen; i++)
-        b->lines[curLine].line[i - 1] = b->lines[curLine].line[i];
+        b->lines[curLine].characters[i - 1] = b->lines[curLine].characters[i];
 
     b->lines[curLine].length--;
     b->cursorPosition.x--;
+}
+
+void enter(Buffer* b)
+{
+    LOG("hello\n");
 }
