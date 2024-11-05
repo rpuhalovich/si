@@ -22,11 +22,11 @@ void moveCursorUp(Buffer* b);
 void moveCursorDown(Buffer* b);
 void moveCursorLeft(Buffer* b);
 void moveCursorRight(Buffer* b);
-
 void moveCursorBeginningOfLine(Buffer* b);
 void moveCursorEndOfLine(Buffer* b);
 
-void typeChar(char c, Buffer* b);
+void typeChar(Buffer* b, char c);
 void backspace(Buffer* b);
+void enter(Buffer* b);
 
 #endif // BUFFER_H

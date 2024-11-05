@@ -46,7 +46,7 @@ void moveCursorEndOfLine(Buffer* b)
     b->cursorPosition.x = b->lines[curline].length;
 }
 
-void typeChar(char c, Buffer* b)
+void typeChar(Buffer* b, char c)
 {
     i32 curLine = (i32)b->cursorPosition.y;
     i32 curCol = (i32)b->cursorPosition.x;

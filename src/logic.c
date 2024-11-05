@@ -93,7 +93,7 @@ void run(AppState* state)
 
     char c;
     while ((c = GetCharPressed()))
-        typeChar(c, &state->buffer);
+        typeChar(&state->buffer, c);
 }
 
 void freeState(AppState* state)
