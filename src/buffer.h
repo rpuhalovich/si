@@ -28,6 +28,7 @@ void moveCursorEndOfLine(Buffer* b);
 
 void typeChar(Buffer* b, char c);
 void backspace(Buffer* b);
+void cutToEnd(Buffer* b);
 void enter(Buffer* b);
 
 #endif // BUFFER_H

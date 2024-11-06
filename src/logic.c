@@ -88,6 +88,9 @@ void run(AppState* state)
     if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_A))
         moveCursorBeginningOfLine(&state->buffer);
 
+    if (IsKeyPressed(KEY_K))
+        cutToEnd(&state->buffer);
+
     if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressedRepeat(KEY_BACKSPACE))
         backspace(&state->buffer);
 

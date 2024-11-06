@@ -83,6 +83,12 @@ void backspace(Buffer* b)
     b->cursorPosition.x--;
 }
 
+void cutToEnd(Buffer* b)
+{
+    i32 curLine = (i32)b->cursorPosition.y;
+    b->lines[curLine].length = (i32)b->cursorPosition.x;
+}
+
 void enter(Buffer* b)
 {
     LOG("hello\n");
