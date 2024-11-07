@@ -115,8 +115,11 @@ void kill(Buffer* b)
     if (b->lines[line]->length == 0 && b->length > 1) {
         for (i32 i = line; i < b->length - 1; i++)
             b->lines[i] = b->lines[i + 1];
-        b->lines[b->length] = NULL;
-        b->length = imin(b->length - 1, 1);
+
+        if (line != b->length - 1) {
+            b->lines[b->length] = NULL;
+            b->length = imin(b->length - 1, 1);
+        }
         return;
     }
 
