@@ -9,6 +9,12 @@
 #include "logic.h"
 #include "state.h"
 
+#define VERYDARKBLUE                                                                                         \
+    CLITERAL(Color)                                                                                          \
+    {                                                                                                        \
+        0, 0, 128, 255                                                                                       \
+    }
+
 AppState* initState(Arena* arena)
 {
     SetTextureFilter(GetFontDefault().texture, TEXTURE_FILTER_POINT);
@@ -17,9 +23,9 @@ AppState* initState(Arena* arena)
 
     // color
     {
-        state->color.background = BEIGE;
-        state->color.foreground = BLACK;
-        state->color.foregroundHighlight = BEIGE;
+        state->color.background = VERYDARKBLUE;
+        state->color.foreground = LIGHTGRAY;
+        state->color.foregroundHighlight = VERYDARKBLUE;
     }
 
     // font
@@ -46,6 +52,8 @@ AppState* initState(Arena* arena)
         state->buffer.lines = allocate(arena, sizeof(Line*) * state->buffer.capacity);
         state->buffer.lines[0] = newLine(arena);
         state->buffer.cursorPosition = (Vector2){0, 0};
+
+        state->buffer.statusLine = newLine(arena);
     }
 
     return state;
@@ -90,6 +98,9 @@ void run(Arena* arena, AppState* state)
         insertTab(arena, &state->buffer);
 
     if (IsKeyPressed(KEY_K) || IsKeyPressedRepeat(KEY_K))
+        kill(&state->buffer);
+
+    if (IsKeyPressed(KEY_O))
         kill(&state->buffer);
 
     if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressedRepeat(KEY_BACKSPACE))

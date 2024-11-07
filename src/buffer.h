@@ -18,6 +18,8 @@ typedef struct {
     i32 capacity;
 
     Vector2 cursorPosition;
+
+    Line* statusLine;
 } Buffer;
 
 void moveCursorUp(Buffer* b);
