@@ -49,29 +49,21 @@ void moveCursorEndOfLine(Buffer* b)
     b->cursorPosition.x = b->lines[curline]->length;
 }
 
-void typeChar(Arena* arena, Buffer* b, char c)
+void typeChar(Arena* arena, Line* l, i32 column, char c)
 {
-    i32 curLine = (i32)b->cursorPosition.y;
-    i32 curCol = (i32)b->cursorPosition.x;
-
-    b->lines[curLine]->length++;
+    l->length++;
 
     // TODO: use arena
-    if (b->lines[curLine]->length > b->lines[curLine]->capacity) {
-        b->lines[curLine]->characters = reallocate(
-            arena,
-            b->lines[curLine]->characters,
-            b->lines[curLine]->capacity,
-            b->lines[curLine]->capacity * 2);
+    if (l->length > l->capacity) {
+        l->characters = reallocate(arena, l->characters, l->capacity, l->capacity * 2);
 
-        b->lines[curLine]->capacity *= 2;
+        l->capacity *= 2;
     }
 
-    for (i32 i = b->lines[curLine]->length - 1; i > curCol; i--)
-        b->lines[curLine]->characters[i] = b->lines[curLine]->characters[i - 1];
+    for (i32 i = l->length - 1; i > column; i--)
+        l->characters[i] = l->characters[i - 1];
 
-    b->lines[curLine]->characters[curCol] = c;
-    b->cursorPosition.x++;
+    l->characters[column] = c;
 }
 
 void insertTab(Arena* arena, Buffer* b)

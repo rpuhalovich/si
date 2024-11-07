@@ -110,8 +110,11 @@ void run(Arena* arena, AppState* state)
         enter(arena, &state->buffer);
 
     char c;
-    while ((c = GetCharPressed()))
-        typeChar(arena, &state->buffer, c);
+    while ((c = GetCharPressed())) {
+        Line* l = state->buffer.lines[(i32)state->buffer.cursorPosition.y];
+        typeChar(arena, l, state->buffer.cursorPosition.x, c);
+        state->buffer.cursorPosition.x++;
+    }
 }
 
 void freeState(AppState* state)

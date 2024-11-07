@@ -29,7 +29,7 @@ void moveCursorRight(Buffer* b);
 void moveCursorBeginningOfLine(Buffer* b);
 void moveCursorEndOfLine(Buffer* b);
 
-void typeChar(Arena* arena, Buffer* b, char c);
+void typeChar(Arena* arena, Line* l, i32 column, char c);
 void insertTab(Arena* arena, Buffer* b);
 
 void backspace(Arena* arena, Buffer* b);
