@@ -2,6 +2,8 @@
 
 #include "buffer.h"
 
+void insertString(Buffer* b, char* str, u32 strlen, i32 line, i32 column);
+
 void moveCursorDown(Buffer* b)
 {
     if (b->cursorPosition.y < b->length - 1)
@@ -60,11 +62,17 @@ void typeChar(Buffer* b, char c)
         b->lines[curLine]->characters = newLine;
     }
 
-    for (int i = b->lines[curLine]->length - 1; i > curCol; i--)
+    for (i32 i = b->lines[curLine]->length - 1; i > curCol; i--)
         b->lines[curLine]->characters[i] = b->lines[curLine]->characters[i - 1];
 
     b->lines[curLine]->characters[curCol] = c;
     b->cursorPosition.x++;
+}
+
+void insertTab(Buffer* b)
+{
+    insertString(b, "    ", sizeof(char) * 4, b->cursorPosition.y, b->cursorPosition.x);
+    b->cursorPosition.x += 4;
 }
 
 void backspace(Buffer* b)
@@ -76,7 +84,7 @@ void backspace(Buffer* b)
     if (curCol == 0)
         return;
 
-    for (int i = curCol; i < lineLen; i++)
+    for (i32 i = curCol; i < lineLen; i++)
         b->lines[curLine]->characters[i - 1] = b->lines[curLine]->characters[i];
 
     b->lines[curLine]->length--;
@@ -135,4 +143,19 @@ void freeLine(Line* l)
 {
     free(l->characters);
     free(l);
+}
+
+void insertString(Buffer* b, char* str, u32 strlen, i32 line, i32 column)
+{
+    i32 cutLen = b->lines[line]->length - column;
+
+    b->lines[line]->length = b->lines[line]->length + strlen;
+
+    while (b->lines[line]->length > b->lines[line]->capacity) {
+        b->lines[line]->capacity *= 2;
+        b->lines[line]->characters = realloc(b->lines[line]->characters, b->lines[line]->capacity);
+    }
+
+    memcpy(b->lines[line]->characters + column + strlen, b->lines[line]->characters + column, cutLen);
+    memcpy(b->lines[line]->characters + column, str, strlen);
 }

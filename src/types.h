@@ -11,6 +11,7 @@
 #define i32 int32_t
 #define i64 long long
 #define u8 unsigned char
+#define u32 unsigned int
 #define u64 unsigned long long
 #define f32 float
 #define f64 double

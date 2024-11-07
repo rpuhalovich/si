@@ -27,6 +27,7 @@ void moveCursorBeginningOfLine(Buffer* b);
 void moveCursorEndOfLine(Buffer* b);
 
 void typeChar(Buffer* b, char c);
+void insertTab(Buffer* b);
 
 void backspace(Buffer* b);
 void kill(Buffer* b);

@@ -88,6 +88,9 @@ void run(AppState* state)
     if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_A))
         moveCursorBeginningOfLine(&state->buffer);
 
+    if (IsKeyPressed(KEY_TAB) || IsKeyPressedRepeat(KEY_TAB))
+        insertTab(&state->buffer);
+
     if (IsKeyPressed(KEY_K))
         kill(&state->buffer);
 
@@ -105,7 +108,7 @@ void run(AppState* state)
 void freeState(AppState* state)
 {
     UnloadFont(state->font.font);
-    for (int i = 0; i < state->buffer.length; i++)
+    for (i32 i = 0; i < state->buffer.length; i++)
         freeLine(state->buffer.lines[i]);
     free(state->buffer.lines); // probs need to free each char*?
     free(state);
