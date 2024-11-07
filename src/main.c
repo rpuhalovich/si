@@ -12,7 +12,7 @@ i32 main()
     SetTargetFPS(60);
     SetExitKey(0);
 
-    Arena* stateArena = initArena(GIGABYTES(4));
+    Arena* stateArena = initArena(MEGABYTES(128));
     AppState* state = initState(stateArena);
 
     while (!WindowShouldClose()) {

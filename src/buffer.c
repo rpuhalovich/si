@@ -1,6 +1,7 @@
 #include <math.h>
 
 #include "buffer.h"
+#include "appmath.h"
 
 void insertString(Arena* arena, Buffer* b, char* str, u32 strlen, i32 line, i32 column);
 
@@ -118,10 +119,11 @@ void kill(Buffer* b)
 {
     i32 line = (i32)b->cursorPosition.y;
 
-    if (b->lines[line]->length == 0) {
+    if (b->lines[line]->length == 0 && b->length > 1) {
         for (i32 i = line; i < b->length - 1; i++)
             b->lines[i] = b->lines[i + 1];
         b->lines[b->length - 1]->length = 0;
+        b->length = imin(b->length - 1, 1);
     } else {
         b->lines[line]->length = (i32)b->cursorPosition.x;
     }
