@@ -116,8 +116,15 @@ void backspace(Arena* arena, Buffer* b)
 
 void kill(Buffer* b)
 {
-    i32 curLine = (i32)b->cursorPosition.y;
-    b->lines[curLine]->length = (i32)b->cursorPosition.x;
+    i32 line = (i32)b->cursorPosition.y;
+
+    if (b->lines[line]->length == 0) {
+        for (i32 i = line; i < b->length - 1; i++)
+            b->lines[i] = b->lines[i + 1];
+        b->lines[b->length - 1]->length = 0;
+    } else {
+        b->lines[line]->length = (i32)b->cursorPosition.x;
+    }
 }
 
 void enter(Arena* arena, Buffer* b)
