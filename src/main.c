@@ -20,8 +20,6 @@ i32 main()
     }
     freeState(state);
 
-    printf("QUIT APP\n");
-
     CloseWindow();
     return 0;
 }

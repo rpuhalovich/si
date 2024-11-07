@@ -105,7 +105,7 @@ void freeState(AppState* state)
 {
     UnloadFont(state->font.font);
     for (int i = 0; i < state->buffer.length; i++)
-        free(state->buffer.lines[i]->characters);
+        freeLine(state->buffer.lines[i]);
     free(state->buffer.lines); // probs need to free each char*?
     free(state);
 }
