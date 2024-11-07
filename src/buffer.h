@@ -30,7 +30,7 @@ void moveCursorEndOfLine(Buffer* b);
 void typeChar(Arena* arena, Buffer* b, char c);
 void insertTab(Arena* arena, Buffer* b);
 
-void backspace(Buffer* b);
+void backspace(Arena* arena, Buffer* b);
 void kill(Buffer* b);
 void enter(Arena* arena, Buffer* b);
 

@@ -94,7 +94,7 @@ void run(Arena* arena, AppState* state)
         kill(&state->buffer);
 
     if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressedRepeat(KEY_BACKSPACE))
-        backspace(&state->buffer);
+        backspace(arena, &state->buffer);
 
     if (IsKeyPressed(KEY_ENTER) || IsKeyPressedRepeat(KEY_ENTER))
         enter(arena, &state->buffer);

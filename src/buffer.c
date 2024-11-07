@@ -79,7 +79,7 @@ void insertTab(Arena* arena, Buffer* b)
     b->cursorPosition.x += 4;
 }
 
-void backspace(Buffer* b)
+void backspace(Arena* arena, Buffer* b)
 {
     i32 line = (i32)b->cursorPosition.y;
     i32 column = (i32)b->cursorPosition.x;
@@ -91,6 +91,26 @@ void backspace(Buffer* b)
 
         b->lines[line]->length--;
         b->cursorPosition.x--;
+    }
+
+    if (column <= 0 && line > 0) {
+        i32 oldlen = b->lines[line - 1]->length;
+
+        insertString(
+            arena,
+            b,
+            b->lines[line]->characters,
+            b->lines[line]->length,
+            line - 1,
+            b->lines[line - 1]->length);
+
+        for (i32 i = line; i < b->length - 1; i++)
+            b->lines[i] = b->lines[i + 1];
+
+        b->lines[b->length - 1]->length = 0;
+
+        b->cursorPosition.x = oldlen;
+        b->cursorPosition.y--;
     }
 }
 
