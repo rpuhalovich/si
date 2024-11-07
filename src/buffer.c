@@ -3,7 +3,7 @@
 #include "appmath.h"
 #include "buffer.h"
 
-void insertString(Arena* arena, Buffer* b, char* str, u32 strlen, i32 line, i32 column);
+void insertString(Arena* arena, Line* l, char* str, u32 strlen, i32 column);
 
 void moveCursorDown(Buffer* b)
 {
@@ -76,7 +76,8 @@ void typeChar(Arena* arena, Buffer* b, char c)
 
 void insertTab(Arena* arena, Buffer* b)
 {
-    insertString(arena, b, "    ", sizeof(char) * 4, b->cursorPosition.y, b->cursorPosition.x);
+    i32 line = (i32)b->cursorPosition.y;
+    insertString(arena, b->lines[line], "    ", sizeof(char) * 4, b->cursorPosition.x);
     b->cursorPosition.x += 4;
 }
 
@@ -99,10 +100,9 @@ void backspace(Arena* arena, Buffer* b)
 
         insertString(
             arena,
-            b,
+            b->lines[line - 1],
             b->lines[line]->characters,
             b->lines[line]->length,
-            line - 1,
             b->lines[line - 1]->length);
 
         for (i32 i = line; i < b->length - 1; i++)
@@ -122,7 +122,7 @@ void kill(Buffer* b)
     if (b->lines[line]->length == 0 && b->length > 1) {
         for (i32 i = line; i < b->length - 1; i++)
             b->lines[i] = b->lines[i + 1];
-        b->lines[b->length - 1]->length = 0;
+        b->lines[b->length] = NULL;
         b->length = imin(b->length - 1, 1);
     } else {
         b->lines[line]->length = (i32)b->cursorPosition.x;
@@ -175,19 +175,16 @@ Line* newLine(Arena* arena)
     return l;
 }
 
-void insertString(Arena* arena, Buffer* b, char* str, u32 strlen, i32 line, i32 column)
+void insertString(Arena* arena, Line* l, char* str, u32 strlen, i32 column)
 {
-    i32 cutLen = b->lines[line]->length - column;
+    i32 cutLen = l->length - column;
 
-    b->lines[line]->length = b->lines[line]->length + strlen;
-
-    while (b->lines[line]->length > b->lines[line]->capacity) {
-        b->lines[line]->characters = reallocate(
-            arena, b->lines[line]->characters, b->lines[line]->capacity, b->lines[line]->capacity * 2);
-
-        b->lines[line]->capacity *= 2;
+    l->length = l->length + strlen;
+    while (l->length > l->capacity) {
+        l->characters = reallocate(arena, l->characters, l->capacity, l->capacity * 2);
+        l->capacity *= 2;
     }
 
-    memcpy(b->lines[line]->characters + column + strlen, b->lines[line]->characters + column, cutLen);
-    memcpy(b->lines[line]->characters + column, str, strlen);
+    memcpy(l->characters + column + strlen, l->characters + column, cutLen);
+    memcpy(l->characters + column, str, strlen);
 }

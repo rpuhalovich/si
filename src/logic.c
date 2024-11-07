@@ -97,10 +97,10 @@ void run(Arena* arena, AppState* state)
     if (IsKeyPressed(KEY_TAB) || IsKeyPressedRepeat(KEY_TAB))
         insertTab(arena, &state->buffer);
 
-    if (IsKeyPressed(KEY_K) || IsKeyPressedRepeat(KEY_K))
+    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_K) || IsKeyPressedRepeat(KEY_K))
         kill(&state->buffer);
 
-    if (IsKeyPressed(KEY_O))
+    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O))
         kill(&state->buffer);
 
     if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressedRepeat(KEY_BACKSPACE))
