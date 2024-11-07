@@ -12,7 +12,7 @@ typedef struct {
 } Line;
 
 typedef struct {
-    Line* lines;
+    Line** lines;
     i32 length;
     i32 capacity;
 
@@ -27,8 +27,12 @@ void moveCursorBeginningOfLine(Buffer* b);
 void moveCursorEndOfLine(Buffer* b);
 
 void typeChar(Buffer* b, char c);
+
 void backspace(Buffer* b);
-void cutToEnd(Buffer* b);
+void kill(Buffer* b);
 void enter(Buffer* b);
+
+Line* newLine();
+void freeLine(Line* l);
 
 #endif // BUFFER_H

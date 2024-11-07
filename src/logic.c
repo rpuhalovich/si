@@ -42,10 +42,9 @@ AppState* init()
     // buffer
     {
         state->buffer.length = 1;
-        state->buffer.lines = malloc(sizeof(Line));
-        state->buffer.lines[0].length = 0;
-        state->buffer.lines[0].capacity = 16;
-        state->buffer.lines[0].characters = malloc(sizeof(char) * state->buffer.lines[0].capacity);
+        state->buffer.capacity = 1;
+        state->buffer.lines = malloc(sizeof(Line*) * state->buffer.length);
+        state->buffer.lines[0] = newLine();
 
         state->buffer.cursorPosition = (Vector2){0, 0};
     }
@@ -89,7 +88,7 @@ void run(AppState* state)
         moveCursorBeginningOfLine(&state->buffer);
 
     if (IsKeyPressed(KEY_K))
-        cutToEnd(&state->buffer);
+        kill(&state->buffer);
 
     if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressedRepeat(KEY_BACKSPACE))
         backspace(&state->buffer);
@@ -106,7 +105,7 @@ void freeState(AppState* state)
 {
     UnloadFont(state->font.font);
     for (int i = 0; i < state->buffer.length; i++)
-        free(state->buffer.lines[i].characters);
+        free(state->buffer.lines[i]->characters);
     free(state->buffer.lines); // probs need to free each char*?
     free(state);
 }
