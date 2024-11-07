@@ -96,31 +96,25 @@ void enter(Buffer* b)
 
     b->length++;
 
-    // TODO: use arena
-    if (b->length > b->capacity) {
-        b->capacity *= 2;
-        Line** newLines = realloc(b->lines, b->capacity);
-        b->lines = newLines;
-    }
-
     for (i32 i = b->length - 1; i > curLine; i--) {
         b->lines[i] = b->lines[i - 1];
     }
 
-    b->lines[curLine] = newLine();
+    b->lines[curLine + 1] = newLine();
 
-    int curChar = 0;
-    for (i32 i = curCol; i < b->lines[curLine]->length; i++) {
+    for (i32 i = curCol, j = 0; i < b->lines[curLine]->length; i++, j++) {
         b->lines[curLine + 1]->length++;
 
         if (b->lines[curLine + 1]->length > b->lines[curLine + 1]->capacity) {
             b->lines[curLine + 1]->capacity *= 2;
-            char* newLine = realloc(b->lines[curLine + 1]->characters, b->lines[curLine + 1]->capacity);
-            b->lines[curLine + 1]->characters = newLine;
+            b->lines[curLine + 1]->characters =
+                realloc(b->lines[curLine + 1]->characters, b->lines[curLine + 1]->capacity);
         }
 
-        b->lines[curLine + 1]->characters[curChar] = b->lines[curLine]->characters[i];
+        b->lines[curLine + 1]->characters[j] = b->lines[curLine]->characters[i];
     }
+
+    b->lines[curLine]->length = curCol;
 
     b->cursorPosition.x = 0;
     b->cursorPosition.y++;
@@ -129,9 +123,11 @@ void enter(Buffer* b)
 Line* newLine()
 {
     Line* l = malloc(sizeof(Line));
+    memset(l, 0, sizeof(Line));
     l->length = 0;
     l->capacity = 16;
     l->characters = malloc(sizeof(char) * l->capacity);
+    memset(l->characters, 0, sizeof(char) * l->capacity);
     return l;
 }
 

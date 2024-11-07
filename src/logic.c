@@ -42,8 +42,9 @@ AppState* init()
     // buffer
     {
         state->buffer.length = 1;
-        state->buffer.capacity = 1;
-        state->buffer.lines = malloc(sizeof(Line*) * state->buffer.length);
+        state->buffer.capacity = 100000;
+        state->buffer.lines = malloc(sizeof(Line*) * state->buffer.capacity);
+        memset(state->buffer.lines, 0, sizeof(Line*) * state->buffer.capacity);
         state->buffer.lines[0] = newLine();
 
         state->buffer.cursorPosition = (Vector2){0, 0};
