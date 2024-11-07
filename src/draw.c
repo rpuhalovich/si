@@ -5,6 +5,13 @@
 #include "draw.h"
 #include "state.h"
 
+i32 getCharCodePoint(char c)
+{
+    i32 codepointByteCount = 0;
+    char character = c;
+    return GetCodepointNext(&character, &codepointByteCount);
+}
+
 void draw(AppState* state)
 {
     ClearBackground(state->color.background);
@@ -38,9 +45,7 @@ void draw(AppState* state)
                 }
 
                 if (r < state->buffer.length && c < state->buffer.lines[r]->length) {
-                    i32 codepointByteCount = 0;
-                    char character = state->buffer.lines[r]->characters[c];
-                    i32 codepoint = GetCodepointNext(&character, &codepointByteCount);
+                    i32 codepoint = getCharCodePoint(state->buffer.lines[r]->characters[c]);
                     DrawTextCodepoint(state->font.font, codepoint, pos, state->font.size, color);
                 }
             }
@@ -57,9 +62,7 @@ void draw(AppState* state)
 
         char* hello = "~/dev/test-raylib/src/draw.c [+]";
         for (i32 i = 0; i < strlen(hello); i++) {
-            i32 codepointByteCount = 0;
-            char character = hello[i];
-            i32 codepoint = GetCodepointNext(&character, &codepointByteCount);
+            i32 codepoint = getCharCodePoint(hello[i]);
             DrawTextCodepoint(
                 state->font.font, codepoint, pos, state->font.size, state->color.foregroundHighlight);
             pos.x += state->grid.cellWidth;

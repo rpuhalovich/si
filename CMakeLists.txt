@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28.3...3.28.3)
-project(testRayLib C)
+project(si C)
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -DRELEASE")

@@ -52,8 +52,6 @@ AppState* initState(Arena* arena)
         state->buffer.lines = allocate(arena, sizeof(Line*) * state->buffer.capacity);
         state->buffer.lines[0] = newLine(arena);
         state->buffer.cursorPosition = (Vector2){0, 0};
-
-        state->buffer.statusLine = newLine(arena);
     }
 
     return state;

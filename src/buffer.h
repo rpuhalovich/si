@@ -6,6 +6,11 @@
 #include "arena.h"
 #include "types.h"
 
+typedef enum {
+    EDIT,
+    COMMAND
+} Mode;
+
 typedef struct {
     char* characters;
     i32 length;
@@ -19,7 +24,9 @@ typedef struct {
 
     Vector2 cursorPosition;
 
-    Line* statusLine;
+    bool isDirty;
+    Line* fileName;
+    Mode currentMode;
 } Buffer;
 
 void moveCursorUp(Buffer* b);
