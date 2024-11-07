@@ -16,13 +16,13 @@ void draw(AppState* state)
             state->grid.gridXOffset += state->buffer.cursorPosition.x - firstOutOfBoundsXRight;
         }
 
-        // if (state->buffer.cursorPosition.x < ) {
-        //     state->grid.gridXOffset += state->buffer.cursorPosition.x - firstOutOfBoundsXRight;
-        // }
+        if (state->buffer.cursorPosition.x < state->grid.gridXOffset) {
+            state->grid.gridXOffset = state->buffer.cursorPosition.x;
+        }
 
         for (i32 r = 0; r < state->grid.numCellRows - 1; r++) {
-            for (i32 c = state->grid.gridXOffset; c < state->grid.numCellCols + state->grid.gridXOffset + 1;
-                 c++) {
+            i32 gridOffset = state->grid.numCellCols + state->grid.gridXOffset + 1;
+            for (i32 c = state->grid.gridXOffset; c < gridOffset; c++) {
                 Vector2 pos = {
                     (c - state->grid.gridXOffset) * state->grid.cellWidth, r * state->grid.cellHeight};
                 Color color = state->color.foreground;
