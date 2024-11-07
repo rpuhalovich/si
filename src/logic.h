@@ -1,11 +1,12 @@
 #ifndef LOGIC_H
 #define LOGIC_H
 
+#include "arena.h"
 #include "state.h"
 
-AppState* init();
+AppState* initState(Arena* arena);
 
-void run(AppState* state);
+void run(Arena* arena, AppState* state);
 
 void freeState(AppState* state);
 

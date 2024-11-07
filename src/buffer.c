@@ -2,7 +2,7 @@
 
 #include "buffer.h"
 
-void insertString(Buffer* b, char* str, u32 strlen, i32 line, i32 column);
+void insertString(Arena* arena, Buffer* b, char* str, u32 strlen, i32 line, i32 column);
 
 void moveCursorDown(Buffer* b)
 {
@@ -48,7 +48,7 @@ void moveCursorEndOfLine(Buffer* b)
     b->cursorPosition.x = b->lines[curline]->length;
 }
 
-void typeChar(Buffer* b, char c)
+void typeChar(Arena* arena, Buffer* b, char c)
 {
     i32 curLine = (i32)b->cursorPosition.y;
     i32 curCol = (i32)b->cursorPosition.x;
@@ -57,9 +57,13 @@ void typeChar(Buffer* b, char c)
 
     // TODO: use arena
     if (b->lines[curLine]->length > b->lines[curLine]->capacity) {
+        b->lines[curLine]->characters = reallocate(
+            arena,
+            b->lines[curLine]->characters,
+            b->lines[curLine]->capacity,
+            b->lines[curLine]->capacity * 2);
+
         b->lines[curLine]->capacity *= 2;
-        char* newLine = realloc(b->lines[curLine]->characters, b->lines[curLine]->capacity);
-        b->lines[curLine]->characters = newLine;
     }
 
     for (i32 i = b->lines[curLine]->length - 1; i > curCol; i--)
@@ -69,26 +73,25 @@ void typeChar(Buffer* b, char c)
     b->cursorPosition.x++;
 }
 
-void insertTab(Buffer* b)
+void insertTab(Arena* arena, Buffer* b)
 {
-    insertString(b, "    ", sizeof(char) * 4, b->cursorPosition.y, b->cursorPosition.x);
+    insertString(arena, b, "    ", sizeof(char) * 4, b->cursorPosition.y, b->cursorPosition.x);
     b->cursorPosition.x += 4;
 }
 
 void backspace(Buffer* b)
 {
-    i32 curLine = (i32)b->cursorPosition.y;
-    i32 curCol = (i32)b->cursorPosition.x;
-    i32 lineLen = b->lines[curLine]->length;
+    i32 line = (i32)b->cursorPosition.y;
+    i32 column = (i32)b->cursorPosition.x;
+    i32 lineLen = b->lines[line]->length;
 
-    if (curCol == 0)
-        return;
+    if (column > 0) {
+        for (i32 i = column; i < lineLen; i++)
+            b->lines[line]->characters[i - 1] = b->lines[line]->characters[i];
 
-    for (i32 i = curCol; i < lineLen; i++)
-        b->lines[curLine]->characters[i - 1] = b->lines[curLine]->characters[i];
-
-    b->lines[curLine]->length--;
-    b->cursorPosition.x--;
+        b->lines[line]->length--;
+        b->cursorPosition.x--;
+    }
 }
 
 void kill(Buffer* b)
@@ -97,7 +100,7 @@ void kill(Buffer* b)
     b->lines[curLine]->length = (i32)b->cursorPosition.x;
 }
 
-void enter(Buffer* b)
+void enter(Arena* arena, Buffer* b)
 {
     i32 curLine = (i32)b->cursorPosition.y;
     i32 curCol = (i32)b->cursorPosition.x;
@@ -108,15 +111,19 @@ void enter(Buffer* b)
         b->lines[i] = b->lines[i - 1];
     }
 
-    b->lines[curLine + 1] = newLine();
+    b->lines[curLine + 1] = newLine(arena);
 
     for (i32 i = curCol, j = 0; i < b->lines[curLine]->length; i++, j++) {
         b->lines[curLine + 1]->length++;
 
         if (b->lines[curLine + 1]->length > b->lines[curLine + 1]->capacity) {
+            b->lines[curLine + 1]->characters = reallocate(
+                arena,
+                b->lines[curLine + 1]->characters,
+                b->lines[curLine + 1]->capacity,
+                b->lines[curLine + 1]->capacity * 2);
+
             b->lines[curLine + 1]->capacity *= 2;
-            b->lines[curLine + 1]->characters =
-                realloc(b->lines[curLine + 1]->characters, b->lines[curLine + 1]->capacity);
         }
 
         b->lines[curLine + 1]->characters[j] = b->lines[curLine]->characters[i];
@@ -128,32 +135,28 @@ void enter(Buffer* b)
     b->cursorPosition.y++;
 }
 
-Line* newLine()
+Line* newLine(Arena* arena)
 {
-    Line* l = malloc(sizeof(Line));
+    Line* l = allocate(arena, sizeof(Line));
     memset(l, 0, sizeof(Line));
     l->length = 0;
     l->capacity = 16;
-    l->characters = malloc(sizeof(char) * l->capacity);
+    l->characters = allocate(arena, sizeof(char) * l->capacity);
     memset(l->characters, 0, sizeof(char) * l->capacity);
     return l;
 }
 
-void freeLine(Line* l)
-{
-    free(l->characters);
-    free(l);
-}
-
-void insertString(Buffer* b, char* str, u32 strlen, i32 line, i32 column)
+void insertString(Arena* arena, Buffer* b, char* str, u32 strlen, i32 line, i32 column)
 {
     i32 cutLen = b->lines[line]->length - column;
 
     b->lines[line]->length = b->lines[line]->length + strlen;
 
     while (b->lines[line]->length > b->lines[line]->capacity) {
+        b->lines[line]->characters = reallocate(
+            arena, b->lines[line]->characters, b->lines[line]->capacity, b->lines[line]->capacity * 2);
+
         b->lines[line]->capacity *= 2;
-        b->lines[line]->characters = realloc(b->lines[line]->characters, b->lines[line]->capacity);
     }
 
     memcpy(b->lines[line]->characters + column + strlen, b->lines[line]->characters + column, cutLen);

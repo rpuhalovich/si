@@ -3,6 +3,7 @@
 
 #include <raylib.h>
 
+#include "arena.h"
 #include "types.h"
 
 typedef struct {
@@ -26,14 +27,13 @@ void moveCursorRight(Buffer* b);
 void moveCursorBeginningOfLine(Buffer* b);
 void moveCursorEndOfLine(Buffer* b);
 
-void typeChar(Buffer* b, char c);
-void insertTab(Buffer* b);
+void typeChar(Arena* arena, Buffer* b, char c);
+void insertTab(Arena* arena, Buffer* b);
 
 void backspace(Buffer* b);
 void kill(Buffer* b);
-void enter(Buffer* b);
+void enter(Arena* arena, Buffer* b);
 
-Line* newLine();
-void freeLine(Line* l);
+Line* newLine(Arena* arena);
 
 #endif // BUFFER_H

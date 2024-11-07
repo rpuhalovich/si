@@ -1,6 +1,7 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -18,8 +19,10 @@
 
 #ifdef DEBUG
 #define LOG(...) printf(__VA_ARGS__)
+#define ASSERT(condition) assert(condition)
 #else
 #define LOG(...)
+#define ASSERT(condition)
 #endif
 
 #endif // TYPES_H

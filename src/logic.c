@@ -5,15 +5,15 @@
 #include <string.h>
 
 #include "appmath.h"
+#include "arena.h"
 #include "logic.h"
 #include "state.h"
 
-AppState* init()
+AppState* initState(Arena* arena)
 {
     SetTextureFilter(GetFontDefault().texture, TEXTURE_FILTER_POINT);
 
-    AppState* state = malloc(sizeof(AppState));
-    memset(state, 0, sizeof(AppState));
+    AppState* state = allocate(arena, sizeof(AppState));
 
     // color
     {
@@ -43,9 +43,8 @@ AppState* init()
     {
         state->buffer.length = 1;
         state->buffer.capacity = 100000;
-        state->buffer.lines = malloc(sizeof(Line*) * state->buffer.capacity);
-        memset(state->buffer.lines, 0, sizeof(Line*) * state->buffer.capacity);
-        state->buffer.lines[0] = newLine();
+        state->buffer.lines = allocate(arena, sizeof(Line*) * state->buffer.capacity);
+        state->buffer.lines[0] = newLine(arena);
 
         state->buffer.cursorPosition = (Vector2){0, 0};
     }
@@ -53,7 +52,7 @@ AppState* init()
     return state;
 }
 
-void run(AppState* state)
+void run(Arena* arena, AppState* state)
 {
     state->grid.numCellCols = GetScreenWidth() / state->grid.cellWidth;
     state->grid.numCellRows = GetScreenHeight() / state->grid.cellHeight;
@@ -89,7 +88,7 @@ void run(AppState* state)
         moveCursorBeginningOfLine(&state->buffer);
 
     if (IsKeyPressed(KEY_TAB) || IsKeyPressedRepeat(KEY_TAB))
-        insertTab(&state->buffer);
+        insertTab(arena, &state->buffer);
 
     if (IsKeyPressed(KEY_K))
         kill(&state->buffer);
@@ -98,18 +97,14 @@ void run(AppState* state)
         backspace(&state->buffer);
 
     if (IsKeyPressed(KEY_ENTER) || IsKeyPressedRepeat(KEY_ENTER))
-        enter(&state->buffer);
+        enter(arena, &state->buffer);
 
     char c;
     while ((c = GetCharPressed()))
-        typeChar(&state->buffer, c);
+        typeChar(arena, &state->buffer, c);
 }
 
 void freeState(AppState* state)
 {
     UnloadFont(state->font.font);
-    for (i32 i = 0; i < state->buffer.length; i++)
-        freeLine(state->buffer.lines[i]);
-    free(state->buffer.lines); // probs need to free each char*?
-    free(state);
 }

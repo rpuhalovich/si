@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include <stdio.h>
 
+#include "arena.h"
 #include "draw.h"
 #include "logic.h"
 
@@ -11,14 +12,18 @@ i32 main()
     SetTargetFPS(60);
     SetExitKey(0);
 
-    AppState* state = init();
+    Arena* stateArena = initArena(GIGABYTES(4));
+    AppState* state = initState(stateArena);
+
     while (!WindowShouldClose()) {
         BeginDrawing();
-        run(state);
+        run(stateArena, state);
         draw(state);
         EndDrawing();
     }
+
     freeState(state);
+    freeArena(stateArena);
 
     CloseWindow();
     return 0;
