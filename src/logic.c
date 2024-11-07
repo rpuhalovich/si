@@ -45,7 +45,6 @@ AppState* initState(Arena* arena)
         state->buffer.capacity = 100000;
         state->buffer.lines = allocate(arena, sizeof(Line*) * state->buffer.capacity);
         state->buffer.lines[0] = newLine(arena);
-
         state->buffer.cursorPosition = (Vector2){0, 0};
     }
 
@@ -54,7 +53,7 @@ AppState* initState(Arena* arena)
 
 void run(Arena* arena, AppState* state)
 {
-    state->grid.numCellCols = GetScreenWidth() / state->grid.cellWidth;
+    state->grid.numCellCols = GetScreenWidth() / state->grid.cellWidth - 1;
     state->grid.numCellRows = GetScreenHeight() / state->grid.cellHeight;
 
     if (IsKeyPressed(KEY_RIGHT) || IsKeyPressedRepeat(KEY_RIGHT))

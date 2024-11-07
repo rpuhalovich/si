@@ -15,11 +15,13 @@ typedef struct {
 
 typedef struct {
     struct {
-        // TODO: move to buffer struct
         i32 numCellCols;
         i32 numCellRows;
         i32 cellWidth;
         i32 cellHeight;
+        i32 gridXOffset;
+
+        Rectangle editorBounds;
     } grid;
 
     struct {

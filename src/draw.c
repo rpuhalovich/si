@@ -11,14 +11,23 @@ void draw(AppState* state)
 
     // grid
     {
-        Buffer b = state->buffer;
+        i32 firstOutOfBoundsXRight = state->grid.gridXOffset + state->grid.numCellCols;
+        if (state->buffer.cursorPosition.x > firstOutOfBoundsXRight) {
+            state->grid.gridXOffset += state->buffer.cursorPosition.x - firstOutOfBoundsXRight;
+        }
+
+        // if (state->buffer.cursorPosition.x < ) {
+        //     state->grid.gridXOffset += state->buffer.cursorPosition.x - firstOutOfBoundsXRight;
+        // }
 
         for (i32 r = 0; r < state->grid.numCellRows - 1; r++) {
-            for (i32 c = 0; c < state->grid.numCellCols; c++) {
-                Vector2 pos = {c * state->grid.cellWidth, r * state->grid.cellHeight};
+            for (i32 c = state->grid.gridXOffset; c < state->grid.numCellCols + state->grid.gridXOffset + 1;
+                 c++) {
+                Vector2 pos = {
+                    (c - state->grid.gridXOffset) * state->grid.cellWidth, r * state->grid.cellHeight};
                 Color color = state->color.foreground;
 
-                if (b.cursorPosition.y == r && b.cursorPosition.x == c) {
+                if (state->buffer.cursorPosition.y == r && state->buffer.cursorPosition.x == c) {
                     Rectangle rect = {
                         .x = pos.x,
                         .y = pos.y,

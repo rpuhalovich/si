@@ -12,18 +12,18 @@ i32 main()
     SetTargetFPS(60);
     SetExitKey(0);
 
-    Arena* stateArena = initArena(MEGABYTES(128));
-    AppState* state = initState(stateArena);
+    Arena* arena = initArena(MEGABYTES(128));
+    AppState* state = initState(arena);
 
     while (!WindowShouldClose()) {
         BeginDrawing();
-        run(stateArena, state);
+        run(arena, state);
         draw(state);
         EndDrawing();
     }
 
     freeState(state);
-    freeArena(stateArena);
+    freeArena(arena);
 
     CloseWindow();
     return 0;

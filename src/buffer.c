@@ -1,7 +1,7 @@
 #include <math.h>
 
-#include "buffer.h"
 #include "appmath.h"
+#include "buffer.h"
 
 void insertString(Arena* arena, Buffer* b, char* str, u32 strlen, i32 line, i32 column);
 
