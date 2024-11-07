@@ -12,7 +12,7 @@
 #define VERYDARKBLUE                                                                                         \
     CLITERAL(Color)                                                                                          \
     {                                                                                                        \
-        0, 0, 128, 255                                                                                       \
+        0, 0, 100, 255                                                                                       \
     }
 
 AppState* initState(Arena* arena)
@@ -54,6 +54,8 @@ AppState* initState(Arena* arena)
         state->buffer.cursorPosition = (Vector2){0, 0};
     }
 
+    state->tempFileName = newLinec(arena, 128);
+
     return state;
 }
 
@@ -62,56 +64,67 @@ void run(Arena* arena, AppState* state)
     state->grid.numCellCols = GetScreenWidth() / state->grid.cellWidth - 1;
     state->grid.numCellRows = GetScreenHeight() / state->grid.cellHeight;
 
-    if (IsKeyPressed(KEY_RIGHT) || IsKeyPressedRepeat(KEY_RIGHT))
-        moveCursorRight(&state->buffer);
+    if (state->currentMode == EDIT) {
+        if (IsKeyPressed(KEY_RIGHT) || IsKeyPressedRepeat(KEY_RIGHT))
+            moveCursorRight(&state->buffer);
 
-    if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_F) || IsKeyPressedRepeat(KEY_F)))
-        moveCursorRight(&state->buffer);
+        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_F) || IsKeyPressedRepeat(KEY_F)))
+            moveCursorRight(&state->buffer);
 
-    if (IsKeyPressed(KEY_LEFT) || IsKeyPressedRepeat(KEY_LEFT))
-        moveCursorLeft(&state->buffer);
+        if (IsKeyPressed(KEY_LEFT) || IsKeyPressedRepeat(KEY_LEFT))
+            moveCursorLeft(&state->buffer);
 
-    if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_B) || IsKeyPressedRepeat(KEY_B)))
-        moveCursorLeft(&state->buffer);
+        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_B) || IsKeyPressedRepeat(KEY_B)))
+            moveCursorLeft(&state->buffer);
 
-    if (IsKeyPressed(KEY_UP) || IsKeyPressedRepeat(KEY_UP))
-        moveCursorUp(&state->buffer);
+        if (IsKeyPressed(KEY_UP) || IsKeyPressedRepeat(KEY_UP))
+            moveCursorUp(&state->buffer);
 
-    if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_P) || IsKeyPressedRepeat(KEY_P)))
-        moveCursorUp(&state->buffer);
+        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_P) || IsKeyPressedRepeat(KEY_P)))
+            moveCursorUp(&state->buffer);
 
-    if (IsKeyPressed(KEY_DOWN) || IsKeyPressedRepeat(KEY_DOWN))
-        moveCursorDown(&state->buffer);
+        if (IsKeyPressed(KEY_DOWN) || IsKeyPressedRepeat(KEY_DOWN))
+            moveCursorDown(&state->buffer);
 
-    if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_N) || IsKeyPressedRepeat(KEY_N)))
-        moveCursorDown(&state->buffer);
+        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_N) || IsKeyPressedRepeat(KEY_N)))
+            moveCursorDown(&state->buffer);
 
-    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_E))
-        moveCursorEndOfLine(&state->buffer);
+        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_E))
+            moveCursorEndOfLine(&state->buffer);
 
-    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_A))
-        moveCursorBeginningOfLine(&state->buffer);
+        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_A))
+            moveCursorBeginningOfLine(&state->buffer);
 
-    if (IsKeyPressed(KEY_TAB) || IsKeyPressedRepeat(KEY_TAB))
-        insertTab(arena, &state->buffer);
+        if (IsKeyPressed(KEY_TAB) || IsKeyPressedRepeat(KEY_TAB))
+            insertTab(arena, &state->buffer);
 
-    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_K) || IsKeyPressedRepeat(KEY_K))
-        kill(&state->buffer);
+        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_K) || IsKeyPressedRepeat(KEY_K))
+            kill(&state->buffer);
 
-    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O))
-        kill(&state->buffer);
+        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O))
+            state->currentMode = OPEN_FILE;
 
-    if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressedRepeat(KEY_BACKSPACE))
-        backspace(arena, &state->buffer);
+        if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressedRepeat(KEY_BACKSPACE))
+            backspace(arena, &state->buffer);
 
-    if (IsKeyPressed(KEY_ENTER) || IsKeyPressedRepeat(KEY_ENTER))
-        enter(arena, &state->buffer);
+        if (IsKeyPressed(KEY_ENTER) || IsKeyPressedRepeat(KEY_ENTER))
+            enter(arena, &state->buffer);
 
-    char c;
-    while ((c = GetCharPressed())) {
-        Line* l = state->buffer.lines[(i32)state->buffer.cursorPosition.y];
-        typeChar(arena, l, state->buffer.cursorPosition.x, c);
-        state->buffer.cursorPosition.x++;
+        char c;
+        while ((c = GetCharPressed())) {
+            Line* l = state->buffer.lines[(i32)state->buffer.cursorPosition.y];
+            typeChar(arena, l, state->buffer.cursorPosition.x, c);
+            state->buffer.cursorPosition.x++;
+        }
+    }
+
+    if (state->currentMode == OPEN_FILE) {
+        char c;
+        while ((c = GetCharPressed())) {
+            Line* l = state->buffer.lines[(i32)state->buffer.cursorPosition.y];
+            typeChar(arena, l, state->buffer.cursorPosition.x, c);
+            state->buffer.cursorPosition.x++;
+        }
     }
 }
 

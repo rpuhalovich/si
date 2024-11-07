@@ -6,6 +6,11 @@
 #include "buffer.h"
 #include "types.h"
 
+typedef enum {
+    EDIT,
+    OPEN_FILE
+} Mode;
+
 typedef struct {
     Font font;
     f32 size;
@@ -29,6 +34,10 @@ typedef struct {
         Color foreground;
         Color foregroundHighlight;
     } color;
+
+    Line* tempFileName;
+
+    Mode currentMode;
 
     AppFont font;
     Buffer buffer;

@@ -14,6 +14,20 @@ Arena* initArena(u64 size)
     return a;
 }
 
+Arena* initArenaa(Arena* arena, u64 size)
+{
+    Arena* a = allocate(arena, size);
+    memset(a, 0, sizeof(Arena));
+
+    a->memory = allocate(arena, size);
+    memset(a->memory, 0, size);
+
+    a->ptr = a->memory;
+    a->capacity = size;
+
+    return a;
+}
+
 void* allocate(Arena* a, u64 size)
 {
     // ASSERT(sizeof(a->ptr + a->capacity + size) < sizeof(a->ptr + a->capacity));
@@ -34,4 +48,10 @@ void freeArena(Arena* a)
 {
     free(a->memory);
     free(a);
+}
+
+void clear(Arena* a)
+{
+    memset(a->memory, 0, a->capacity);
+    a->ptr = a->memory;
 }
