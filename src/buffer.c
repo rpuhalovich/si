@@ -54,6 +54,9 @@ void moveCursorRight(Buffer* b)
     i32 curline = (i32)b->cursorPosition.y;
     if (b->cursorPosition.x < b->lines[curline]->length)
         b->cursorPosition.x++;
+
+    if (b->cursorPosition.x > b->numCols)
+        b->scrollOffset.x++;
 }
 
 void moveCursorBeginningOfLine(Buffer* b)
@@ -163,4 +166,14 @@ void enter(Arena* arena, Buffer* b)
 
     b->cursorPosition.x = 0;
     b->cursorPosition.y++;
+}
+
+void append(Arena* arena, Buffer* b, Line* l)
+{
+    b->length++;
+    if (b->length > b->capacity) {
+        b->lines = reallocate(arena, b->lines, b->capacity, b->capacity * 2);
+        b->capacity *= 2;
+    }
+    b->lines[b->length - 1] = l;
 }

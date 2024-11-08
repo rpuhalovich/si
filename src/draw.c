@@ -19,15 +19,19 @@ void drawBuffer(Buffer* b, AppFont* font, Color color)
     i32 numCellCols = b->bounds.width / font->charWidth - 1;
     i32 numCellRows = b->bounds.height / font->charHeight;
 
+    i32 xoffset = 0;
+    if (b->cursorPosition.x > numCellCols)
+        xoffset = b->cursorPosition.x - numCellCols;
+
     Rectangle rec = {
-        .x = b->cursorPosition.x * font->charWidth + b->bounds.x,
+        .x = (b->cursorPosition.x - xoffset) * font->charWidth + b->bounds.x,
         .y = b->cursorPosition.y * font->charHeight + b->bounds.y,
         .width = font->charWidth,
         .height = font->charHeight};
     DrawRectangleRec(rec, BLACK);
 
     for (i32 r = 0; r < b->length && r < numCellRows; r++) {
-        for (i32 c = 0; c < b->lines[r]->length && c < numCellCols; c++) {
+        for (i32 c = xoffset; c < b->lines[r]->length && c < numCellCols; c++) {
             Vector2 curPos = {c * font->charWidth + b->bounds.x, r * font->charHeight + b->bounds.y};
 
             i32 codepointByteCount = 0;
@@ -43,7 +47,7 @@ void draw(AppState* state)
 {
     ClearBackground(state->color.background);
 
-    // grid
+    // editor
     {
         drawBuffer(state->buffer, state->font, BLACK);
     }

@@ -14,6 +14,9 @@ typedef struct {
     i32 capacity;
 
     Vector2 cursorPosition;
+    Vector2 scrollOffset;
+    i32 numCols;
+    i32 numRows;
 
     bool isActive;
     Rectangle bounds;
@@ -42,5 +45,7 @@ void kill(Buffer* b);
 void enter(Arena* arena, Buffer* b);
 
 void backspace(Arena* arena, Buffer* b);
+
+void append(Arena* arena, Buffer* b, Line* l);
 
 #endif // BUFFER_H
