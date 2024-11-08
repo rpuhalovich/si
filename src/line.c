@@ -16,6 +16,12 @@ Line* newLine(Arena* arena)
     return newLinec(arena, 16);
 }
 
+void clearLine(Line* l)
+{
+    memset(l->characters, 0, l->capacity);
+    l->length = 0;
+}
+
 void insertString(Arena* arena, Line* l, char* str, u32 strlen, i32 column)
 {
     i32 cutLen = l->length - column;

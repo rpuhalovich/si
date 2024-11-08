@@ -53,10 +53,8 @@ void typeChar(Arena* arena, Line* l, i32 column, char c)
 {
     l->length++;
 
-    // TODO: use arena
     if (l->length > l->capacity) {
         l->characters = reallocate(arena, l->characters, l->capacity, l->capacity * 2);
-
         l->capacity *= 2;
     }
 

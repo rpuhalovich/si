@@ -35,7 +35,10 @@ typedef struct {
         Color foregroundHighlight;
     } color;
 
-    Line* tempFileName;
+    struct {
+        Line* tempFileName;
+        i32 column;
+    } commandLine;
 
     Mode currentMode;
 

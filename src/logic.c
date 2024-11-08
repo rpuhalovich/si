@@ -54,7 +54,7 @@ AppState* initState(Arena* arena)
         state->buffer.cursorPosition = (Vector2){0, 0};
     }
 
-    state->tempFileName = newLinec(arena, 128);
+    state->commandLine.tempFileName = newLinec(arena, 128);
 
     return state;
 }
@@ -101,8 +101,19 @@ void run(Arena* arena, AppState* state)
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_K) || IsKeyPressedRepeat(KEY_K))
             kill(&state->buffer);
 
-        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O))
+        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O)) {
+            clearLine(state->commandLine.tempFileName);
+
+            char* openFileDialog = "file: ";
+            insertString(
+                arena,
+                state->commandLine.tempFileName,
+                openFileDialog,
+                sizeof(char) * strlen(openFileDialog),
+                0);
+
             state->currentMode = OPEN_FILE;
+        }
 
         if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressedRepeat(KEY_BACKSPACE))
             backspace(arena, &state->buffer);
@@ -121,9 +132,9 @@ void run(Arena* arena, AppState* state)
     if (state->currentMode == OPEN_FILE) {
         char c;
         while ((c = GetCharPressed())) {
-            Line* l = state->buffer.lines[(i32)state->buffer.cursorPosition.y];
-            typeChar(arena, l, state->buffer.cursorPosition.x, c);
-            state->buffer.cursorPosition.x++;
+            Line* l = state->commandLine.tempFileName;
+            typeChar(arena, l, state->commandLine.tempFileName->length, c);
+            state->commandLine.column++;
         }
     }
 }

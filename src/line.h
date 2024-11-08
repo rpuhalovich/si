@@ -14,6 +14,8 @@ Line* newLine(Arena* arena);
 
 Line* newLinec(Arena* arena, i32 capacity);
 
+void clearLine(Line* l);
+
 void insertString(Arena* arena, Line* l, char* str, u32 strlen, i32 column);
 
 #endif // LINE_H

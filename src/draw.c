@@ -60,9 +60,8 @@ void draw(AppState* state)
             .x = pos.x, .y = pos.y, .width = GetScreenWidth(), .height = state->grid.cellHeight};
         DrawRectangleRec(rect, state->color.foreground);
 
-        char* hello = "~/dev/test-raylib/src/draw.c [+]";
-        for (i32 i = 0; i < strlen(hello); i++) {
-            i32 codepoint = getCharCodePoint(hello[i]);
+        for (i32 i = 0; i < state->commandLine.tempFileName->length; i++) {
+            i32 codepoint = getCharCodePoint(state->commandLine.tempFileName->characters[i]);
             DrawTextCodepoint(
                 state->font.font, codepoint, pos, state->font.size, state->color.foregroundHighlight);
             pos.x += state->grid.cellWidth;
