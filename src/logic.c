@@ -64,6 +64,8 @@ AppState* initState(Arena* arena)
     state->currentBuffer.fileName = newLine(arena);
     insertString(arena, state->currentBuffer.fileName, path, strlen(path), 0);
 
+    state->statusLine.commandLine.commandLineInput = newBuffer(arena);
+
     return state;
 }
 
@@ -90,8 +92,8 @@ void run(Arena* arena, AppState* state)
     Buffer* b;
     if (state->currentMode == EDIT)
         b = state->currentBuffer.buffer;
-    // if (state->currentMode == OPEN_FILE)
-    //     b = state->commandLine.tempFileName;
+    if (state->currentMode == OPEN_FILE)
+        b = state->statusLine.commandLine.commandLineInput;
 
     if (IsKeyPressed(KEY_RIGHT) || IsKeyPressedRepeat(KEY_RIGHT))
         moveCursorRight(b);
@@ -129,17 +131,19 @@ void run(Arena* arena, AppState* state)
     if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_K) || IsKeyPressedRepeat(KEY_K))
         kill(b);
 
-    // if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O)) {
-    //     clearLine(state->commandLine.tempFileName->lines[0]);
-    //     state->commandLine.tempFileName->cursorPosition.x =
-    //         state->commandLine.tempFileName->lines[0]->length; state->currentMode = OPEN_FILE;
-    // }
+    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O)) {
+        clearLine(state->statusLine.commandLine.commandLineInput->lines[0]);
+        state->statusLine.commandLine.commandLineInput->cursorPosition.x = 0;
+        state->currentMode = OPEN_FILE;
+    }
 
     if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressedRepeat(KEY_BACKSPACE))
         backspace(arena, b);
 
-    if (IsKeyPressed(KEY_ENTER) || IsKeyPressedRepeat(KEY_ENTER))
-        enter(arena, state->currentBuffer.buffer);
+    if (IsKeyPressed(KEY_ENTER) || IsKeyPressedRepeat(KEY_ENTER)) {
+        if (state->currentMode == EDIT)
+            enter(arena, b);
+    }
 
     char c;
     while ((c = GetCharPressed()))
