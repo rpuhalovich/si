@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "appmath.h"
 #include "state.h"
 
 void drawLine(Line* l, AppFont* font, Color color, Vector2 pos);

@@ -18,3 +18,9 @@ i32 imax(i32 val, i32 max)
 {
     return val > max ? max : val;
 }
+
+Rectangle RectangleWiden(Rectangle r, f32 amt)
+{
+    return (Rectangle){
+        .x = r.x - amt, .y = r.y - amt, .width = r.width + amt * 2, .height = r.height + amt * 2};
+}

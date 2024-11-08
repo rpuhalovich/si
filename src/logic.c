@@ -65,10 +65,13 @@ void run(Arena* arena, AppState* state)
     state->statusLine.fileName->bounds.width = GetScreenWidth();
     state->statusLine.fileName->bounds.height = state->font->charHeight;
 
-    state->buffer->bounds.x = 100;
-    state->buffer->bounds.y = 100;
-    state->buffer->bounds.width = GetScreenWidth() - 200;
-    state->buffer->bounds.height = GetScreenHeight() - 200;
+    state->buffer->bounds = RectangleWiden(
+        (Rectangle){
+            .x = 0,
+            .y = 0,
+            .width = GetScreenWidth(),
+            .height = GetScreenHeight() - state->font->charHeight - 8},
+        -16.f);
 
     Buffer* b;
     if (state->currentMode == EDIT)
@@ -114,17 +117,7 @@ void run(Arena* arena, AppState* state)
 
     if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O)) {
         clearLine(state->commandLine.tempFileName->lines[0]);
-
-        // char* openFileDialog = "file: ";
-        // insertString(
-        //     arena,
-        //     state->commandLine.tempFileName->lines[0],
-        //     openFileDialog,
-        //     sizeof(char) * strlen(openFileDialog),
-        //     0);
-
         state->commandLine.tempFileName->cursorPosition.x = state->commandLine.tempFileName->lines[0]->length;
-
         state->currentMode = OPEN_FILE;
     }
 

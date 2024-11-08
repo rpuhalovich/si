@@ -1,11 +1,5 @@
 #include "draw.h"
 
-Rectangle RectangleWiden(Rectangle r, f32 amt)
-{
-    return (Rectangle){
-        .x = r.x - amt, .y = r.y - amt, .width = r.width + amt * 2, .height = r.height + amt * 2};
-}
-
 void drawLine(Line* l, AppFont* font, Color color, Vector2 pos)
 {
     Vector2 curPos = pos;
