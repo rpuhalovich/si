@@ -93,7 +93,7 @@ void draw(AppState* state)
                 state->statusLine.statusLineInput,
                 state->font,
                 state->color.statusLineForeGround,
-                state->color.statusLineBackGround);
+                state->color.statusLineCursor);
         }
     }
 }
