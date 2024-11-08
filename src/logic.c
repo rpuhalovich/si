@@ -132,7 +132,7 @@ void run(Arena* arena, AppState* state)
     // if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O)) {
     //     clearLine(state->commandLine.tempFileName->lines[0]);
     //     state->commandLine.tempFileName->cursorPosition.x =
-    //     state->commandLine.tempFileName->lines[0]->length; state->currentMode = OPEN_FILE;
+    //         state->commandLine.tempFileName->lines[0]->length; state->currentMode = OPEN_FILE;
     // }
 
     if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressedRepeat(KEY_BACKSPACE))
@@ -141,26 +141,14 @@ void run(Arena* arena, AppState* state)
     if (IsKeyPressed(KEY_ENTER) || IsKeyPressedRepeat(KEY_ENTER))
         enter(arena, state->currentBuffer.buffer);
 
-    if (state->currentMode == EDIT) {
-        char c;
-        while ((c = GetCharPressed())) {
-            Line* l = state->currentBuffer.buffer->lines[(i32)state->currentBuffer.buffer->cursorPosition.y];
-            typeChar(arena, l, state->currentBuffer.buffer->cursorPosition.x, c);
-            state->currentBuffer.buffer->cursorPosition.x++;
-        }
-    }
+    char c;
+    while ((c = GetCharPressed()))
+        typeCharb(arena, b, c);
 
     if (state->currentMode == OPEN_FILE) {
         if (IsKeyPressed(KEY_ENTER)) {
             state->currentMode = EDIT;
         }
-
-        // char c;
-        // while ((c = GetCharPressed())) {
-        //     Line* l = state->commandLine.tempFileName->lines[0];
-        //     typeChar(arena, l, state->commandLine.tempFileName->lines[0]->length, c);
-        //     state->commandLine.tempFileName->cursorPosition.x++;
-        // }
     }
 }
 

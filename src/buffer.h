@@ -42,6 +42,8 @@ void moveCursorEndOfLine(Buffer* b);
 
 void insertTab(Arena* arena, Buffer* b);
 
+void typeCharb(Arena* arena, Buffer* b, char c);
+
 void kill(Buffer* b);
 
 void enter(Arena* arena, Buffer* b);

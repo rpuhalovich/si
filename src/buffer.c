@@ -4,8 +4,6 @@
 #include "appmath.h"
 #include "buffer.h"
 
-void insertString(Arena* arena, Line* l, char* str, u32 strlen, i32 column);
-
 Buffer* newBuffer(Arena* arena)
 {
     return newBufferc(arena, 1000);
@@ -89,6 +87,7 @@ void insertTab(Arena* arena, Buffer* b)
     i32 line = (i32)b->cursorPosition.y;
     insertString(arena, b->lines[line], "    ", sizeof(char) * 4, b->cursorPosition.x);
     b->cursorPosition.x += 4;
+    b->isDirty = true;
 }
 
 void backspace(Arena* arena, Buffer* b)
@@ -124,6 +123,8 @@ void backspace(Arena* arena, Buffer* b)
         b->cursorPosition.x = oldlen;
         moveCursorUp(b);
     }
+
+    b->isDirty = true;
 }
 
 void kill(Buffer* b)
@@ -142,6 +143,7 @@ void kill(Buffer* b)
     }
 
     b->lines[line]->length = (i32)b->cursorPosition.x;
+    b->isDirty = true;
 }
 
 void enter(Arena* arena, Buffer* b)
@@ -181,6 +183,8 @@ void enter(Arena* arena, Buffer* b)
     b->cursorPosition.x = 0;
     moveCursorDown(b);
     moveCursorBeginningOfLine(b);
+
+    b->isDirty = true;
 }
 
 void append(Arena* arena, Buffer* b, Line* l)
@@ -191,4 +195,12 @@ void append(Arena* arena, Buffer* b, Line* l)
         b->capacity *= 2;
     }
     b->lines[b->length - 1] = l;
+}
+
+void typeCharb(Arena* arena, Buffer* b, char c)
+{
+    b->isDirty = true;
+    Line* l = b->lines[(i32)b->cursorPosition.y];
+    typeChar(arena, l, b->cursorPosition.x, c);
+    moveCursorRight(b);
 }
