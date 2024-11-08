@@ -16,20 +16,21 @@ void drawBuffer(Buffer* b, AppFont* font, Color color)
 {
     DrawRectangleRec(b->bounds, DARKBLUE);
 
-    i32 numCellCols = b->bounds.width / font->charWidth - 1;
+    i32 numCellCols = b->bounds.width / font->charWidth;
     i32 numCellRows = b->bounds.height / font->charHeight;
 
     Rectangle rec = {
         .x = (b->cursorPosition.x - b->scrollOffset.x) * font->charWidth + b->bounds.x,
-        .y = b->cursorPosition.y * font->charHeight + b->bounds.y,
+        .y = (b->cursorPosition.y - b->scrollOffset.y) * font->charHeight + b->bounds.y,
         .width = font->charWidth,
         .height = font->charHeight};
     DrawRectangleRec(rec, GRAY);
 
-    for (i32 r = 0; r < b->length && r < numCellRows; r++) {
+    for (i32 r = b->scrollOffset.y; r < b->length && r < numCellRows + b->scrollOffset.y; r++) {
         for (i32 c = b->scrollOffset.x; c < b->lines[r]->length && c < numCellCols + b->scrollOffset.x; c++) {
             Vector2 curPos = {
-                (c - b->scrollOffset.x) * font->charWidth + b->bounds.x, r * font->charHeight + b->bounds.y};
+                (c - b->scrollOffset.x) * font->charWidth + b->bounds.x,
+                (r - b->scrollOffset.y) * font->charHeight + b->bounds.y};
 
             i32 codepointByteCount = 0;
             char character = b->lines[r]->characters[c];

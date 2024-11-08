@@ -52,8 +52,8 @@ AppState* initState(Arena* arena)
     state->buffer->bounds.width = 600;
     state->buffer->bounds.height = 400;
 
-    b->numCellCols = b->bounds.width / state->font->charWidth - 2;
-    b->numCellRows = b->bounds.height / state->font->charHeight;
+    b->numCellCols = b->bounds.width / state->font->charWidth - 1;
+    b->numCellRows = b->bounds.height / state->font->charHeight - 1;
 
     state->commandLine.tempFileName = newBuffer(arena);
     state->commandLine.tempFileName->maxLength = 1;

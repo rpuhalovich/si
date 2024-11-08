@@ -31,6 +31,9 @@ void moveCursorDown(Buffer* b)
     i32 curline = (i32)b->cursorPosition.y;
     i32 len = b->lines[curline]->length;
     b->cursorPosition.x = fmin(b->cursorPosition.x, len);
+
+    if (b->cursorPosition.y > b->numCellRows + b->scrollOffset.y && b->cursorPosition.y < b->length)
+        b->scrollOffset.y++;
 }
 
 void moveCursorUp(Buffer* b)
@@ -41,6 +44,9 @@ void moveCursorUp(Buffer* b)
     i32 curline = (i32)b->cursorPosition.y;
     i32 len = b->lines[curline]->length;
     b->cursorPosition.x = fmin(b->cursorPosition.x, len);
+
+    if (b->cursorPosition.y < b->scrollOffset.y)
+        b->scrollOffset.y--;
 }
 
 void moveCursorLeft(Buffer* b)
@@ -73,6 +79,9 @@ void moveCursorEndOfLine(Buffer* b)
 {
     i32 curline = (i32)b->cursorPosition.y;
     b->cursorPosition.x = b->lines[curline]->length;
+
+    if (b->lines[curline]->length > b->scrollOffset.x + b->numCellCols)
+        b->scrollOffset.x = b->lines[curline]->length - b->numCellCols;
 }
 
 void insertTab(Arena* arena, Buffer* b)
@@ -93,7 +102,7 @@ void backspace(Arena* arena, Buffer* b)
             b->lines[line]->characters[i - 1] = b->lines[line]->characters[i];
 
         b->lines[line]->length--;
-        b->cursorPosition.x--;
+        moveCursorLeft(b);
     }
 
     if (column <= 0 && line > 0) {
@@ -113,7 +122,7 @@ void backspace(Arena* arena, Buffer* b)
         b->length = imin(b->length - 1, 1);
 
         b->cursorPosition.x = oldlen;
-        b->cursorPosition.y--;
+        moveCursorUp(b);
     }
 }
 
@@ -170,7 +179,8 @@ void enter(Arena* arena, Buffer* b)
     b->lines[curLine]->length = curCol;
 
     b->cursorPosition.x = 0;
-    b->cursorPosition.y++;
+    moveCursorDown(b);
+    moveCursorBeginningOfLine(b);
 }
 
 void append(Arena* arena, Buffer* b, Line* l)
