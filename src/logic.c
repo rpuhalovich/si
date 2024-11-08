@@ -130,6 +130,10 @@ void run(Arena* arena, AppState* state)
     }
 
     if (state->currentMode == OPEN_FILE) {
+        if (IsKeyPressed(KEY_ENTER)) {
+            state->currentMode = EDIT;
+        }
+
         char c;
         while ((c = GetCharPressed())) {
             Line* l = state->commandLine.tempFileName;

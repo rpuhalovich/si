@@ -55,13 +55,18 @@ void draw(AppState* state)
     // status line
     {
         Vector2 pos = {0, GetScreenHeight() - state->grid.cellHeight};
-
         Rectangle rect = {
             .x = pos.x, .y = pos.y, .width = GetScreenWidth(), .height = state->grid.cellHeight};
         DrawRectangleRec(rect, state->color.foreground);
 
-        for (i32 i = 0; i < state->commandLine.tempFileName->length; i++) {
-            i32 codepoint = getCharCodePoint(state->commandLine.tempFileName->characters[i]);
+        Line* l;
+        if (state->currentMode == EDIT)
+            return;
+        if (state->currentMode == OPEN_FILE)
+            l = state->commandLine.tempFileName;
+
+        for (i32 i = 0; i < l->length; i++) {
+            i32 codepoint = getCharCodePoint(l->characters[i]);
             DrawTextCodepoint(
                 state->font.font, codepoint, pos, state->font.size, state->color.foregroundHighlight);
             pos.x += state->grid.cellWidth;
