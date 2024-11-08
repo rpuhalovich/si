@@ -16,6 +16,18 @@ Line* newLine(Arena* arena)
     return newLinec(arena, 16);
 }
 
+Line* newLines(Arena* arena, char* str)
+{
+    i32 len = strlen(str);
+    i32 capacity = 1;
+    while (len > capacity)
+        capacity *= 2;
+    Line* l = newLinec(arena, capacity);
+    l->length = len;
+    memcpy(l->characters, str, len);
+    return l;
+}
+
 void clearLine(Line* l)
 {
     memset(l->characters, 0, l->capacity);

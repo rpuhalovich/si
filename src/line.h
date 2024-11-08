@@ -4,6 +4,8 @@
 #include "arena.h"
 #include "types.h"
 
+// TODO: this should probably be renamed to String
+
 typedef struct {
     char* characters;
     i32 length;
@@ -13,6 +15,8 @@ typedef struct {
 Line* newLine(Arena* arena);
 
 Line* newLinec(Arena* arena, i32 capacity);
+
+Line* newLines(Arena* arena, char* str);
 
 void clearLine(Line* l);
 

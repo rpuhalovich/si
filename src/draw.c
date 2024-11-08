@@ -55,7 +55,6 @@ void draw(AppState* state)
     }
 
     // status line
-#if 0
     {
         Vector2 pos = {0, GetScreenHeight() - state->grid.cellHeight};
         Rectangle rect = {
@@ -64,19 +63,19 @@ void draw(AppState* state)
 
         Line* l;
         if (state->currentMode == EDIT)
-            return;
+            l = state->file.fileName;
         if (state->currentMode == OPEN_FILE)
-            l = state->commandLine.tempFileName;
+            l = state->commandLine.tempFileName->lines[0];
 
         for (i32 i = 0; i < l->length; i++) {
             i32 codepoint = getCharCodePoint(l->characters[i]);
 
-            Rectangle rect = {
-                .x = state->commandLine.column * state->grid.cellWidth,
-                .y = pos.y,
-                .width = state->grid.cellWidth,
-                .height = state->grid.cellHeight};
-            DrawRectangleRec(rect, GRAY);
+            // Rectangle rect = {
+            //     .x = state->commandLine.column * state->grid.cellWidth,
+            //     .y = pos.y,
+            //     .width = state->grid.cellWidth,
+            //     .height = state->grid.cellHeight};
+            // DrawRectangleRec(rect, GRAY);
 
             DrawTextCodepoint(
                 state->font.font, codepoint, pos, state->font.size, state->color.foregroundHighlight);
@@ -84,5 +83,4 @@ void draw(AppState* state)
             pos.x += state->grid.cellWidth;
         }
     }
-#endif
 }

@@ -41,6 +41,10 @@ AppState* initState(Arena* arena)
 
     state->buffer = newBuffer(arena);
     state->commandLine.tempFileName = newBuffer(arena);
+    state->commandLine.tempFileName->maxLength = 1;
+
+    char* tmpstr = "hello there";
+    state->file.fileName = newLines(arena, tmpstr);
 
     return state;
 }
