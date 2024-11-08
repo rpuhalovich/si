@@ -47,6 +47,9 @@ void moveCursorLeft(Buffer* b)
 {
     if (b->cursorPosition.x > 0)
         b->cursorPosition.x--;
+
+    if (b->cursorPosition.x < b->scrollOffset.x)
+        b->scrollOffset.x--;
 }
 
 void moveCursorRight(Buffer* b)
