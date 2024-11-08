@@ -18,7 +18,7 @@ AppState* initState(Arena* arena)
 
     // color
     {
-#if 1
+#if 0
         state->color.background = BLACK;
         state->color.foreground = BEIGE;
         state->color.foregroundHighlight = BLACK;
@@ -28,14 +28,14 @@ AppState* initState(Arena* arena)
         state->color.statusLineForeGround = BLACK;
         state->color.statusLineCursor = GRAY;
 #endif
-#if 0
-        state->color.background = BLACK;
-        state->color.foreground = BEIGE;
-        state->color.foregroundHighlight = BLACK;
+#if 1
+        state->color.background = BEIGE;
+        state->color.foreground = BLACK;
+        state->color.foregroundHighlight = BEIGE;
         state->color.cursor = GRAY;
-        state->color.border = BEIGE;
-        state->color.statusLineBackground = BEIGE;
-        state->color.statusLineForeGround = BLACK;
+        state->color.border = BLACK;
+        state->color.statusLineBackground = BLACK;
+        state->color.statusLineForeGround = BEIGE;
         state->color.statusLineCursor = GRAY;
 #endif
     }
