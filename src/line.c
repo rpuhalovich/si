@@ -28,6 +28,14 @@ Line* newLines(Arena* arena, char* str)
     return l;
 }
 
+Line* newLinel(Arena* arena, Line* l)
+{
+    Line* newl = newLinec(arena, l->capacity);
+    newl->length = l->length;
+    memcpy(newl->characters, l->characters, l->length);
+    return newl;
+}
+
 void clearLine(Line* l)
 {
     memset(l->characters, 0, l->capacity);
