@@ -63,6 +63,7 @@ void moveCursorRight(Buffer* b)
 void moveCursorBeginningOfLine(Buffer* b)
 {
     b->cursorPosition.x = 0;
+    b->scrollOffset.x = 0;
 }
 
 void moveCursorEndOfLine(Buffer* b)
