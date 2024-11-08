@@ -41,9 +41,8 @@ AppState* initState(Arena* arena)
         state->grid.cellHeight = state->font->size + state->font->textLineSpacing;
     }
 
-    // state->buffer = newBuffer(arena);
-
-    Buffer* b = load(arena, newLines(arena, "/Users/rp/Desktop/tmp/.vimrc"));
+    char* path = "/Users/rp/Desktop/tmp/.vimrc";
+    Buffer* b = load(arena, newLines(arena, path));
     if (b == NULL)
         b = newBuffer(arena);
     state->buffer = b;
@@ -51,6 +50,7 @@ AppState* initState(Arena* arena)
     state->buffer->bounds.y = 100;
     state->buffer->bounds.width = 600;
     state->buffer->bounds.height = 400;
+    state->buffer->isActive = true;
 
     b->numCellCols = b->bounds.width / state->font->charWidth - 1;
     b->numCellRows = b->bounds.height / state->font->charHeight - 1;
@@ -58,8 +58,8 @@ AppState* initState(Arena* arena)
     state->commandLine.tempFileName = newBuffer(arena);
     state->commandLine.tempFileName->maxLength = 1;
 
-    char* tmpstr = "hello there";
-    state->file.fileName = newLines(arena, tmpstr);
+    state->statusLine.fileName = newBuffer(arena);
+    insertString(arena, state->statusLine.fileName->lines[0], path, strlen(path), 0);
 
     return state;
 }
@@ -68,6 +68,11 @@ void run(Arena* arena, AppState* state)
 {
     state->grid.numCellCols = GetScreenWidth() / state->grid.cellWidth - 1;
     state->grid.numCellRows = GetScreenHeight() / state->grid.cellHeight;
+
+    state->statusLine.fileName->bounds.x = 0;
+    state->statusLine.fileName->bounds.y = GetScreenHeight() - state->grid.cellHeight - 8;
+    state->statusLine.fileName->bounds.width = GetScreenWidth();
+    state->statusLine.fileName->bounds.height = state->grid.cellHeight;
 
     Buffer* b;
     if (state->currentMode == EDIT)

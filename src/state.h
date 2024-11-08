@@ -24,8 +24,8 @@ typedef struct {
     struct {
         i32 numCellCols;
         i32 numCellRows;
-        i32 cellWidth;
-        i32 cellHeight;
+        f32 cellWidth;
+        f32 cellHeight;
         i32 gridXOffset;
     } grid;
 
@@ -41,8 +41,8 @@ typedef struct {
 
     struct {
         bool isDirty;
-        Line* fileName;
-    } file;
+        Buffer* fileName;
+    } statusLine;
 
     Mode currentMode;
 

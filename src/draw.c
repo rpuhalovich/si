@@ -14,17 +14,19 @@ void drawLine(Line* l, AppFont* font, Color color, Vector2 pos)
 
 void drawBuffer(Buffer* b, AppFont* font, Color color)
 {
-    DrawRectangleRec(b->bounds, DARKBLUE);
+    // DrawRectangleRec(b->bounds, DARKBLUE);
 
     i32 numCellCols = b->bounds.width / font->charWidth;
     i32 numCellRows = b->bounds.height / font->charHeight;
 
-    Rectangle rec = {
-        .x = (b->cursorPosition.x - b->scrollOffset.x) * font->charWidth + b->bounds.x,
-        .y = (b->cursorPosition.y - b->scrollOffset.y) * font->charHeight + b->bounds.y,
-        .width = font->charWidth,
-        .height = font->charHeight};
-    DrawRectangleRec(rec, GRAY);
+    if (b->isActive) {
+        Rectangle rec = {
+            .x = (b->cursorPosition.x - b->scrollOffset.x) * font->charWidth + b->bounds.x,
+            .y = (b->cursorPosition.y - b->scrollOffset.y) * font->charHeight + b->bounds.y,
+            .width = font->charWidth,
+            .height = font->charHeight};
+        DrawRectangleRec(rec, GRAY);
+    }
 
     for (i32 r = b->scrollOffset.y; r < b->length && r < numCellRows + b->scrollOffset.y; r++) {
         for (i32 c = b->scrollOffset.x; c < b->lines[r]->length && c < numCellCols + b->scrollOffset.x; c++) {
@@ -47,24 +49,29 @@ void draw(AppState* state)
 
     // editor
     {
-        drawBuffer(state->buffer, state->font, WHITE);
+        drawBuffer(state->buffer, state->font, BLACK);
     }
 
     // status line
     {
-        Vector2 pos = {0, GetScreenHeight() - state->grid.cellHeight};
-        Rectangle rect = {
-            .x = pos.x, .y = pos.y, .width = GetScreenWidth(), .height = state->grid.cellHeight};
-        DrawRectangleRec(rect, state->color.foreground);
+        DrawRectangleRec(state->statusLine.fileName->bounds, BLACK);
+        drawBuffer(state->statusLine.fileName, state->font, BEIGE);
 
-        Line* l;
-        if (state->currentMode == EDIT)
-            l = state->file.fileName;
-        if (state->currentMode == OPEN_FILE) {
-            l = state->commandLine.tempFileName->lines[0];
-        }
+        // drawBuffer(state->commandLine.tempFileName, state->font, BLACK);
 
-        drawLine(l, state->font, WHITE, pos);
+        // Vector2 pos = {0, GetScreenHeight() - state->grid.cellHeight};
+        // Rectangle rect = {
+        //     .x = pos.x, .y = pos.y, .width = GetScreenWidth(), .height = state->grid.cellHeight};
+        // DrawRectangleRec(rect, state->color.foreground);
+
+        // Line* l;
+        // if (state->currentMode == EDIT)
+        //     l = state->file.fileName;
+        // if (state->currentMode == OPEN_FILE) {
+        //     l = state->commandLine.tempFileName->lines[0];
+        // }
+
+        // drawLine(l, state->font, WHITE, pos);
 
         // for (i32 i = 0; i < l->length; i++) {
         //     i32 codepoint = getCharCodePoint(l->characters[i]);
