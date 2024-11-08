@@ -10,13 +10,14 @@
 typedef struct {
     Line** lines;
     i32 length;
+    i32 maxLength;
     i32 capacity;
-
     Vector2 cursorPosition;
-
-    bool isDirty;
-    Line* fileName;
 } Buffer;
+
+Buffer* newBuffer(Arena* arena);
+
+Buffer* newBufferc(Arena* arena, i32 capacity);
 
 void moveCursorUp(Buffer* b);
 
@@ -29,8 +30,6 @@ void moveCursorRight(Buffer* b);
 void moveCursorBeginningOfLine(Buffer* b);
 
 void moveCursorEndOfLine(Buffer* b);
-
-void typeChar(Arena* arena, Line* l, i32 column, char c);
 
 void insertTab(Arena* arena, Buffer* b);
 

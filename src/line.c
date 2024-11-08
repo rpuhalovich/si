@@ -35,3 +35,18 @@ void insertString(Arena* arena, Line* l, char* str, u32 strlen, i32 column)
     memcpy(l->characters + column + strlen, l->characters + column, cutLen);
     memcpy(l->characters + column, str, strlen);
 }
+
+void typeChar(Arena* arena, Line* l, i32 column, char c)
+{
+    l->length++;
+
+    if (l->length > l->capacity) {
+        l->characters = reallocate(arena, l->characters, l->capacity, l->capacity * 2);
+        l->capacity *= 2;
+    }
+
+    for (i32 i = l->length - 1; i > column; i--)
+        l->characters[i] = l->characters[i - 1];
+
+    l->characters[column] = c;
+}

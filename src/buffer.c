@@ -1,9 +1,27 @@
+#include <limits.h>
 #include <math.h>
 
 #include "appmath.h"
 #include "buffer.h"
 
 void insertString(Arena* arena, Line* l, char* str, u32 strlen, i32 column);
+
+Buffer* newBuffer(Arena* arena)
+{
+    return newBufferc(arena, 100000);
+}
+
+Buffer* newBufferc(Arena* arena, i32 capacity)
+{
+    Buffer* b = allocate(arena, sizeof(Buffer));
+    b->length = 1;
+    b->maxLength = INT_MAX;
+    b->capacity = capacity;
+    b->lines = allocate(arena, sizeof(Line*) * b->capacity);
+    b->lines[0] = newLine(arena);
+    b->cursorPosition = (Vector2){0, 0};
+    return b;
+}
 
 void moveCursorDown(Buffer* b)
 {
@@ -47,21 +65,6 @@ void moveCursorEndOfLine(Buffer* b)
 {
     i32 curline = (i32)b->cursorPosition.y;
     b->cursorPosition.x = b->lines[curline]->length;
-}
-
-void typeChar(Arena* arena, Line* l, i32 column, char c)
-{
-    l->length++;
-
-    if (l->length > l->capacity) {
-        l->characters = reallocate(arena, l->characters, l->capacity, l->capacity * 2);
-        l->capacity *= 2;
-    }
-
-    for (i32 i = l->length - 1; i > column; i--)
-        l->characters[i] = l->characters[i - 1];
-
-    l->characters[column] = c;
 }
 
 void insertTab(Arena* arena, Buffer* b)
@@ -128,6 +131,9 @@ void enter(Arena* arena, Buffer* b)
 {
     i32 curLine = (i32)b->cursorPosition.y;
     i32 curCol = (i32)b->cursorPosition.x;
+
+    if (b->length + 1 > b->maxLength)
+        return;
 
     b->length++;
 

@@ -9,12 +9,6 @@
 #include "logic.h"
 #include "state.h"
 
-#define VERYDARKBLUE                                                                                         \
-    CLITERAL(Color)                                                                                          \
-    {                                                                                                        \
-        0, 0, 100, 255                                                                                       \
-    }
-
 AppState* initState(Arena* arena)
 {
     SetTextureFilter(GetFontDefault().texture, TEXTURE_FILTER_POINT);
@@ -23,9 +17,9 @@ AppState* initState(Arena* arena)
 
     // color
     {
-        state->color.background = VERYDARKBLUE;
-        state->color.foreground = LIGHTGRAY;
-        state->color.foregroundHighlight = VERYDARKBLUE;
+        state->color.background = BEIGE;
+        state->color.foreground = BLACK;
+        state->color.foregroundHighlight = BEIGE;
     }
 
     // font
@@ -45,16 +39,8 @@ AppState* initState(Arena* arena)
         state->grid.cellHeight = state->font.size + state->font.textLineSpacing;
     }
 
-    // buffer
-    {
-        state->buffer.length = 1;
-        state->buffer.capacity = 100000;
-        state->buffer.lines = allocate(arena, sizeof(Line*) * state->buffer.capacity);
-        state->buffer.lines[0] = newLine(arena);
-        state->buffer.cursorPosition = (Vector2){0, 0};
-    }
-
-    state->commandLine.tempFileName = newLinec(arena, 128);
+    state->buffer = newBuffer(arena);
+    state->commandLine.tempFileName = newBuffer(arena);
 
     return state;
 }
@@ -64,70 +50,76 @@ void run(Arena* arena, AppState* state)
     state->grid.numCellCols = GetScreenWidth() / state->grid.cellWidth - 1;
     state->grid.numCellRows = GetScreenHeight() / state->grid.cellHeight;
 
+    Buffer* b;
+    if (state->currentMode == EDIT)
+        b = state->buffer;
+    if (state->currentMode == OPEN_FILE)
+        b = state->commandLine.tempFileName;
+
+    if (IsKeyPressed(KEY_RIGHT) || IsKeyPressedRepeat(KEY_RIGHT))
+        moveCursorRight(state->buffer);
+
+    if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_F) || IsKeyPressedRepeat(KEY_F)))
+        moveCursorRight(state->buffer);
+
+    if (IsKeyPressed(KEY_LEFT) || IsKeyPressedRepeat(KEY_LEFT))
+        moveCursorLeft(state->buffer);
+
+    if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_B) || IsKeyPressedRepeat(KEY_B)))
+        moveCursorLeft(state->buffer);
+
+    if (IsKeyPressed(KEY_UP) || IsKeyPressedRepeat(KEY_UP))
+        moveCursorUp(state->buffer);
+
+    if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_P) || IsKeyPressedRepeat(KEY_P)))
+        moveCursorUp(state->buffer);
+
+    if (IsKeyPressed(KEY_DOWN) || IsKeyPressedRepeat(KEY_DOWN))
+        moveCursorDown(state->buffer);
+
+    if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_N) || IsKeyPressedRepeat(KEY_N)))
+        moveCursorDown(state->buffer);
+
+    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_E))
+        moveCursorEndOfLine(state->buffer);
+
+    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_A))
+        moveCursorBeginningOfLine(state->buffer);
+
+    if (IsKeyPressed(KEY_TAB) || IsKeyPressedRepeat(KEY_TAB))
+        insertTab(arena, state->buffer);
+
+    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_K) || IsKeyPressedRepeat(KEY_K))
+        kill(state->buffer);
+
+    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O)) {
+        clearLine(state->commandLine.tempFileName->lines[0]);
+
+        char* openFileDialog = "file: ";
+        insertString(
+            arena,
+            state->commandLine.tempFileName->lines[0],
+            openFileDialog,
+            sizeof(char) * strlen(openFileDialog),
+            0);
+
+        state->commandLine.column = state->commandLine.tempFileName->length;
+
+        state->currentMode = OPEN_FILE;
+    }
+
+    if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressedRepeat(KEY_BACKSPACE))
+        backspace(arena, state->buffer);
+
+    if (IsKeyPressed(KEY_ENTER) || IsKeyPressedRepeat(KEY_ENTER))
+        enter(arena, state->buffer);
+
     if (state->currentMode == EDIT) {
-        if (IsKeyPressed(KEY_RIGHT) || IsKeyPressedRepeat(KEY_RIGHT))
-            moveCursorRight(&state->buffer);
-
-        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_F) || IsKeyPressedRepeat(KEY_F)))
-            moveCursorRight(&state->buffer);
-
-        if (IsKeyPressed(KEY_LEFT) || IsKeyPressedRepeat(KEY_LEFT))
-            moveCursorLeft(&state->buffer);
-
-        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_B) || IsKeyPressedRepeat(KEY_B)))
-            moveCursorLeft(&state->buffer);
-
-        if (IsKeyPressed(KEY_UP) || IsKeyPressedRepeat(KEY_UP))
-            moveCursorUp(&state->buffer);
-
-        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_P) || IsKeyPressedRepeat(KEY_P)))
-            moveCursorUp(&state->buffer);
-
-        if (IsKeyPressed(KEY_DOWN) || IsKeyPressedRepeat(KEY_DOWN))
-            moveCursorDown(&state->buffer);
-
-        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_N) || IsKeyPressedRepeat(KEY_N)))
-            moveCursorDown(&state->buffer);
-
-        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_E))
-            moveCursorEndOfLine(&state->buffer);
-
-        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_A))
-            moveCursorBeginningOfLine(&state->buffer);
-
-        if (IsKeyPressed(KEY_TAB) || IsKeyPressedRepeat(KEY_TAB))
-            insertTab(arena, &state->buffer);
-
-        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_K) || IsKeyPressedRepeat(KEY_K))
-            kill(&state->buffer);
-
-        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O)) {
-            clearLine(state->commandLine.tempFileName);
-
-            char* openFileDialog = "file: ";
-            insertString(
-                arena,
-                state->commandLine.tempFileName,
-                openFileDialog,
-                sizeof(char) * strlen(openFileDialog),
-                0);
-
-            state->commandLine.column = state->commandLine.tempFileName->length;
-
-            state->currentMode = OPEN_FILE;
-        }
-
-        if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressedRepeat(KEY_BACKSPACE))
-            backspace(arena, &state->buffer);
-
-        if (IsKeyPressed(KEY_ENTER) || IsKeyPressedRepeat(KEY_ENTER))
-            enter(arena, &state->buffer);
-
         char c;
         while ((c = GetCharPressed())) {
-            Line* l = state->buffer.lines[(i32)state->buffer.cursorPosition.y];
-            typeChar(arena, l, state->buffer.cursorPosition.x, c);
-            state->buffer.cursorPosition.x++;
+            Line* l = state->buffer->lines[(i32)state->buffer->cursorPosition.y];
+            typeChar(arena, l, state->buffer->cursorPosition.x, c);
+            state->buffer->cursorPosition.x++;
         }
     }
 
@@ -138,8 +130,8 @@ void run(Arena* arena, AppState* state)
 
         char c;
         while ((c = GetCharPressed())) {
-            Line* l = state->commandLine.tempFileName;
-            typeChar(arena, l, state->commandLine.tempFileName->length, c);
+            Line* l = state->commandLine.tempFileName->lines[0];
+            typeChar(arena, l, state->commandLine.tempFileName->lines[0]->length, c);
             state->commandLine.column++;
         }
     }

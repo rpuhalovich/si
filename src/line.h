@@ -18,4 +18,6 @@ void clearLine(Line* l);
 
 void insertString(Arena* arena, Line* l, char* str, u32 strlen, i32 column);
 
+void typeChar(Arena* arena, Line* l, i32 column, char c);
+
 #endif // LINE_H
