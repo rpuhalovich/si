@@ -55,7 +55,7 @@ void moveCursorRight(Buffer* b)
     if (b->cursorPosition.x < b->lines[curline]->length)
         b->cursorPosition.x++;
 
-    if (b->cursorPosition.x > b->numCols)
+    if (b->cursorPosition.x > b->numCellCols && b->cursorPosition.x < b->lines[curline]->length)
         b->scrollOffset.x++;
 }
 

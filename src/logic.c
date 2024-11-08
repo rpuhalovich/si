@@ -43,11 +43,17 @@ AppState* initState(Arena* arena)
 
     // state->buffer = newBuffer(arena);
 
-    state->buffer = load(arena, newLines(arena, "/Users/rp/Desktop/tmp/.vimrc"));
+    Buffer* b = load(arena, newLines(arena, "/Users/rp/Desktop/tmp/.vimrc"));
+    if (b == NULL)
+        b = newBuffer(arena);
+    state->buffer = b;
     state->buffer->bounds.x = 100;
     state->buffer->bounds.y = 100;
     state->buffer->bounds.width = 600;
     state->buffer->bounds.height = 400;
+
+    b->numCellCols = b->bounds.width / state->font->charWidth - 2;
+    b->numCellRows = b->bounds.height / state->font->charHeight;
 
     state->commandLine.tempFileName = newBuffer(arena);
     state->commandLine.tempFileName->maxLength = 1;

@@ -7,8 +7,8 @@ Buffer* load(Arena* arena, Line* path)
 {
     Buffer* b = newBuffer(arena);
     b->length = 0;
-    FILE* fp = fopen(path->characters, "r");
 
+    FILE* fp = fopen(path->characters, "r");
     if (fp == NULL) {
         if (errno == ENOENT)
             printf("ENOENT: file not found");

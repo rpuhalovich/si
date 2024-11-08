@@ -15,8 +15,8 @@ typedef struct {
 
     Vector2 cursorPosition;
     Vector2 scrollOffset;
-    i32 numCols;
-    i32 numRows;
+    i32 numCellCols;
+    i32 numCellRows;
 
     bool isActive;
     Rectangle bounds;
