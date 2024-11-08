@@ -33,18 +33,21 @@ typedef struct {
     } color;
 
     struct {
-        Buffer* tempFileName;
-    } commandLine;
+        struct {
+            Buffer* commandLineInput;
+        } commandLine;
+
+        Rectangle bounds;
+    } statusLine;
 
     struct {
-        bool isDirty;
-        Buffer* fileName;
-    } statusLine;
+        Line* fileName;
+        Buffer* buffer;
+    } currentBuffer;
 
     Mode currentMode;
 
     AppFont* font;
-    Buffer* buffer;
 } AppState;
 
 #endif // STATE_H

@@ -49,17 +49,27 @@ void draw(AppState* state)
 
     // editor
     {
-        DrawRectangleLinesEx(RectangleWiden(state->buffer->bounds, 8.f), 2.0f, state->color.border);
-        drawBuffer(state->buffer, state->font, state->color.foreground, state->color.cursor);
+        DrawRectangleLinesEx(
+            RectangleWiden(state->currentBuffer.buffer->bounds, 8.f), 2.0f, state->color.border);
+        drawBuffer(state->currentBuffer.buffer, state->font, state->color.foreground, state->color.cursor);
     }
 
     // status line
     {
-        DrawRectangleRec(state->statusLine.fileName->bounds, state->color.statusLineBackground);
-        drawBuffer(
-            state->statusLine.fileName,
+        DrawRectangleRec(state->statusLine.bounds, state->color.statusLineBackground);
+        drawLine(
+            state->currentBuffer.fileName,
             state->font,
             state->color.statusLineForeGround,
-            state->color.statusLineCursor);
+            (Vector2){state->statusLine.bounds.x, state->statusLine.bounds.y});
+
+        if (state->currentBuffer.buffer->isDirty) {
+            f32 dirtyIndicatorOffsetX = (state->currentBuffer.fileName->length + 1) * state->font->charWidth;
+            f32 dirtyIndicatorOffsetY = state->statusLine.bounds.y + state->font->charHeight / 2;
+            DrawCircleV(
+                (Vector2){dirtyIndicatorOffsetX, dirtyIndicatorOffsetY},
+                2.f,
+                state->color.statusLineForeGround);
+        }
     }
 }
