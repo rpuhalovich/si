@@ -12,7 +12,7 @@ void drawLine(Line* l, AppFont* font, Color color, Vector2 pos)
     }
 }
 
-void drawBuffer(Buffer* b, AppFont* font, Color color)
+void drawBuffer(Buffer* b, AppFont* font, Color textColor, Color cursorColor)
 {
     // DrawRectangleRec(b->bounds, DARKBLUE);
 
@@ -25,7 +25,7 @@ void drawBuffer(Buffer* b, AppFont* font, Color color)
             .y = (b->cursorPosition.y - b->scrollOffset.y) * font->charHeight + b->bounds.y,
             .width = font->charWidth,
             .height = font->charHeight};
-        DrawRectangleRec(rec, GRAY);
+        DrawRectangleRec(rec, cursorColor);
     }
 
     for (i32 r = b->scrollOffset.y; r < b->length && r < numCellRows + b->scrollOffset.y; r++) {
@@ -38,7 +38,7 @@ void drawBuffer(Buffer* b, AppFont* font, Color color)
             char character = b->lines[r]->characters[c];
             i32 codepoint = GetCodepointNext(&character, &codepointByteCount);
 
-            DrawTextCodepoint(font->font, codepoint, curPos, font->size, color);
+            DrawTextCodepoint(font->font, codepoint, curPos, font->size, textColor);
         }
     }
 }
@@ -49,13 +49,17 @@ void draw(AppState* state)
 
     // editor
     {
-        DrawRectangleLinesEx(RectangleWiden(state->buffer->bounds, 8.f), 2.0f, BLACK);
-        drawBuffer(state->buffer, state->font, BLACK);
+        DrawRectangleLinesEx(RectangleWiden(state->buffer->bounds, 8.f), 2.0f, state->color.border);
+        drawBuffer(state->buffer, state->font, state->color.foreground, state->color.cursor);
     }
 
     // status line
     {
-        DrawRectangleRec(state->statusLine.fileName->bounds, BLACK);
-        drawBuffer(state->statusLine.fileName, state->font, BEIGE);
+        DrawRectangleRec(state->statusLine.fileName->bounds, state->color.statusLineBackground);
+        drawBuffer(
+            state->statusLine.fileName,
+            state->font,
+            state->color.statusLineForeGround,
+            state->color.statusLineCursor);
     }
 }

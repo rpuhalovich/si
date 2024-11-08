@@ -18,9 +18,26 @@ AppState* initState(Arena* arena)
 
     // color
     {
-        state->color.background = BEIGE;
-        state->color.foreground = BLACK;
-        state->color.foregroundHighlight = BEIGE;
+#if 1
+        state->color.background = BLACK;
+        state->color.foreground = BEIGE;
+        state->color.foregroundHighlight = BLACK;
+        state->color.cursor = GRAY;
+        state->color.border = BEIGE;
+        state->color.statusLineBackground = BEIGE;
+        state->color.statusLineForeGround = BLACK;
+        state->color.statusLineCursor = GRAY;
+#endif
+#if 0
+        state->color.background = BLACK;
+        state->color.foreground = BEIGE;
+        state->color.foregroundHighlight = BLACK;
+        state->color.cursor = GRAY;
+        state->color.border = BEIGE;
+        state->color.statusLineBackground = BEIGE;
+        state->color.statusLineForeGround = BLACK;
+        state->color.statusLineCursor = GRAY;
+#endif
     }
 
     // TODO: https://rodneylab.com/raylib-sdf-fonts/

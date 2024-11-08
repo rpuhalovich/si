@@ -25,6 +25,11 @@ typedef struct {
         Color background;
         Color foreground;
         Color foregroundHighlight;
+        Color cursor;
+        Color border;
+        Color statusLineBackground;
+        Color statusLineForeGround;
+        Color statusLineCursor;
     } color;
 
     struct {

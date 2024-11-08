@@ -10,8 +10,7 @@
 
 void drawLine(Line* l, AppFont* font, Color color, Vector2 pos);
 
-// considers cursor position
-void drawBuffer(Buffer* b, AppFont* font, Color color);
+void drawBuffer(Buffer* b, AppFont* font, Color textColor, Color cursorColor);
 
 void draw(AppState* state);
 
