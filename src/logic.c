@@ -6,6 +6,7 @@
 
 #include "appmath.h"
 #include "arena.h"
+#include "file.h"
 #include "logic.h"
 #include "state.h"
 
@@ -40,7 +41,9 @@ AppState* initState(Arena* arena)
         state->grid.cellHeight = state->font->size + state->font->textLineSpacing;
     }
 
-    state->buffer = newBuffer(arena);
+    // state->buffer = newBuffer(arena);
+
+    state->buffer = load(arena, newLines(arena, "/Users/rp/Desktop/tmp/.vimrc"));
     state->buffer->bounds.x = 100;
     state->buffer->bounds.y = 100;
     state->buffer->bounds.width = 600;

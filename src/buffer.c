@@ -8,7 +8,7 @@ void insertString(Arena* arena, Line* l, char* str, u32 strlen, i32 column);
 
 Buffer* newBuffer(Arena* arena)
 {
-    return newBufferc(arena, 100000);
+    return newBufferc(arena, 1000);
 }
 
 Buffer* newBufferc(Arena* arena, i32 capacity)
