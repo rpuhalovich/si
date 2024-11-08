@@ -14,7 +14,7 @@ void drawLine(Line* l, AppFont* font, Color color, Vector2 pos)
 
 void drawBuffer(Buffer* b, AppFont* font, Color color)
 {
-    DrawRectangleRec(b->bounds, BLUE);
+    DrawRectangleRec(b->bounds, DARKBLUE);
 
     i32 numCellCols = b->bounds.width / font->charWidth - 1;
     i32 numCellRows = b->bounds.height / font->charHeight;
@@ -28,7 +28,7 @@ void drawBuffer(Buffer* b, AppFont* font, Color color)
         .y = b->cursorPosition.y * font->charHeight + b->bounds.y,
         .width = font->charWidth,
         .height = font->charHeight};
-    DrawRectangleRec(rec, BLACK);
+    DrawRectangleRec(rec, GRAY);
 
     for (i32 r = 0; r < b->length && r < numCellRows; r++) {
         for (i32 c = xoffset; c < b->lines[r]->length && c < numCellCols; c++) {
@@ -49,7 +49,7 @@ void draw(AppState* state)
 
     // editor
     {
-        drawBuffer(state->buffer, state->font, BLACK);
+        drawBuffer(state->buffer, state->font, WHITE);
     }
 
     // status line
