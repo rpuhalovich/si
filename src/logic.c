@@ -77,7 +77,7 @@ void run(Arena* arena, AppState* state)
     state->statusLine.bounds.height = state->font->charHeight;
 
     state->currentBuffer.buffer->bounds = (Rectangle){
-        .x = 0, .y = 0, .width = GetScreenWidth(), .height = GetScreenHeight() - state->font->charHeight - 8};
+        .x = 0, .y = 0, .width = GetScreenWidth(), .height = GetScreenHeight() - state->font->charHeight};
 
     state->currentBuffer.buffer->numCellCols =
         state->currentBuffer.buffer->bounds.width / state->font->charWidth - 1;
@@ -157,6 +157,10 @@ void run(Arena* arena, AppState* state)
         if (state->currentMode == OPEN_FILE) {
             state->currentMode = EDIT;
             b->isActive = false;
+
+            state->currentBuffer.buffer = load(arena, state->statusLine.statusLineInput->lines[0]);
+            state->currentBuffer.fileName = state->statusLine.statusLineInput->lines[0];
+
             state->currentBuffer.buffer->isActive = true;
         }
     }

@@ -30,7 +30,7 @@ void moveCursorDown(Buffer* b)
     i32 len = b->lines[curline]->length;
     b->cursorPosition.x = fmin(b->cursorPosition.x, len);
 
-    if (b->cursorPosition.y > b->numCellRows + b->scrollOffset.y && b->cursorPosition.y < b->length)
+    if (b->cursorPosition.y > b->numCellRows - 1 + b->scrollOffset.y && b->cursorPosition.y < b->length)
         b->scrollOffset.y++;
 }
 
