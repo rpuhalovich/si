@@ -25,7 +25,7 @@ Buffer* newBufferc(Arena* arena, i32 capacity)
 
 void moveCursorDown(Buffer* b)
 {
-    if (b->cursorPosition.y < b->length - 1)
+    if (b->cursorPosition.y < b->length - 1 && b->cursorPosition.y < b->maxLength)
         b->cursorPosition.y++;
 
     i32 curline = (i32)b->cursorPosition.y;

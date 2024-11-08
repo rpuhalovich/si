@@ -1,57 +1,51 @@
-#include <raylib.h>
-#include <stdio.h>
-#include <string.h>
-
 #include "draw.h"
-#include "state.h"
 
-i32 getCharCodePoint(char c)
+void drawLine(Line* l, AppFont* font, Color color, Vector2 pos)
 {
-    i32 codepointByteCount = 0;
-    char character = c;
-    return GetCodepointNext(&character, &codepointByteCount);
+    Vector2 curPos = pos;
+    for (i32 i = 0; i < l->length; i++) {
+        i32 codepointByteCount = 0;
+        char character = l->characters[i];
+        i32 codepoint = GetCodepointNext(&character, &codepointByteCount);
+        DrawTextCodepoint(font->font, codepoint, curPos, font->size, color);
+        curPos.x += font->charWidth;
+    }
+}
+
+void drawBuffer(Buffer* b, AppFont* font, Color color)
+{
+    DrawRectangleRec(b->bounds, BLUE);
+
+    i32 numCellCols = b->bounds.width / font->charWidth - 1;
+    i32 numCellRows = b->bounds.height / font->charHeight;
+
+    Rectangle rec = {
+        .x = b->cursorPosition.x * font->charWidth + b->bounds.x,
+        .y = b->cursorPosition.y * font->charHeight + b->bounds.y,
+        .width = font->charWidth,
+        .height = font->charHeight};
+    DrawRectangleRec(rec, BLACK);
+
+    for (i32 r = 0; r < b->length && r < numCellRows; r++) {
+        for (i32 c = 0; c < b->lines[r]->length && c < numCellCols; c++) {
+            Vector2 curPos = {c * font->charWidth + b->bounds.x, r * font->charHeight + b->bounds.y};
+
+            i32 codepointByteCount = 0;
+            char character = b->lines[r]->characters[c];
+            i32 codepoint = GetCodepointNext(&character, &codepointByteCount);
+
+            DrawTextCodepoint(font->font, codepoint, curPos, font->size, color);
+        }
+    }
 }
 
 void draw(AppState* state)
 {
     ClearBackground(state->color.background);
 
-    // grid && cursor
+    // grid
     {
-        i32 firstOutOfBoundsXRight = state->grid.gridXOffset + state->grid.numCellCols;
-        if (state->buffer->cursorPosition.x > firstOutOfBoundsXRight) {
-            state->grid.gridXOffset += state->buffer->cursorPosition.x - firstOutOfBoundsXRight;
-        }
-
-        if (state->buffer->cursorPosition.x < state->grid.gridXOffset) {
-            state->grid.gridXOffset = state->buffer->cursorPosition.x;
-        }
-
-        for (i32 r = 0; r < state->grid.numCellRows - 1; r++) {
-            i32 gridOffset = state->grid.numCellCols + state->grid.gridXOffset + 1;
-            for (i32 c = state->grid.gridXOffset; c < gridOffset; c++) {
-                Vector2 pos = {
-                    (c - state->grid.gridXOffset) * state->grid.cellWidth, r * state->grid.cellHeight};
-                Color color = state->color.foreground;
-
-                bool isCursorEdit = state->currentMode == EDIT && state->buffer->cursorPosition.y == r &&
-                                    state->buffer->cursorPosition.x == c;
-                if (isCursorEdit) {
-                    Rectangle rect = {
-                        .x = pos.x,
-                        .y = pos.y,
-                        .width = state->grid.cellWidth,
-                        .height = state->grid.cellHeight};
-                    DrawRectangleRec(rect, state->color.foreground);
-                    color = BLACK; // TODO: make proper cursor color
-                }
-
-                if (r < state->buffer->length && c < state->buffer->lines[r]->length) {
-                    i32 codepoint = getCharCodePoint(state->buffer->lines[r]->characters[c]);
-                    DrawTextCodepoint(state->font.font, codepoint, pos, state->font.size, color);
-                }
-            }
-        }
+        drawBuffer(state->buffer, state->font, BLACK);
     }
 
     // status line
@@ -64,23 +58,26 @@ void draw(AppState* state)
         Line* l;
         if (state->currentMode == EDIT)
             l = state->file.fileName;
-        if (state->currentMode == OPEN_FILE)
+        if (state->currentMode == OPEN_FILE) {
             l = state->commandLine.tempFileName->lines[0];
-
-        for (i32 i = 0; i < l->length; i++) {
-            i32 codepoint = getCharCodePoint(l->characters[i]);
-
-            // Rectangle rect = {
-            //     .x = state->commandLine.column * state->grid.cellWidth,
-            //     .y = pos.y,
-            //     .width = state->grid.cellWidth,
-            //     .height = state->grid.cellHeight};
-            // DrawRectangleRec(rect, GRAY);
-
-            DrawTextCodepoint(
-                state->font.font, codepoint, pos, state->font.size, state->color.foregroundHighlight);
-
-            pos.x += state->grid.cellWidth;
         }
+
+        drawLine(l, state->font, WHITE, pos);
+
+        // for (i32 i = 0; i < l->length; i++) {
+        //     i32 codepoint = getCharCodePoint(l->characters[i]);
+
+        //     Rectangle rect = {
+        //         .x = state->commandLine.tempFileName->cursorPosition.x * state->grid.cellWidth,
+        //         .y = pos.y,
+        //         .width = state->grid.cellWidth,
+        //         .height = state->grid.cellHeight};
+        //     DrawRectangleRec(rect, GRAY);
+
+        //     DrawTextCodepoint(
+        //         state->font->font, codepoint, pos, state->font->size, state->color.foregroundHighlight);
+
+        //     pos.x += state->grid.cellWidth;
+        // }
     }
 }

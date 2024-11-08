@@ -12,7 +12,11 @@ typedef struct {
     i32 length;
     i32 maxLength;
     i32 capacity;
+
     Vector2 cursorPosition;
+
+    bool isActive;
+    Rectangle bounds;
 } Buffer;
 
 Buffer* newBuffer(Arena* arena);

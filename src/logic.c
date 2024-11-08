@@ -26,20 +26,26 @@ AppState* initState(Arena* arena)
     {
         // TODO: https://rodneylab.com/raylib-sdf-fonts/
         // TODO: https://devcodef1.com/news/1401333/raylib-freetype-font-rendering
-        state->font.font = LoadFontEx("res/JetBrainsMonoNL-Regular.ttf", 32, 0, 250);
-        state->font.size = state->font.font.baseSize / 2;
-        state->font.spacing = 1.0f;
-        state->font.textLineSpacing = 2;
 
-        // cell dimensions
-        f32 scaleFactor = state->font.size / state->font.font.baseSize;
-        Vector2 monospaceCharDimensions = MeasureTextEx(state->font.font, "x", state->font.size, 1.0f);
+        state->font = allocate(arena, sizeof(AppFont));
+        state->font->font = LoadFontEx("res/JetBrainsMonoNL-Regular.ttf", 32, 0, 250);
+        state->font->size = state->font->font.baseSize / 2;
+        state->font->spacing = 1.0f;
+        state->font->textLineSpacing = 2;
 
+        Vector2 monospaceCharDimensions = MeasureTextEx(state->font->font, "x", state->font->size, 1.0f);
+        state->font->charWidth = monospaceCharDimensions.x;
+        state->font->charHeight = monospaceCharDimensions.y;
         state->grid.cellWidth = monospaceCharDimensions.x;
-        state->grid.cellHeight = state->font.size + state->font.textLineSpacing;
+        state->grid.cellHeight = state->font->size + state->font->textLineSpacing;
     }
 
     state->buffer = newBuffer(arena);
+    state->buffer->bounds.x = 100;
+    state->buffer->bounds.y = 100;
+    state->buffer->bounds.width = 600;
+    state->buffer->bounds.height = 400;
+
     state->commandLine.tempFileName = newBuffer(arena);
     state->commandLine.tempFileName->maxLength = 1;
 
@@ -61,59 +67,59 @@ void run(Arena* arena, AppState* state)
         b = state->commandLine.tempFileName;
 
     if (IsKeyPressed(KEY_RIGHT) || IsKeyPressedRepeat(KEY_RIGHT))
-        moveCursorRight(state->buffer);
+        moveCursorRight(b);
 
     if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_F) || IsKeyPressedRepeat(KEY_F)))
-        moveCursorRight(state->buffer);
+        moveCursorRight(b);
 
     if (IsKeyPressed(KEY_LEFT) || IsKeyPressedRepeat(KEY_LEFT))
-        moveCursorLeft(state->buffer);
+        moveCursorLeft(b);
 
     if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_B) || IsKeyPressedRepeat(KEY_B)))
-        moveCursorLeft(state->buffer);
+        moveCursorLeft(b);
 
     if (IsKeyPressed(KEY_UP) || IsKeyPressedRepeat(KEY_UP))
-        moveCursorUp(state->buffer);
+        moveCursorUp(b);
 
     if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_P) || IsKeyPressedRepeat(KEY_P)))
-        moveCursorUp(state->buffer);
+        moveCursorUp(b);
 
     if (IsKeyPressed(KEY_DOWN) || IsKeyPressedRepeat(KEY_DOWN))
-        moveCursorDown(state->buffer);
+        moveCursorDown(b);
 
     if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_N) || IsKeyPressedRepeat(KEY_N)))
-        moveCursorDown(state->buffer);
+        moveCursorDown(b);
 
     if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_E))
-        moveCursorEndOfLine(state->buffer);
+        moveCursorEndOfLine(b);
 
     if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_A))
-        moveCursorBeginningOfLine(state->buffer);
+        moveCursorBeginningOfLine(b);
 
     if (IsKeyPressed(KEY_TAB) || IsKeyPressedRepeat(KEY_TAB))
         insertTab(arena, state->buffer);
 
     if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_K) || IsKeyPressedRepeat(KEY_K))
-        kill(state->buffer);
+        kill(b);
 
     if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O)) {
         clearLine(state->commandLine.tempFileName->lines[0]);
 
-        char* openFileDialog = "file: ";
-        insertString(
-            arena,
-            state->commandLine.tempFileName->lines[0],
-            openFileDialog,
-            sizeof(char) * strlen(openFileDialog),
-            0);
+        // char* openFileDialog = "file: ";
+        // insertString(
+        //     arena,
+        //     state->commandLine.tempFileName->lines[0],
+        //     openFileDialog,
+        //     sizeof(char) * strlen(openFileDialog),
+        //     0);
 
-        state->commandLine.column = state->commandLine.tempFileName->length;
+        state->commandLine.tempFileName->cursorPosition.x = state->commandLine.tempFileName->lines[0]->length;
 
         state->currentMode = OPEN_FILE;
     }
 
     if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressedRepeat(KEY_BACKSPACE))
-        backspace(arena, state->buffer);
+        backspace(arena, b);
 
     if (IsKeyPressed(KEY_ENTER) || IsKeyPressedRepeat(KEY_ENTER))
         enter(arena, state->buffer);
@@ -136,12 +142,12 @@ void run(Arena* arena, AppState* state)
         while ((c = GetCharPressed())) {
             Line* l = state->commandLine.tempFileName->lines[0];
             typeChar(arena, l, state->commandLine.tempFileName->lines[0]->length, c);
-            state->commandLine.column++;
+            state->commandLine.tempFileName->cursorPosition.x++;
         }
     }
 }
 
 void freeState(AppState* state)
 {
-    UnloadFont(state->font.font);
+    UnloadFont(state->font->font);
 }

@@ -16,6 +16,8 @@ typedef struct {
     f32 size;
     f32 spacing;
     i32 textLineSpacing;
+    f32 charWidth;
+    f32 charHeight;
 } AppFont;
 
 typedef struct {
@@ -25,8 +27,6 @@ typedef struct {
         i32 cellWidth;
         i32 cellHeight;
         i32 gridXOffset;
-
-        Rectangle editorBounds;
     } grid;
 
     struct {
@@ -37,7 +37,6 @@ typedef struct {
 
     struct {
         Buffer* tempFileName;
-        i32 column;
     } commandLine;
 
     struct {
@@ -47,7 +46,7 @@ typedef struct {
 
     Mode currentMode;
 
-    AppFont font;
+    AppFont* font;
     Buffer* buffer;
 } AppState;
 
