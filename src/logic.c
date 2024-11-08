@@ -62,9 +62,6 @@ AppState* initState(Arena* arena)
     state->buffer = b;
     state->buffer->isActive = true;
 
-    b->numCellCols = b->bounds.width / state->font->charWidth - 1;
-    b->numCellRows = b->bounds.height / state->font->charHeight - 1;
-
     state->commandLine.tempFileName = newBuffer(arena);
     state->commandLine.tempFileName->maxLength = 1;
 
@@ -89,6 +86,9 @@ void run(Arena* arena, AppState* state)
             .width = GetScreenWidth(),
             .height = GetScreenHeight() - state->font->charHeight - 8},
         -16.f);
+
+    state->buffer->numCellCols = state->buffer->bounds.width / state->font->charWidth - 1;
+    state->buffer->numCellRows = state->buffer->bounds.height / state->font->charHeight - 1;
 
     Buffer* b;
     if (state->currentMode == EDIT)
