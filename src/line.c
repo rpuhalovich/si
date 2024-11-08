@@ -46,11 +46,13 @@ void insertString(Arena* arena, Line* l, char* str, u32 strlen, i32 column)
 {
     i32 cutLen = l->length - column;
 
+    i32 originalCapacity = l->capacity;
     l->length = l->length + strlen;
-    while (l->length > l->capacity) {
-        l->characters = reallocate(arena, l->characters, l->capacity, l->capacity * 2);
+    while (l->length > l->capacity)
         l->capacity *= 2;
-    }
+
+    if (originalCapacity < l->capacity)
+        l->characters = reallocate(arena, l->characters, l->capacity, l->capacity);
 
     memcpy(l->characters + column + strlen, l->characters + column, cutLen);
     memcpy(l->characters + column, str, strlen);
