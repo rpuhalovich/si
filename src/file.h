@@ -8,6 +8,6 @@
 
 Buffer* load(Arena* arena, Line* path);
 
-void write(Line* path);
+void write(Arena* arena, Buffer* b, Line* path);
 
 #endif // FILE_H

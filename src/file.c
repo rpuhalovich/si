@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <sys/errno.h>
 
+#include "appmath.h"
 #include "file.h"
 
 Buffer* load(Arena* arena, Line* path)
@@ -30,6 +31,10 @@ Buffer* load(Arena* arena, Line* path)
     return b;
 }
 
-void write(Line* path)
+void write(Arena* arena, Buffer* b, Line* path)
 {
+    FILE* fp = fopen(path->characters, "w");
+    for (int i = 0; i < b->length; i++)
+        fprintf(fp, "%s\n", b->lines[i]->characters);
+    fclose(fp);
 }

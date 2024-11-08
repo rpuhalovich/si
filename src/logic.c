@@ -76,13 +76,8 @@ void run(Arena* arena, AppState* state)
     state->statusLine.bounds.width = GetScreenWidth();
     state->statusLine.bounds.height = state->font->charHeight;
 
-    state->currentBuffer.buffer->bounds = RectangleWiden(
-        (Rectangle){
-            .x = 0,
-            .y = 0,
-            .width = GetScreenWidth(),
-            .height = GetScreenHeight() - state->font->charHeight - 8},
-        -16.f);
+    state->currentBuffer.buffer->bounds = (Rectangle){
+        .x = 0, .y = 0, .width = GetScreenWidth(), .height = GetScreenHeight() - state->font->charHeight - 8};
 
     state->currentBuffer.buffer->numCellCols =
         state->currentBuffer.buffer->bounds.width / state->font->charWidth - 1;
@@ -128,6 +123,13 @@ void run(Arena* arena, AppState* state)
 
     if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_A))
         moveCursorBeginningOfLine(b);
+
+    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S)) {
+        if (state->currentMode == EDIT) {
+            write(arena, b, state->currentBuffer.fileName);
+            b->isDirty = false;
+        }
+    }
 
     if (IsKeyPressed(KEY_TAB) || IsKeyPressedRepeat(KEY_TAB))
         insertTab(arena, b);
