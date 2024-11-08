@@ -112,6 +112,8 @@ void run(Arena* arena, AppState* state)
                 sizeof(char) * strlen(openFileDialog),
                 0);
 
+            state->commandLine.column = state->commandLine.tempFileName->length;
+
             state->currentMode = OPEN_FILE;
         }
 

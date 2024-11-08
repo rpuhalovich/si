@@ -16,7 +16,7 @@ void draw(AppState* state)
 {
     ClearBackground(state->color.background);
 
-    // grid
+    // grid && cursor
     {
         i32 firstOutOfBoundsXRight = state->grid.gridXOffset + state->grid.numCellCols;
         if (state->buffer.cursorPosition.x > firstOutOfBoundsXRight) {
@@ -34,14 +34,16 @@ void draw(AppState* state)
                     (c - state->grid.gridXOffset) * state->grid.cellWidth, r * state->grid.cellHeight};
                 Color color = state->color.foreground;
 
-                if (state->buffer.cursorPosition.y == r && state->buffer.cursorPosition.x == c) {
+                bool isCursorEdit = state->currentMode == EDIT && state->buffer.cursorPosition.y == r &&
+                                    state->buffer.cursorPosition.x == c;
+                if (isCursorEdit) {
                     Rectangle rect = {
                         .x = pos.x,
                         .y = pos.y,
                         .width = state->grid.cellWidth,
                         .height = state->grid.cellHeight};
                     DrawRectangleRec(rect, state->color.foreground);
-                    color = state->color.foregroundHighlight;
+                    color = BLACK; // TODO: make proper cursor color
                 }
 
                 if (r < state->buffer.length && c < state->buffer.lines[r]->length) {
@@ -67,8 +69,17 @@ void draw(AppState* state)
 
         for (i32 i = 0; i < l->length; i++) {
             i32 codepoint = getCharCodePoint(l->characters[i]);
+
+            Rectangle rect = {
+                .x = state->commandLine.column * state->grid.cellWidth,
+                .y = pos.y,
+                .width = state->grid.cellWidth,
+                .height = state->grid.cellHeight};
+            DrawRectangleRec(rect, BLACK);
+
             DrawTextCodepoint(
                 state->font.font, codepoint, pos, state->font.size, state->color.foregroundHighlight);
+
             pos.x += state->grid.cellWidth;
         }
     }
