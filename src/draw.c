@@ -2,10 +2,15 @@
 
 void drawLine(Line* l, AppFont* font, Color color, Vector2 pos)
 {
+    drawString(l->characters, l->length, font, color, pos);
+}
+
+void drawString(char* str, i32 strLen, AppFont* font, Color color, Vector2 pos)
+{
     Vector2 curPos = pos;
-    for (i32 i = 0; i < l->length; i++) {
+    for (i32 i = 0; i < strLen; i++) {
         i32 codepointByteCount = 0;
-        char character = l->characters[i];
+        char character = str[i];
         i32 codepoint = GetCodepointNext(&character, &codepointByteCount);
         DrawTextCodepoint(font->font, codepoint, curPos, font->size, color);
         curPos.x += font->charWidth;
@@ -14,11 +19,6 @@ void drawLine(Line* l, AppFont* font, Color color, Vector2 pos)
 
 void drawBuffer(Buffer* b, AppFont* font, Color textColor, Color cursorColor)
 {
-    // DrawRectangleRec(b->bounds, DARKBLUE);
-
-    i32 numCellCols = b->bounds.width / font->charWidth;
-    i32 numCellRows = b->bounds.height / font->charHeight;
-
     if (b->isActive) {
         Rectangle rec = {
             .x = (b->cursorPosition.x - b->scrollOffset.x) * font->charWidth + b->bounds.x,
@@ -28,8 +28,9 @@ void drawBuffer(Buffer* b, AppFont* font, Color textColor, Color cursorColor)
         DrawRectangleRec(rec, cursorColor);
     }
 
-    for (i32 r = b->scrollOffset.y; r < b->length && r < numCellRows + b->scrollOffset.y; r++) {
-        for (i32 c = b->scrollOffset.x; c < b->lines[r]->length && c < numCellCols + b->scrollOffset.x; c++) {
+    for (i32 r = b->scrollOffset.y; r < b->length && r < b->numCellRows + b->scrollOffset.y; r++) {
+        for (i32 c = b->scrollOffset.x; c < b->lines[r]->length && c < b->numCellCols + b->scrollOffset.x;
+             c++) {
             Vector2 curPos = {
                 (c - b->scrollOffset.x) * font->charWidth + b->bounds.x,
                 (r - b->scrollOffset.y) * font->charHeight + b->bounds.y};
@@ -56,20 +57,43 @@ void draw(AppState* state)
 
     // status line
     {
-        DrawRectangleRec(state->statusLine.bounds, state->color.statusLineBackground);
-        drawLine(
-            state->currentBuffer.fileName,
-            state->font,
-            state->color.statusLineForeGround,
-            (Vector2){state->statusLine.bounds.x, state->statusLine.bounds.y});
+        DrawRectangleRec(state->statusLine.bounds, state->color.statusLineBackGround);
 
-        if (state->currentBuffer.buffer->isDirty) {
-            f32 dirtyIndicatorOffsetX = (state->currentBuffer.fileName->length + 1) * state->font->charWidth;
-            f32 dirtyIndicatorOffsetY = state->statusLine.bounds.y + state->font->charHeight / 2;
-            DrawCircleV(
-                (Vector2){dirtyIndicatorOffsetX, dirtyIndicatorOffsetY},
-                2.f,
-                state->color.statusLineForeGround);
+        if (state->currentMode == EDIT) {
+            drawLine(
+                state->currentBuffer.fileName,
+                state->font,
+                state->color.statusLineForeGround,
+                (Vector2){state->statusLine.bounds.x, state->statusLine.bounds.y});
+
+            if (state->currentBuffer.buffer->isDirty) {
+                f32 dirtyIndicatorOffsetX =
+                    (state->currentBuffer.fileName->length + 1) * state->font->charWidth;
+                f32 dirtyIndicatorOffsetY = state->statusLine.bounds.y + state->font->charHeight / 2;
+                DrawCircleV(
+                    (Vector2){dirtyIndicatorOffsetX, dirtyIndicatorOffsetY},
+                    2.f,
+                    state->color.statusLineForeGround);
+            }
+        }
+
+        if (state->currentMode == OPEN_FILE) {
+            char* str = "file: ";
+            drawString(
+                str,
+                strlen(str),
+                state->font,
+                state->color.statusLineForeGround,
+                (Vector2){state->statusLine.bounds.x, state->statusLine.bounds.y});
+
+            // probs shouldn't be mutating bounds like this
+            state->statusLine.statusLineInput->bounds.y = state->statusLine.bounds.y;
+            state->statusLine.statusLineInput->bounds.x = (strlen(str) * state->font->charWidth);
+            drawBuffer(
+                state->statusLine.statusLineInput,
+                state->font,
+                state->color.statusLineForeGround,
+                state->color.statusLineBackGround);
         }
     }
 }

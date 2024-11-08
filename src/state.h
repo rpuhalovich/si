@@ -27,16 +27,13 @@ typedef struct {
         Color foregroundHighlight;
         Color cursor;
         Color border;
-        Color statusLineBackground;
+        Color statusLineBackGround;
         Color statusLineForeGround;
         Color statusLineCursor;
     } color;
 
     struct {
-        struct {
-            Buffer* commandLineInput;
-        } commandLine;
-
+        Buffer* statusLineInput;
         Rectangle bounds;
     } statusLine;
 
