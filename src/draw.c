@@ -1,5 +1,11 @@
 #include "draw.h"
 
+Rectangle RectangleWiden(Rectangle r, f32 amt)
+{
+    return (Rectangle){
+        .x = r.x - amt, .y = r.y - amt, .width = r.width + amt * 2, .height = r.height + amt * 2};
+}
+
 void drawLine(Line* l, AppFont* font, Color color, Vector2 pos)
 {
     Vector2 curPos = pos;
@@ -49,6 +55,7 @@ void draw(AppState* state)
 
     // editor
     {
+        DrawRectangleLinesEx(RectangleWiden(state->buffer->bounds, 8.f), 2.0f, BLACK);
         drawBuffer(state->buffer, state->font, BLACK);
     }
 
@@ -56,37 +63,5 @@ void draw(AppState* state)
     {
         DrawRectangleRec(state->statusLine.fileName->bounds, BLACK);
         drawBuffer(state->statusLine.fileName, state->font, BEIGE);
-
-        // drawBuffer(state->commandLine.tempFileName, state->font, BLACK);
-
-        // Vector2 pos = {0, GetScreenHeight() - state->grid.cellHeight};
-        // Rectangle rect = {
-        //     .x = pos.x, .y = pos.y, .width = GetScreenWidth(), .height = state->grid.cellHeight};
-        // DrawRectangleRec(rect, state->color.foreground);
-
-        // Line* l;
-        // if (state->currentMode == EDIT)
-        //     l = state->file.fileName;
-        // if (state->currentMode == OPEN_FILE) {
-        //     l = state->commandLine.tempFileName->lines[0];
-        // }
-
-        // drawLine(l, state->font, WHITE, pos);
-
-        // for (i32 i = 0; i < l->length; i++) {
-        //     i32 codepoint = getCharCodePoint(l->characters[i]);
-
-        //     Rectangle rect = {
-        //         .x = state->commandLine.tempFileName->cursorPosition.x * state->grid.cellWidth,
-        //         .y = pos.y,
-        //         .width = state->grid.cellWidth,
-        //         .height = state->grid.cellHeight};
-        //     DrawRectangleRec(rect, GRAY);
-
-        //     DrawTextCodepoint(
-        //         state->font->font, codepoint, pos, state->font->size, state->color.foregroundHighlight);
-
-        //     pos.x += state->grid.cellWidth;
-        // }
     }
 }

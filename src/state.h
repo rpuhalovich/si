@@ -22,14 +22,6 @@ typedef struct {
 
 typedef struct {
     struct {
-        i32 numCellCols;
-        i32 numCellRows;
-        f32 cellWidth;
-        f32 cellHeight;
-        i32 gridXOffset;
-    } grid;
-
-    struct {
         Color background;
         Color foreground;
         Color foregroundHighlight;

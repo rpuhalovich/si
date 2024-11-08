@@ -23,11 +23,10 @@ AppState* initState(Arena* arena)
         state->color.foregroundHighlight = BEIGE;
     }
 
+    // TODO: https://rodneylab.com/raylib-sdf-fonts/
+    // TODO: https://devcodef1.com/news/1401333/raylib-freetype-font-rendering
     // font
     {
-        // TODO: https://rodneylab.com/raylib-sdf-fonts/
-        // TODO: https://devcodef1.com/news/1401333/raylib-freetype-font-rendering
-
         state->font = allocate(arena, sizeof(AppFont));
         state->font->font = LoadFontEx("res/JetBrainsMonoNL-Regular.ttf", 32, 0, 250);
         state->font->size = state->font->font.baseSize / 2;
@@ -37,8 +36,6 @@ AppState* initState(Arena* arena)
         Vector2 monospaceCharDimensions = MeasureTextEx(state->font->font, "x", state->font->size, 1.0f);
         state->font->charWidth = monospaceCharDimensions.x;
         state->font->charHeight = monospaceCharDimensions.y;
-        state->grid.cellWidth = monospaceCharDimensions.x;
-        state->grid.cellHeight = state->font->size + state->font->textLineSpacing;
     }
 
     char* path = "/Users/rp/Desktop/tmp/.vimrc";
@@ -46,10 +43,6 @@ AppState* initState(Arena* arena)
     if (b == NULL)
         b = newBuffer(arena);
     state->buffer = b;
-    state->buffer->bounds.x = 100;
-    state->buffer->bounds.y = 100;
-    state->buffer->bounds.width = 600;
-    state->buffer->bounds.height = 400;
     state->buffer->isActive = true;
 
     b->numCellCols = b->bounds.width / state->font->charWidth - 1;
@@ -59,6 +52,7 @@ AppState* initState(Arena* arena)
     state->commandLine.tempFileName->maxLength = 1;
 
     state->statusLine.fileName = newBuffer(arena);
+    state->statusLine.fileName->maxLength = 1;
     insertString(arena, state->statusLine.fileName->lines[0], path, strlen(path), 0);
 
     return state;
@@ -66,13 +60,15 @@ AppState* initState(Arena* arena)
 
 void run(Arena* arena, AppState* state)
 {
-    state->grid.numCellCols = GetScreenWidth() / state->grid.cellWidth - 1;
-    state->grid.numCellRows = GetScreenHeight() / state->grid.cellHeight;
-
     state->statusLine.fileName->bounds.x = 0;
-    state->statusLine.fileName->bounds.y = GetScreenHeight() - state->grid.cellHeight - 8;
+    state->statusLine.fileName->bounds.y = GetScreenHeight() - state->font->charHeight - 8;
     state->statusLine.fileName->bounds.width = GetScreenWidth();
-    state->statusLine.fileName->bounds.height = state->grid.cellHeight;
+    state->statusLine.fileName->bounds.height = state->font->charHeight;
+
+    state->buffer->bounds.x = 100;
+    state->buffer->bounds.y = 100;
+    state->buffer->bounds.width = GetScreenWidth() - 200;
+    state->buffer->bounds.height = GetScreenHeight() - 200;
 
     Buffer* b;
     if (state->currentMode == EDIT)
