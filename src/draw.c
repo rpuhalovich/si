@@ -50,7 +50,7 @@ void drawBuffer(Buffer* b, AppFont* font, Color textColor, Color cursorColor)
         }
     }
 
-    for (i32 r = b->length; r < b->numCellRows; r++) {
+    for (i32 r = b->length - (i32)b->scrollOffset.y; r < b->numCellRows; r++) {
         Vector2 curPos = {.x = b->bounds.x, .y = r * font->charHeight};
 
         i32 codepointByteCount = 0;
