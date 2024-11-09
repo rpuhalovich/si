@@ -82,9 +82,17 @@ void draw(AppState* state)
                 state->color.statusLineForeGround,
                 (Vector2){state->statusLine.bounds.x, state->statusLine.bounds.y});
 
+            Buffer* b = state->currentBuffer.buffer;
+            char str[128];
+            snprintf(str, sizeof(str), "%dL %dC", (i32)b->cursorPosition.y + 1, (i32)b->cursorPosition.x + 1);
+            Vector2 coordsPos = {
+                .x = (state->currentBuffer.fileName->length + 1) * state->font->charWidth,
+                .y = state->statusLine.bounds.y};
+            drawString(str, strlen(str), state->font, state->color.statusLineForeGround, coordsPos);
+
             if (state->currentBuffer.buffer->isDirty && !state->currentBuffer.buffer->isScratch) {
                 f32 dirtyIndicatorOffsetX =
-                    (state->currentBuffer.fileName->length + 1) * state->font->charWidth;
+                    (state->currentBuffer.fileName->length + strlen(str) + 2) * state->font->charWidth;
                 f32 dirtyIndicatorOffsetY = state->statusLine.bounds.y + state->font->charHeight / 2;
                 DrawCircleV(
                     (Vector2){dirtyIndicatorOffsetX, dirtyIndicatorOffsetY},
