@@ -34,7 +34,10 @@ Buffer* load(Arena* arena, Line* path)
 void write(Arena* arena, Buffer* b, Line* path)
 {
     FILE* fp = fopen(path->characters, "w");
-    for (int i = 0; i < b->length; i++)
+    for (int i = 0; i < b->length; i++) {
+        i32 len = b->lines[i]->length;
+        b->lines[i]->characters[len] = '\0';
         fprintf(fp, "%s\n", b->lines[i]->characters);
+    }
     fclose(fp);
 }

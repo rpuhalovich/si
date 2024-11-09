@@ -71,103 +71,109 @@ AppState* initState(Arena* arena)
 
 void run(Arena* arena, AppState* state)
 {
-    state->statusLine.bounds.x = 0;
-    state->statusLine.bounds.y = GetScreenHeight() - state->font->charHeight - 8;
-    state->statusLine.bounds.width = GetScreenWidth();
-    state->statusLine.bounds.height = state->font->charHeight;
+    // window resize
+    {
+        state->statusLine.bounds.x = 0;
+        state->statusLine.bounds.y = GetScreenHeight() - state->font->charHeight - 8;
+        state->statusLine.bounds.width = GetScreenWidth();
+        state->statusLine.bounds.height = state->font->charHeight;
 
-    state->currentBuffer.buffer->bounds = (Rectangle){
-        .x = 0, .y = 0, .width = GetScreenWidth(), .height = GetScreenHeight() - state->font->charHeight};
+        state->currentBuffer.buffer->bounds = (Rectangle){
+            .x = 0, .y = 0, .width = GetScreenWidth(), .height = GetScreenHeight() - state->font->charHeight};
 
-    state->currentBuffer.buffer->numCellCols =
-        state->currentBuffer.buffer->bounds.width / state->font->charWidth - 1;
-    state->currentBuffer.buffer->numCellRows =
-        state->currentBuffer.buffer->bounds.height / state->font->charHeight - 1;
+        state->currentBuffer.buffer->numCellCols =
+            state->currentBuffer.buffer->bounds.width / state->font->charWidth - 1;
+        state->currentBuffer.buffer->numCellRows =
+            state->currentBuffer.buffer->bounds.height / state->font->charHeight - 1;
 
-    state->statusLine.statusLineInput->numCellRows = 1;
-    state->statusLine.statusLineInput->numCellCols =
-        state->currentBuffer.buffer->bounds.width / state->font->charWidth - 1;
-
-    Buffer* b;
-    if (state->currentMode == EDIT)
-        b = state->currentBuffer.buffer;
-    if (state->currentMode == OPEN_FILE)
-        b = state->statusLine.statusLineInput;
-
-    if (IsKeyPressed(KEY_RIGHT) || IsKeyPressedRepeat(KEY_RIGHT))
-        moveCursorRight(b);
-
-    if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_F) || IsKeyPressedRepeat(KEY_F)))
-        moveCursorRight(b);
-
-    if (IsKeyPressed(KEY_LEFT) || IsKeyPressedRepeat(KEY_LEFT))
-        moveCursorLeft(b);
-
-    if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_B) || IsKeyPressedRepeat(KEY_B)))
-        moveCursorLeft(b);
-
-    if (IsKeyPressed(KEY_UP) || IsKeyPressedRepeat(KEY_UP))
-        moveCursorUp(b);
-
-    if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_P) || IsKeyPressedRepeat(KEY_P)))
-        moveCursorUp(b);
-
-    if (IsKeyPressed(KEY_DOWN) || IsKeyPressedRepeat(KEY_DOWN))
-        moveCursorDown(b);
-
-    if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_N) || IsKeyPressedRepeat(KEY_N)))
-        moveCursorDown(b);
-
-    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_E))
-        moveCursorEndOfLine(b);
-
-    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_A))
-        moveCursorBeginningOfLine(b);
-
-    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S)) {
-        if (state->currentMode == EDIT) {
-            write(arena, b, state->currentBuffer.fileName);
-            b->isDirty = false;
-        }
+        state->statusLine.statusLineInput->numCellRows = 1;
+        state->statusLine.statusLineInput->numCellCols =
+            state->currentBuffer.buffer->bounds.width / state->font->charWidth - 1;
     }
 
-    if (IsKeyPressed(KEY_TAB) || IsKeyPressedRepeat(KEY_TAB))
-        insertTab(arena, b);
+    // input
+    {
+        Buffer* b;
+        if (state->currentMode == EDIT)
+            b = state->currentBuffer.buffer;
+        if (state->currentMode == OPEN_FILE)
+            b = state->statusLine.statusLineInput;
 
-    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_K) || IsKeyPressedRepeat(KEY_K))
-        kill(b);
+        if (IsKeyPressed(KEY_RIGHT) || IsKeyPressedRepeat(KEY_RIGHT))
+            moveCursorRight(b);
 
-    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O)) {
-        b->isActive = false;
+        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_F) || IsKeyPressedRepeat(KEY_F)))
+            moveCursorRight(b);
 
-        clearLine(state->statusLine.statusLineInput->lines[0]);
-        state->statusLine.statusLineInput->cursorPosition.x = 0;
-        state->statusLine.statusLineInput->isActive = true;
-        state->currentMode = OPEN_FILE;
-    }
+        if (IsKeyPressed(KEY_LEFT) || IsKeyPressedRepeat(KEY_LEFT))
+            moveCursorLeft(b);
 
-    if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressedRepeat(KEY_BACKSPACE))
-        backspace(arena, b);
+        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_B) || IsKeyPressedRepeat(KEY_B)))
+            moveCursorLeft(b);
 
-    if (IsKeyPressed(KEY_ENTER) || IsKeyPressedRepeat(KEY_ENTER)) {
-        if (state->currentMode == EDIT) {
-            enter(arena, b);
+        if (IsKeyPressed(KEY_UP) || IsKeyPressedRepeat(KEY_UP))
+            moveCursorUp(b);
+
+        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_P) || IsKeyPressedRepeat(KEY_P)))
+            moveCursorUp(b);
+
+        if (IsKeyPressed(KEY_DOWN) || IsKeyPressedRepeat(KEY_DOWN))
+            moveCursorDown(b);
+
+        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_N) || IsKeyPressedRepeat(KEY_N)))
+            moveCursorDown(b);
+
+        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_E))
+            moveCursorEndOfLine(b);
+
+        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_A))
+            moveCursorBeginningOfLine(b);
+
+        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S)) {
+            if (state->currentMode == EDIT) {
+                write(arena, b, state->currentBuffer.fileName);
+                b->isDirty = false;
+            }
         }
 
-        if (state->currentMode == OPEN_FILE) {
-            state->currentMode = EDIT;
+        if (IsKeyPressed(KEY_TAB) || IsKeyPressedRepeat(KEY_TAB))
+            insertTab(arena, b);
+
+        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_K) || IsKeyPressedRepeat(KEY_K))
+            kill(b);
+
+        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O)) {
             b->isActive = false;
 
-            state->currentBuffer.buffer = load(arena, state->statusLine.statusLineInput->lines[0]);
-            state->currentBuffer.fileName = state->statusLine.statusLineInput->lines[0];
-
-            state->currentBuffer.buffer->isActive = true;
+            clearLine(state->statusLine.statusLineInput->lines[0]);
+            state->statusLine.statusLineInput->cursorPosition.x = 0;
+            state->statusLine.statusLineInput->isActive = true;
+            state->currentMode = OPEN_FILE;
         }
-    }
 
-    char c;
-    while ((c = GetCharPressed()))
-        typeCharb(arena, b, c);
+        if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressedRepeat(KEY_BACKSPACE))
+            backspace(arena, b);
+
+        if (IsKeyPressed(KEY_ENTER) || IsKeyPressedRepeat(KEY_ENTER)) {
+            if (state->currentMode == EDIT) {
+                enter(arena, b);
+            }
+
+            if (state->currentMode == OPEN_FILE) {
+                state->currentMode = EDIT;
+                b->isActive = false;
+
+                state->currentBuffer.buffer = load(arena, state->statusLine.statusLineInput->lines[0]);
+                state->currentBuffer.fileName = state->statusLine.statusLineInput->lines[0];
+
+                state->currentBuffer.buffer->isActive = true;
+            }
+        }
+
+        char c;
+        while ((c = GetCharPressed()))
+            typeCharb(arena, b, c);
+    }
 }
 
 void freeState(AppState* state)
