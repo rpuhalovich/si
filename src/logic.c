@@ -55,14 +55,13 @@ AppState* initState(Arena* arena)
         state->font->charHeight = monospaceCharDimensions.y;
     }
 
-    char* path = "/Users/rp/Desktop/tmp/.vimrc";
-    Buffer* b = load(arena, newLines(arena, path));
-    if (b == NULL)
-        b = newBuffer(arena);
+    Buffer* b = newBuffer(arena);
+    b->isScratch = true;
     state->currentBuffer.buffer = b;
     state->currentBuffer.buffer->isActive = true;
     state->currentBuffer.fileName = newLine(arena);
-    insertString(arena, state->currentBuffer.fileName, path, strlen(path), 0);
+    char* scratchName = "[SCRATCH]";
+    insertString(arena, state->currentBuffer.fileName, scratchName, strlen(scratchName), 0);
 
     state->statusLine.statusLineInput = newBuffer(arena);
 
@@ -131,11 +130,9 @@ void run(Arena* arena, AppState* state)
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_A))
             moveCursorBeginningOfLine(b);
 
-        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S)) {
-            if (state->currentMode == EDIT) {
-                write(arena, b, state->currentBuffer.fileName);
-                b->isDirty = false;
-            }
+        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S) && state->currentMode == EDIT) {
+            write(arena, b, state->currentBuffer.fileName);
+            b->isDirty = false;
         }
 
         if (IsKeyPressed(KEY_TAB) || IsKeyPressedRepeat(KEY_TAB))
@@ -175,6 +172,11 @@ void run(Arena* arena, AppState* state)
         char c;
         while ((c = GetCharPressed()))
             typeCharb(arena, b, c);
+
+#ifdef DEBUG
+        if (IsKeyPressed(KEY_F9))
+            state->isDebugViewEnabled = !state->isDebugViewEnabled;
+#endif
     }
 }
 

@@ -20,6 +20,7 @@ typedef struct {
 
     bool isActive;
     bool isDirty;
+    bool isScratch;
 
     Rectangle bounds;
 } Buffer;

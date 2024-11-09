@@ -5,6 +5,13 @@ void drawLine(Line* l, AppFont* font, Color color, Vector2 pos)
     drawString(l->characters, l->length, font, color, pos);
 }
 
+void drawStringbg(char* str, i32 strLen, AppFont* font, Color color, Color bg, Vector2 pos)
+{
+    Rectangle r = {.x = pos.x, .y = pos.y, .width = strLen * font->charWidth, .height = font->charHeight};
+    DrawRectangleRec(r, bg);
+    drawString(str, strLen, font, color, pos);
+}
+
 void drawString(char* str, i32 strLen, AppFont* font, Color color, Vector2 pos)
 {
     Vector2 curPos = pos;
@@ -66,7 +73,7 @@ void draw(AppState* state)
                 state->color.statusLineForeGround,
                 (Vector2){state->statusLine.bounds.x, state->statusLine.bounds.y});
 
-            if (state->currentBuffer.buffer->isDirty) {
+            if (state->currentBuffer.buffer->isDirty && !state->currentBuffer.buffer->isScratch) {
                 f32 dirtyIndicatorOffsetX =
                     (state->currentBuffer.fileName->length + 1) * state->font->charWidth;
                 f32 dirtyIndicatorOffsetY = state->statusLine.bounds.y + state->font->charHeight / 2;
@@ -95,5 +102,18 @@ void draw(AppState* state)
                 state->color.statusLineForeGround,
                 state->color.statusLineCursor);
         }
+
+#ifdef DEBUG
+        // debug view
+        if (state->isDebugViewEnabled) {
+            char str[128];
+
+            snprintf(str, sizeof(str), "FPS: %d", GetFPS());
+            drawStringbg(str, strlen(str), state->font, WHITE, BLACK, (Vector2){16, 16});
+
+            snprintf(str, sizeof(str), "FRAME TIME: %fms", GetFrameTime() * 1000);
+            drawStringbg(str, strlen(str), state->font, WHITE, BLACK, (Vector2){16, 32});
+        }
+#endif
     }
 }

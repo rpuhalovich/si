@@ -33,8 +33,10 @@ Buffer* load(Arena* arena, Line* filePath)
 
 void write(Arena* arena, Buffer* b, Line* filePath)
 {
-    if (!b->isDirty)
+    if (!b->isDirty || b->isScratch)
         return;
+
+    // FIXME: there's a bug where line pointers are being mutated
 
     FILE* fp = fopen(filePath->characters, "w");
     for (int i = 0; i < b->length; i++) {

@@ -8,6 +8,8 @@
 #include "appmath.h"
 #include "state.h"
 
+void drawStringbg(char* str, i32 strLen, AppFont* font, Color color, Color bg, Vector2 pos);
+
 void drawLine(Line* l, AppFont* font, Color color, Vector2 pos);
 
 void drawString(char* str, i32 strLen, AppFont* font, Color color, Vector2 pos);

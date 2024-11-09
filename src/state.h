@@ -45,6 +45,10 @@ typedef struct {
     Mode currentMode;
 
     AppFont* font;
+
+#ifdef DEBUG
+    bool isDebugViewEnabled;
+#endif
 } AppState;
 
 #endif // STATE_H

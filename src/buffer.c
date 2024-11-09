@@ -63,7 +63,7 @@ void moveCursorRight(Buffer* b)
         b->cursorPosition.x++;
 
     if (b->cursorPosition.x > b->numCellCols + b->scrollOffset.x &&
-        b->cursorPosition.x < b->lines[curline]->length)
+        b->cursorPosition.x <= b->lines[curline]->length)
         b->scrollOffset.x++;
 }
 
@@ -199,19 +199,20 @@ void append(Arena* arena, Buffer* b, Line* l)
 
 void typeCharb(Arena* arena, Buffer* b, char c)
 {
-    b->isDirty = true;
     Line* l = b->lines[(i32)b->cursorPosition.y];
     typeChar(arena, l, b->cursorPosition.x, c);
     moveCursorRight(b);
+    b->isDirty = true;
 }
 
 void deletec(Buffer* b)
 {
     i32 line = (i32)b->cursorPosition.y;
     i32 col = (i32)b->cursorPosition.x;
-    for (i32 i = col + 1; i < b->lines[line]->length; i++) {
+
+    for (i32 i = col + 1; i < b->lines[line]->length; i++)
         b->lines[line]->characters[i - 1] = b->lines[line]->characters[i];
-    }
+
     b->lines[line]->length--;
     b->isDirty = true;
 }
