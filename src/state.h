@@ -22,15 +22,25 @@ typedef struct {
 } AppFont;
 
 typedef struct {
+    /*
     struct {
-        Buffer* statusLineInput;
-        Rectangle bounds;
-    } statusLine;
+        // TODO: implement
+    } menuBar;
+    */
 
     struct {
-        Line* fileName;
-        Buffer* buffer;
-    } currentBuffer;
+        struct {
+            Buffer* statusLineInput;
+            Rectangle bounds;
+        } statusLine;
+
+        struct {
+            Line* fileName;
+            Buffer* buffer;
+        } currentBuffer;
+
+        Rectangle bounds;
+    } editor;
 
     ColorScheme color;
 
@@ -45,7 +55,9 @@ typedef struct {
         bool isDebugViewEnabled;
         float usedCapacity;
         float capacity;
-    } debug;
+
+        Rectangle bounds;
+    } debugView;
 #endif
 } AppState;
 

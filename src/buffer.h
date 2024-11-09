@@ -22,7 +22,7 @@ typedef struct {
     bool isDirty;
     bool isScratch;
 
-    Rectangle bounds;
+    // Rectangle bounds;
 } Buffer;
 
 Buffer* newBuffer(Arena* arena);

@@ -24,12 +24,12 @@ void drawString(char* str, i32 strLen, AppFont* font, Color color, Vector2 pos)
     }
 }
 
-void drawBuffer(Buffer* b, AppFont* font, Color textColor, Color cursorColor)
+void drawBuffer(Rectangle bounds, Buffer* b, AppFont* font, Color textColor, Color cursorColor)
 {
     if (b->isActive) {
         Rectangle rec = {
-            .x = (b->cursorPosition.x - b->scrollOffset.x) * font->charWidth + b->bounds.x,
-            .y = (b->cursorPosition.y - b->scrollOffset.y) * font->charHeight + b->bounds.y,
+            .x = (b->cursorPosition.x - b->scrollOffset.x) * font->charWidth + bounds.x,
+            .y = (b->cursorPosition.y - b->scrollOffset.y) * font->charHeight + bounds.y,
             .width = font->charWidth,
             .height = font->charHeight};
         DrawRectangleRec(rec, cursorColor);
@@ -39,8 +39,8 @@ void drawBuffer(Buffer* b, AppFont* font, Color textColor, Color cursorColor)
         for (i32 c = b->scrollOffset.x; c < b->lines[r]->length && c < b->numCellCols + b->scrollOffset.x;
              c++) {
             Vector2 curPos = {
-                (c - b->scrollOffset.x) * font->charWidth + b->bounds.x,
-                (r - b->scrollOffset.y) * font->charHeight + b->bounds.y};
+                (c - b->scrollOffset.x) * font->charWidth + bounds.x,
+                (r - b->scrollOffset.y) * font->charHeight + bounds.y};
 
             i32 codepointByteCount = 0;
             char character = b->lines[r]->characters[c];
@@ -51,7 +51,7 @@ void drawBuffer(Buffer* b, AppFont* font, Color textColor, Color cursorColor)
     }
 
     for (i32 r = b->length - (i32)b->scrollOffset.y; r < b->numCellRows; r++) {
-        Vector2 curPos = {.x = b->bounds.x, .y = r * font->charHeight};
+        Vector2 curPos = {.x = bounds.x, .y = r * font->charHeight};
 
         i32 codepointByteCount = 0;
         char character = '~';
@@ -64,36 +64,42 @@ void draw(AppState* state)
 {
     ClearBackground(state->color.background);
 
-    // editor
+    // editor view
     {
-        DrawRectangleLinesEx(
-            RectangleWiden(state->currentBuffer.buffer->bounds, 8.f), 2.0f, state->color.border);
-        drawBuffer(state->currentBuffer.buffer, state->font, state->color.foreground, state->color.cursor);
-    }
+        // DrawRectangleLinesEx(RectangleWiden(state->editor.currentBuffer.buffer->bounds, 8.f), 2.0f,
+        // state->color.border);
 
-    // status line
-    {
-        DrawRectangleRec(state->statusLine.bounds, state->color.statusLineBackGround);
+        // editor
+        drawBuffer(
+            state->editor.bounds,
+            state->editor.currentBuffer.buffer,
+            state->font,
+            state->color.foreground,
+            state->color.cursor);
+
+        // status line
+        DrawRectangleRec(state->editor.statusLine.bounds, state->color.statusLineBackGround);
 
         if (state->currentMode == EDIT) {
             drawLine(
-                state->currentBuffer.fileName,
+                state->editor.currentBuffer.fileName,
                 state->font,
                 state->color.statusLineForeGround,
-                (Vector2){state->statusLine.bounds.x, state->statusLine.bounds.y});
+                (Vector2){state->editor.statusLine.bounds.x, state->editor.statusLine.bounds.y});
 
-            Buffer* b = state->currentBuffer.buffer;
+            Buffer* b = state->editor.currentBuffer.buffer;
             char str[128];
             snprintf(str, sizeof(str), "%dL %dC", (i32)b->cursorPosition.y + 1, (i32)b->cursorPosition.x + 1);
             Vector2 coordsPos = {
-                .x = (state->currentBuffer.fileName->length + 1) * state->font->charWidth,
-                .y = state->statusLine.bounds.y};
+                .x = (state->editor.currentBuffer.fileName->length + 1) * state->font->charWidth,
+                .y = state->editor.statusLine.bounds.y};
             drawString(str, strlen(str), state->font, state->color.statusLineForeGround, coordsPos);
 
-            if (state->currentBuffer.buffer->isDirty && !state->currentBuffer.buffer->isScratch) {
+            if (state->editor.currentBuffer.buffer->isDirty &&
+                !state->editor.currentBuffer.buffer->isScratch) {
                 f32 dirtyIndicatorOffsetX =
-                    (state->currentBuffer.fileName->length + strlen(str) + 2) * state->font->charWidth;
-                f32 dirtyIndicatorOffsetY = state->statusLine.bounds.y + state->font->charHeight / 2;
+                    (state->editor.currentBuffer.fileName->length + strlen(str) + 2) * state->font->charWidth;
+                f32 dirtyIndicatorOffsetY = state->editor.statusLine.bounds.y + state->font->charHeight / 2;
                 DrawCircleV(
                     (Vector2){dirtyIndicatorOffsetX, dirtyIndicatorOffsetY},
                     2.f,
@@ -108,13 +114,14 @@ void draw(AppState* state)
                 strlen(str),
                 state->font,
                 state->color.statusLineForeGround,
-                (Vector2){state->statusLine.bounds.x, state->statusLine.bounds.y});
+                (Vector2){state->editor.statusLine.bounds.x, state->editor.statusLine.bounds.y});
 
             // probs shouldn't be mutating bounds like this
-            state->statusLine.statusLineInput->bounds.y = state->statusLine.bounds.y;
-            state->statusLine.statusLineInput->bounds.x = (strlen(str) * state->font->charWidth);
+            state->editor.bounds.y = state->editor.statusLine.bounds.y;
+            state->editor.bounds.x = (strlen(str) * state->font->charWidth);
             drawBuffer(
-                state->statusLine.statusLineInput,
+                state->editor.bounds,
+                state->editor.statusLine.statusLineInput,
                 state->font,
                 state->color.statusLineForeGround,
                 state->color.statusLineCursor);
@@ -122,7 +129,7 @@ void draw(AppState* state)
 
 #ifdef DEBUG
         // debug view
-        if (state->debug.isDebugViewEnabled) {
+        if (state->debugView.isDebugViewEnabled) {
             char str[128];
             Vector2 pos = {16, 16};
 
@@ -134,11 +141,11 @@ void draw(AppState* state)
             drawStringbg(str, strlen(str), state->font, WHITE, BLACK, pos);
             pos.y += state->font->charHeight;
 
-            snprintf(str, sizeof(str), "ARENA CAPACITY: %f bytes", state->debug.capacity);
+            snprintf(str, sizeof(str), "ARENA CAPACITY: %f bytes", state->debugView.capacity);
             drawStringbg(str, strlen(str), state->font, WHITE, BLACK, pos);
             pos.y += state->font->charHeight;
 
-            snprintf(str, sizeof(str), "ARENA CAPACITY PERCENT USED: %f%%", state->debug.usedCapacity);
+            snprintf(str, sizeof(str), "ARENA CAPACITY PERCENT USED: %f%%", state->debugView.usedCapacity);
             drawStringbg(str, strlen(str), state->font, WHITE, BLACK, pos);
         }
 #endif
