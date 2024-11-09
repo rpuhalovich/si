@@ -33,6 +33,9 @@ Buffer* load(Arena* arena, Line* filePath)
 
 void write(Arena* arena, Buffer* b, Line* filePath)
 {
+    if (!b->isDirty)
+        return;
+
     FILE* fp = fopen(filePath->characters, "w");
     for (int i = 0; i < b->length; i++) {
         i32 len = b->lines[i]->length;

@@ -74,7 +74,7 @@ void run(Arena* arena, AppState* state)
     // window resize
     {
         state->statusLine.bounds.x = 0;
-        state->statusLine.bounds.y = GetScreenHeight() - state->font->charHeight - 8;
+        state->statusLine.bounds.y = GetScreenHeight() - state->font->charHeight;
         state->statusLine.bounds.width = GetScreenWidth();
         state->statusLine.bounds.height = state->font->charHeight;
 
@@ -84,11 +84,10 @@ void run(Arena* arena, AppState* state)
         state->currentBuffer.buffer->numCellCols =
             state->currentBuffer.buffer->bounds.width / state->font->charWidth - 1;
         state->currentBuffer.buffer->numCellRows =
-            state->currentBuffer.buffer->bounds.height / state->font->charHeight - 1;
+            state->currentBuffer.buffer->bounds.height / state->font->charHeight;
 
         state->statusLine.statusLineInput->numCellRows = 1;
-        state->statusLine.statusLineInput->numCellCols =
-            state->currentBuffer.buffer->bounds.width / state->font->charWidth - 1;
+        state->statusLine.statusLineInput->numCellCols = state->currentBuffer.buffer->numCellCols;
     }
 
     // input
@@ -122,6 +121,9 @@ void run(Arena* arena, AppState* state)
 
         if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_N) || IsKeyPressedRepeat(KEY_N)))
             moveCursorDown(b);
+
+        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_D) || IsKeyPressedRepeat(KEY_D)))
+            deletec(b);
 
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_E))
             moveCursorEndOfLine(b);

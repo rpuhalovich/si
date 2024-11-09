@@ -204,3 +204,14 @@ void typeCharb(Arena* arena, Buffer* b, char c)
     typeChar(arena, l, b->cursorPosition.x, c);
     moveCursorRight(b);
 }
+
+void deletec(Buffer* b)
+{
+    i32 line = (i32)b->cursorPosition.y;
+    i32 col = (i32)b->cursorPosition.x;
+    for (i32 i = col + 1; i < b->lines[line]->length; i++) {
+        b->lines[line]->characters[i - 1] = b->lines[line]->characters[i];
+    }
+    b->lines[line]->length--;
+    b->isDirty = true;
+}

@@ -50,6 +50,8 @@ void enter(Arena* arena, Buffer* b);
 
 void backspace(Arena* arena, Buffer* b);
 
+void deletec(Buffer* b);
+
 void append(Arena* arena, Buffer* b, Line* l);
 
 #endif // BUFFER_H
