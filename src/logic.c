@@ -6,38 +6,18 @@
 
 #include "appmath.h"
 #include "arena.h"
+#include "colorscheme.h"
 #include "file.h"
 #include "logic.h"
 #include "state.h"
 
 AppState* initState(Arena* arena)
 {
-    SetTextureFilter(GetFontDefault().texture, TEXTURE_FILTER_POINT);
-
     AppState* state = allocate(arena, sizeof(AppState));
 
     // color
     {
-#if 0
-        state->color.background = BLACK;
-        state->color.foreground = BEIGE;
-        state->color.foregroundHighlight = BLACK;
-        state->color.cursor = GRAY;
-        state->color.border = BEIGE;
-        state->color.statusLineBackground = BEIGE;
-        state->color.statusLineForeGround = BLACK;
-        state->color.statusLineCursor = GRAY;
-#endif
-#if 1
-        state->color.background = BEIGE;
-        state->color.foreground = BLACK;
-        state->color.foregroundHighlight = BEIGE;
-        state->color.cursor = GRAY;
-        state->color.border = BLACK;
-        state->color.statusLineBackGround = BLACK;
-        state->color.statusLineForeGround = BEIGE;
-        state->color.statusLineCursor = GRAY;
-#endif
+        state->color = GetTheme(COLORSCHEME_LIGHT_BEIGE);
     }
 
     // TODO: https://rodneylab.com/raylib-sdf-fonts/
@@ -163,16 +143,16 @@ void run(Arena* arena, AppState* state)
             backspace(arena, b);
 
         if (IsKeyPressed(KEY_ENTER) || IsKeyPressedRepeat(KEY_ENTER)) {
-            if (state->currentMode == EDIT) {
+            if (state->currentMode == EDIT)
                 enter(arena, b);
-            }
 
             if (state->currentMode == OPEN_FILE) {
                 state->currentMode = EDIT;
                 b->isActive = false;
 
-                state->currentBuffer.buffer = load(arena, state->statusLine.statusLineInput->lines[0]);
-                state->currentBuffer.fileName = state->statusLine.statusLineInput->lines[0];
+                Line* fileName = state->statusLine.statusLineInput->lines[0];
+                state->currentBuffer.buffer = load(arena, fileName);
+                state->currentBuffer.fileName = fileName;
 
                 state->currentBuffer.buffer->isActive = true;
             }

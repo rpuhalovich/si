@@ -10,6 +10,7 @@ i32 main()
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(1280, 720, "");
     SetExitKey(0);
+    SetTextureFilter(GetFontDefault().texture, TEXTURE_FILTER_POINT);
 
     Arena* arena = initArena(MEGABYTES(128));
     AppState* state = initState(arena);

@@ -221,6 +221,8 @@ void zeroUnusedCapacity(Buffer* b)
 {
     for (i32 i = 0; i < b->length; i++) {
         Line* l = b->lines[i];
-        memset(l->characters + l->length, 0, l->capacity - l->length);
+        for (i32 c = l->length; c < l->capacity; c++)
+            l->characters[c] = '\0';
+        // memset(l->characters + l->length, '\0', l->capacity - l->length);
     }
 }

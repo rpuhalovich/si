@@ -4,6 +4,7 @@
 #include <raylib.h>
 
 #include "buffer.h"
+#include "colorscheme.h"
 #include "types.h"
 
 typedef enum {
@@ -22,17 +23,6 @@ typedef struct {
 
 typedef struct {
     struct {
-        Color background;
-        Color foreground;
-        Color foregroundHighlight;
-        Color cursor;
-        Color border;
-        Color statusLineBackGround;
-        Color statusLineForeGround;
-        Color statusLineCursor;
-    } color;
-
-    struct {
         Buffer* statusLineInput;
         Rectangle bounds;
     } statusLine;
@@ -41,6 +31,8 @@ typedef struct {
         Line* fileName;
         Buffer* buffer;
     } currentBuffer;
+
+    ColorScheme color;
 
     Mode currentMode;
 
