@@ -22,15 +22,19 @@ AppState* initState(Arena* arena)
 
     // TODO: https://rodneylab.com/raylib-sdf-fonts/
     // TODO: https://devcodef1.com/news/1401333/raylib-freetype-font-rendering
+    // FIXME: raylibs font rendering is slow and shit
     // font
     {
-        state->font = allocate(arena, sizeof(AppFont));
-        state->font->font = LoadFontEx("res/JetBrainsMonoNL-Regular.ttf", 32, 0, 250);
-        state->font->size = state->font->font.baseSize / 2;
-        state->font->spacing = 1.0f;
-        state->font->textLineSpacing = 2;
+        f32 fontScale = 2.0f;
 
-        Vector2 monospaceCharDimensions = MeasureTextEx(state->font->font, "x", state->font->size, 1.0f);
+        state->font = allocate(arena, sizeof(AppFont));
+        state->font->font = LoadFontEx("res/JetBrainsMonoNL-Regular.ttf", 24 * fontScale, 0, 250);
+        state->font->size = state->font->font.baseSize / fontScale;
+        state->font->spacing = 1.0f;
+        state->font->textLineSpacing = 1;
+
+        Vector2 dpi = GetWindowScaleDPI();
+        Vector2 monospaceCharDimensions = MeasureTextEx(state->font->font, "x", state->font->size, dpi.x);
         state->font->charWidth = monospaceCharDimensions.x;
         state->font->charHeight = monospaceCharDimensions.y;
     }
