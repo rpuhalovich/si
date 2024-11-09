@@ -11,10 +11,6 @@ i32 main()
     InitWindow(1280, 720, "");
     SetExitKey(0);
 
-#ifdef RELEASE
-    SetTargetFPS(60);
-#endif
-
     Arena* arena = initArena(MEGABYTES(128));
     AppState* state = initState(arena);
 

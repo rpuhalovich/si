@@ -46,6 +46,8 @@ typedef struct {
 
     AppFont* font;
 
+    i32 currentTargetFps;
+
 #ifdef DEBUG
     bool isDebugViewEnabled;
 #endif

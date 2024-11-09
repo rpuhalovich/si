@@ -87,6 +87,12 @@ void run(Arena* arena, AppState* state)
 
         state->statusLine.statusLineInput->numCellRows = 1;
         state->statusLine.statusLineInput->numCellCols = state->currentBuffer.buffer->numCellCols;
+
+        i32 monitorRefreshRate = GetMonitorRefreshRate(GetCurrentMonitor());
+        if (state->currentTargetFps != monitorRefreshRate) {
+            SetTargetFPS(monitorRefreshRate);
+            state->currentTargetFps = monitorRefreshRate;
+        }
     }
 
     // input

@@ -49,6 +49,15 @@ void drawBuffer(Buffer* b, AppFont* font, Color textColor, Color cursorColor)
             DrawTextCodepoint(font->font, codepoint, curPos, font->size, textColor);
         }
     }
+
+    for (i32 r = b->length; r < b->numCellRows; r++) {
+        Vector2 curPos = {.x = b->bounds.x, .y = r * font->charHeight};
+
+        i32 codepointByteCount = 0;
+        char character = '~';
+        i32 codepoint = GetCodepointNext(&character, &codepointByteCount);
+        DrawTextCodepoint(font->font, codepoint, curPos, font->size, textColor);
+    }
 }
 
 void draw(AppState* state)
