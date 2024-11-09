@@ -6,8 +6,8 @@
 #include "line.h"
 #include "types.h"
 
-Buffer* load(Arena* arena, Line* path);
+Buffer* load(Arena* arena, Line* filePath);
 
-void write(Arena* arena, Buffer* b, Line* path);
+void write(Arena* arena, Buffer* b, Line* filePath);
 
 #endif // FILE_H

@@ -4,12 +4,12 @@
 #include "appmath.h"
 #include "file.h"
 
-Buffer* load(Arena* arena, Line* path)
+Buffer* load(Arena* arena, Line* filePath)
 {
     Buffer* b = newBuffer(arena);
     b->length = 0;
 
-    FILE* fp = fopen(path->characters, "r");
+    FILE* fp = fopen(filePath->characters, "r");
     if (fp == NULL) {
         if (errno == ENOENT)
             printf("ENOENT: file not found");
@@ -31,9 +31,9 @@ Buffer* load(Arena* arena, Line* path)
     return b;
 }
 
-void write(Arena* arena, Buffer* b, Line* path)
+void write(Arena* arena, Buffer* b, Line* filePath)
 {
-    FILE* fp = fopen(path->characters, "w");
+    FILE* fp = fopen(filePath->characters, "w");
     for (int i = 0; i < b->length; i++) {
         i32 len = b->lines[i]->length;
         b->lines[i]->characters[len] = '\0';
