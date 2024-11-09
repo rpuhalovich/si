@@ -7,12 +7,12 @@
 
 i32 main()
 {
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_HIGHDPI | FLAG_MSAA_4X_HINT);
     InitWindow(1280, 720, "");
     SetExitKey(0);
     SetTextureFilter(GetFontDefault().texture, TEXTURE_FILTER_POINT);
 
-    Arena* arena = initArena(MEGABYTES(128));
+    Arena* arena = initArena(MEGABYTES(16));
     AppState* state = initState(arena);
 
     while (!WindowShouldClose()) {
