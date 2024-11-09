@@ -17,7 +17,7 @@ AppState* initState(Arena* arena)
 
     // color
     {
-        state->color = GetTheme(COLORSCHEME_LIGHT_BEIGE);
+        state->color = GetTheme(COLORSCHEME_DARK_GRUVBOX);
     }
 
     // TODO: https://rodneylab.com/raylib-sdf-fonts/

@@ -11,10 +11,8 @@ typedef enum {
 
 typedef struct {
     ColorSchemeVariant variant;
-
     Color background;
     Color foreground;
-    Color foregroundHighlight;
     Color cursor;
     Color border;
     Color statusLineBackGround;

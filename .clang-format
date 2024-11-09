@@ -2,6 +2,7 @@
 Language: Cpp
 BasedOnStyle: LLVM
 IndentWidth: 4
+IndentCaseLabels: true
 AccessModifierOffset: -4
 IndentAccessModifiers: false
 DerivePointerAlignment: false
