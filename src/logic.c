@@ -95,9 +95,11 @@ void run(Arena* arena, AppState* state)
         state->debugView.capacity = arena->capacity;
 
         if (state->debugView.isDebugViewEnabled) {
-            state->editor.bounds.x = 100.f;
-            state->editor.bounds.width = GetScreenWidth() - 100.f;
-            state->debugView.bounds.width = 100.f;
+            f32 offset = 500.f;
+            state->editor.bounds.x = offset;
+            state->editor.bounds.width = GetScreenWidth() - offset;
+            state->debugView.bounds.width = offset;
+            state->debugView.bounds.height = GetScreenHeight();
         } else {
             state->editor.bounds.x = 0.f;
             state->editor.bounds.width = GetScreenWidth();

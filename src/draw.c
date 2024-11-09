@@ -115,9 +115,6 @@ void draw(AppState* state)
                 state->color.statusLineForeGround,
                 (Vector2){state->editor.statusLine.bounds.x, state->editor.statusLine.bounds.y});
 
-            // probs shouldn't be mutating bounds like this
-            // state->editor.bounds.y = state->editor.statusLine.bounds.y;
-            // state->editor.bounds.x = (strlen(str) * state->font->charWidth);
             drawBuffer(
                 state->editor.bounds,
                 state->editor.statusLine.statusLineInput,
@@ -129,8 +126,13 @@ void draw(AppState* state)
 #ifdef DEBUG
         // debug view
         if (state->debugView.isDebugViewEnabled) {
+            Vector2 start = {state->debugView.bounds.width, 0};
+            Vector2 end = {
+                state->debugView.bounds.width, state->debugView.bounds.height - state->font->charHeight};
+            DrawLineEx(start, end, 2.f, state->color.foreground);
+
             char str[128];
-            Vector2 pos = {16, 16};
+            Vector2 pos = {0};
 
             snprintf(str, sizeof(str), "FPS: %d", GetFPS());
             drawStringbg(str, strlen(str), state->font, WHITE, BLACK, pos);
