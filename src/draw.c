@@ -128,19 +128,18 @@ void draw(AppState* state)
 
             snprintf(str, sizeof(str), "FPS: %d", GetFPS());
             drawStringbg(str, strlen(str), state->font, WHITE, BLACK, pos);
-            pos.y += 16.f;
+            pos.y += state->font->charHeight;
 
             snprintf(str, sizeof(str), "FRAME TIME: %fms", GetFrameTime() * 1000);
             drawStringbg(str, strlen(str), state->font, WHITE, BLACK, pos);
-            pos.y += 32.f;
+            pos.y += state->font->charHeight;
 
             snprintf(str, sizeof(str), "ARENA CAPACITY: %f bytes", state->debug.capacity);
             drawStringbg(str, strlen(str), state->font, WHITE, BLACK, pos);
-            pos.y += 16.f;
+            pos.y += state->font->charHeight;
 
             snprintf(str, sizeof(str), "ARENA CAPACITY PERCENT USED: %f%%", state->debug.usedCapacity);
             drawStringbg(str, strlen(str), state->font, WHITE, BLACK, pos);
-            pos.y += 16.f;
         }
 #endif
     }

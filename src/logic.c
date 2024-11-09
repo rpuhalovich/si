@@ -25,11 +25,11 @@ AppState* initState(Arena* arena)
     // FIXME: raylibs font rendering is slow and shit
     // font
     {
-        f32 fontScale = 2.0f;
+        f32 fontResolutionScale = 4.0f;
 
         state->font = allocate(arena, sizeof(AppFont));
-        state->font->font = LoadFontEx("res/JetBrainsMonoNL-Regular.ttf", 24 * fontScale, 0, 250);
-        state->font->size = state->font->font.baseSize / fontScale;
+        state->font->font = LoadFontEx("res/JetBrainsMonoNL-Regular.ttf", 20 * fontResolutionScale, 0, 250);
+        state->font->size = state->font->font.baseSize / fontResolutionScale;
         state->font->spacing = 1.0f;
         state->font->textLineSpacing = 1;
 
@@ -39,15 +39,18 @@ AppState* initState(Arena* arena)
         state->font->charHeight = monospaceCharDimensions.y;
     }
 
-    Buffer* b = newBuffer(arena);
-    b->isScratch = true;
-    state->currentBuffer.buffer = b;
-    state->currentBuffer.buffer->isActive = true;
-    state->currentBuffer.fileName = newLine(arena);
-    char* scratchName = "[SCRATCH]";
-    insertString(arena, state->currentBuffer.fileName, scratchName, strlen(scratchName), 0);
+    // scratch buffer
+    {
+        Buffer* b = newBuffer(arena);
+        b->isScratch = true;
+        state->currentBuffer.buffer = b;
+        state->currentBuffer.buffer->isActive = true;
+        state->currentBuffer.fileName = newLine(arena);
+        char* scratchName = "[SCRATCH]";
+        insertString(arena, state->currentBuffer.fileName, scratchName, strlen(scratchName), 0);
 
-    state->statusLine.statusLineInput = newBuffer(arena);
+        state->statusLine.statusLineInput = newBuffer(arena);
+    }
 
     return state;
 }
