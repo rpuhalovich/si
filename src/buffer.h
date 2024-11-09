@@ -55,4 +55,6 @@ void deletec(Buffer* b);
 
 void append(Arena* arena, Buffer* b, Line* l);
 
+void zeroUnusedCapacity(Buffer* b);
+
 #endif // BUFFER_H

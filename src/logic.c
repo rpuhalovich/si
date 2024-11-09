@@ -139,6 +139,7 @@ void run(Arena* arena, AppState* state)
             moveCursorBeginningOfLine(b);
 
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S) && state->currentMode == EDIT) {
+            zeroUnusedCapacity(b);
             write(arena, b, state->currentBuffer.fileName);
             b->isDirty = false;
         }

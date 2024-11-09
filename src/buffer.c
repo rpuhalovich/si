@@ -216,3 +216,11 @@ void deletec(Buffer* b)
     b->lines[line]->length--;
     b->isDirty = true;
 }
+
+void zeroUnusedCapacity(Buffer* b)
+{
+    for (i32 i = 0; i < b->length; i++) {
+        Line* l = b->lines[i];
+        memset(l->characters + l->length, 0, l->capacity - l->length);
+    }
+}
