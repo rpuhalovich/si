@@ -77,6 +77,14 @@ void run(Arena* arena, AppState* state)
 #endif
     }
 
+#ifdef DEBUG
+    // debug properties
+    {
+        state->debug.usedCapacity = ((f32)arena->usedCapacity / arena->capacity) * 100;
+        state->debug.capacity = arena->capacity;
+    }
+#endif
+
     // input
     {
         Buffer* b;
@@ -128,7 +136,7 @@ void run(Arena* arena, AppState* state)
             insertTab(arena, b);
 
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_K) || IsKeyPressedRepeat(KEY_K))
-            kill(b);
+            killl(b);
 
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O)) {
             b->isActive = false;
@@ -151,8 +159,11 @@ void run(Arena* arena, AppState* state)
                 b->isActive = false;
 
                 Line* fileName = state->statusLine.statusLineInput->lines[0];
-                state->currentBuffer.buffer = load(arena, fileName);
-                state->currentBuffer.fileName = fileName;
+                Buffer* newBuffer = load(arena, fileName);
+                if (newBuffer != NULL) {
+                    state->currentBuffer.buffer = newBuffer;
+                    state->currentBuffer.fileName = fileName;
+                }
 
                 state->currentBuffer.buffer->isActive = true;
             }
@@ -164,7 +175,16 @@ void run(Arena* arena, AppState* state)
 
 #ifdef DEBUG
         if (IsKeyPressed(KEY_F9))
-            state->isDebugViewEnabled = !state->isDebugViewEnabled;
+            state->debug.isDebugViewEnabled = !state->debug.isDebugViewEnabled;
+
+        if (IsKeyPressed(KEY_F5)) {
+            char str[128];
+            snprintf(str, sizeof(str), "%s/tmp", getenv("HOME"));
+            Line* fileName = newLines(arena, str);
+            state->currentBuffer.buffer = load(arena, fileName);
+            state->currentBuffer.fileName = fileName;
+            state->currentBuffer.buffer->isActive = true;
+        }
 #endif
     }
 }

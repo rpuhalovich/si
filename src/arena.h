@@ -8,15 +8,18 @@
 #define GIGABYTES(number) (MEGABYTES(number) * 1024ull)
 #define TERABYTES(number) (GIGABYTES(number) * 1024ull)
 
-// macos memory management:
-// <https://developer.apple.com/library/archive/documentation/Performance/Conceptual/ManagingMemory/Articles/AboutMemory.html>
-// Untangling Lifetimes - The Arena Allocator:
-// <https://www.rfleury.com/p/untangling-lifetimes-the-arena-allocator>
+// clang-format off
+
+// macos memory management: // <https://developer.apple.com/library/archive/documentation/Performance/Conceptual/ManagingMemory/Articles/AboutMemory.html>
+// Untangling Lifetimes - The Arena Allocator: // <https://www.rfleury.com/p/untangling-lifetimes-the-arena-allocator>
+
+// clang-format on
 
 typedef struct {
     void* memory;
     void* ptr;
     u64 capacity;
+    u64 usedCapacity;
 } Arena;
 
 Arena* initArena(u64 size);

@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <sys/errno.h>
 
+#ifdef DEBUG
+#include <signal.h>
+#endif
+
 #include "appmath.h"
 #include "file.h"
 
 Buffer* load(Arena* arena, Line* filePath)
 {
-    Buffer* b = newBuffer(arena);
-    b->length = 0;
-
     FILE* fp = fopen(filePath->characters, "r");
     if (fp == NULL) {
         if (errno == ENOENT)
@@ -16,12 +17,15 @@ Buffer* load(Arena* arena, Line* filePath)
         return NULL;
     }
 
+    Buffer* b = newBuffer(arena);
+    b->length = 0;
+
     char* line = NULL;
     size_t linecap = 0;
     ssize_t linelen;
     while ((linelen = getline(&line, &linecap, fp)) > 0) {
         Line* l = newLine(arena);
-        insertString(arena, l, line, strlen(line) - 1, 0);
+        insertString(arena, l, line, linelen - 1, 0);
         append(arena, b, l);
     }
 

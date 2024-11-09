@@ -41,7 +41,11 @@ typedef struct {
     i32 currentTargetFps;
 
 #ifdef DEBUG
-    bool isDebugViewEnabled;
+    struct {
+        bool isDebugViewEnabled;
+        float usedCapacity;
+        float capacity;
+    } debug;
 #endif
 } AppState;
 

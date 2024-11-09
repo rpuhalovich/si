@@ -127,7 +127,7 @@ void backspace(Arena* arena, Buffer* b)
     b->isDirty = true;
 }
 
-void kill(Buffer* b)
+void killl(Buffer* b)
 {
     i32 line = (i32)b->cursorPosition.y;
 

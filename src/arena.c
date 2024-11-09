@@ -31,17 +31,25 @@ Arena* initArenaa(Arena* arena, u64 size)
 void* allocate(Arena* a, u64 size)
 {
     ASSERT(a->ptr + size < a->ptr + a->capacity);
+
     void* ptr = a->ptr;
     a->ptr += size;
+    a->usedCapacity += size;
+
     return ptr;
 }
 
 void* reallocate(Arena* a, void* ptr, u64 oldsize, u64 newsize)
 {
     ASSERT(a->ptr + newsize < a->ptr + a->capacity);
+
     void* newptr = a->ptr;
     a->ptr += newsize;
     memcpy(newptr, ptr, oldsize);
+
+    a->usedCapacity -= oldsize;
+    a->usedCapacity += newsize;
+
     return newptr;
 }
 
@@ -55,4 +63,5 @@ void clear(Arena* a)
 {
     memset(a->memory, 0, a->capacity);
     a->ptr = a->memory;
+    a->usedCapacity = 0;
 }

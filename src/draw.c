@@ -122,14 +122,25 @@ void draw(AppState* state)
 
 #ifdef DEBUG
         // debug view
-        if (state->isDebugViewEnabled) {
+        if (state->debug.isDebugViewEnabled) {
             char str[128];
+            Vector2 pos = {16, 16};
 
             snprintf(str, sizeof(str), "FPS: %d", GetFPS());
-            drawStringbg(str, strlen(str), state->font, WHITE, BLACK, (Vector2){16, 16});
+            drawStringbg(str, strlen(str), state->font, WHITE, BLACK, pos);
+            pos.y += 16.f;
 
             snprintf(str, sizeof(str), "FRAME TIME: %fms", GetFrameTime() * 1000);
-            drawStringbg(str, strlen(str), state->font, WHITE, BLACK, (Vector2){16, 32});
+            drawStringbg(str, strlen(str), state->font, WHITE, BLACK, pos);
+            pos.y += 32.f;
+
+            snprintf(str, sizeof(str), "ARENA CAPACITY: %f bytes", state->debug.capacity);
+            drawStringbg(str, strlen(str), state->font, WHITE, BLACK, pos);
+            pos.y += 16.f;
+
+            snprintf(str, sizeof(str), "ARENA CAPACITY PERCENT USED: %f%%", state->debug.usedCapacity);
+            drawStringbg(str, strlen(str), state->font, WHITE, BLACK, pos);
+            pos.y += 16.f;
         }
 #endif
     }
