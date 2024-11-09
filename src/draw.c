@@ -81,29 +81,28 @@ void draw(AppState* state)
         DrawRectangleRec(state->editor.statusLine.bounds, state->color.statusLineBackGround);
 
         if (state->currentMode == EDIT) {
-            drawLine(
-                state->editor.currentBuffer.fileName,
-                state->font,
-                state->color.statusLineForeGround,
-                (Vector2){state->editor.statusLine.bounds.x, state->editor.statusLine.bounds.y});
+            f32 curx = state->editor.bounds.x;
+            f32 cury = state->editor.statusLine.bounds.y;
+            Line* fileName = state->editor.currentBuffer.fileName;
+            Buffer* currentBuffer = state->editor.currentBuffer.buffer;
 
-            Buffer* b = state->editor.currentBuffer.buffer;
+            drawLine(fileName, state->font, state->color.statusLineForeGround, (Vector2){curx, cury});
+            curx += (fileName->length + 1) * state->font->charWidth;
+
             char str[128];
-            snprintf(str, sizeof(str), "%dL %dC", (i32)b->cursorPosition.y + 1, (i32)b->cursorPosition.x + 1);
-            Vector2 coordsPos = {
-                .x = (state->editor.currentBuffer.fileName->length + 1) * state->font->charWidth,
-                .y = state->editor.statusLine.bounds.y};
-            drawString(str, strlen(str), state->font, state->color.statusLineForeGround, coordsPos);
+            snprintf(
+                str,
+                sizeof(str),
+                "%dL %dC",
+                (i32)currentBuffer->cursorPosition.y + 1,
+                (i32)currentBuffer->cursorPosition.x + 1);
+            drawString(
+                str, strlen(str), state->font, state->color.statusLineForeGround, (Vector2){curx, cury});
+            curx += (1 + strlen(str)) * state->font->charWidth;
 
-            if (state->editor.currentBuffer.buffer->isDirty &&
-                !state->editor.currentBuffer.buffer->isScratch) {
-                f32 dirtyIndicatorOffsetX =
-                    (state->editor.currentBuffer.fileName->length + strlen(str) + 2) * state->font->charWidth;
+            if (currentBuffer->isDirty && !currentBuffer->isScratch) {
                 f32 dirtyIndicatorOffsetY = state->editor.statusLine.bounds.y + state->font->charHeight / 2;
-                DrawCircleV(
-                    (Vector2){dirtyIndicatorOffsetX, dirtyIndicatorOffsetY},
-                    2.f,
-                    state->color.statusLineForeGround);
+                DrawCircleV((Vector2){curx, dirtyIndicatorOffsetY}, 2.f, state->color.statusLineForeGround);
             }
         }
 
@@ -117,8 +116,8 @@ void draw(AppState* state)
                 (Vector2){state->editor.statusLine.bounds.x, state->editor.statusLine.bounds.y});
 
             // probs shouldn't be mutating bounds like this
-            state->editor.bounds.y = state->editor.statusLine.bounds.y;
-            state->editor.bounds.x = (strlen(str) * state->font->charWidth);
+            // state->editor.bounds.y = state->editor.statusLine.bounds.y;
+            // state->editor.bounds.x = (strlen(str) * state->font->charWidth);
             drawBuffer(
                 state->editor.bounds,
                 state->editor.statusLine.statusLineInput,
