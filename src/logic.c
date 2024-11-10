@@ -51,8 +51,7 @@ AppState* initState(Arena* arena)
 
         state->editor.statusLine.statusLineInput = newBuffer(arena);
 
-        state->editor.bounds =
-            (Rectangle){.x = 0, .y = 0, .width = GetScreenWidth(), .height = GetScreenHeight()};
+        state->editor.bounds = (Rectangle){.x = 0, .y = 0, .width = GetScreenWidth(), .height = GetScreenHeight()};
     }
 
     return state;
@@ -62,22 +61,30 @@ void run(Arena* arena, AppState* state)
 {
     // window resize
     {
-        state->editor.statusLine.bounds.x = 0;
-        state->editor.statusLine.bounds.y = GetScreenHeight() - state->font->charHeight;
-        state->editor.statusLine.bounds.width = GetScreenWidth();
-        state->editor.statusLine.bounds.height = state->font->charHeight;
+        state->editor.bounds = (Rectangle){.x = 0, .y = 0, .width = GetScreenWidth(), .height = GetScreenHeight() - state->font->charHeight};
 
-        state->editor.bounds = (Rectangle){
-            .x = 0, .y = 0, .width = GetScreenWidth(), .height = GetScreenHeight() - state->font->charHeight};
+#ifdef DEBUG
+        if (state->debugView.isDebugViewEnabled) {
+            f32 offset = 500.f;
 
-        state->editor.currentBuffer.buffer->numCellCols =
-            state->editor.bounds.width / state->font->charWidth - 1;
-        state->editor.currentBuffer.buffer->numCellRows =
-            state->editor.bounds.height / state->font->charHeight;
+            state->editor.bounds.x = offset;
+            state->editor.bounds.width = GetScreenWidth() - offset;
+            state->debugView.bounds.width = offset;
+            state->debugView.bounds.height = GetScreenHeight();
+        } else {
+            state->editor.bounds.x = 0.f;
+            state->editor.bounds.width = GetScreenWidth();
+        }
+#endif
+
+        state->editor.currentBuffer.buffer->numCellCols = state->editor.bounds.width / state->font->charWidth - 1;
+        state->editor.currentBuffer.buffer->numCellRows = state->editor.bounds.height / state->font->charHeight;
 
         state->editor.statusLine.statusLineInput->numCellRows = 1;
-        state->editor.statusLine.statusLineInput->numCellCols =
-            state->editor.currentBuffer.buffer->numCellCols;
+        state->editor.statusLine.statusLineInput->numCellCols = state->editor.currentBuffer.buffer->numCellCols;
+
+        state->editor.currentBuffer.buffer->numCellCols = state->editor.bounds.width / state->font->charWidth - 1;
+        state->editor.currentBuffer.buffer->numCellRows = state->editor.bounds.height / state->font->charHeight;
 
 #ifdef RELEASE
         i32 monitorRefreshRate = GetMonitorRefreshRate(GetCurrentMonitor());
@@ -93,17 +100,6 @@ void run(Arena* arena, AppState* state)
     {
         state->debugView.usedCapacity = ((f32)arena->usedCapacity / arena->capacity) * 100;
         state->debugView.capacity = arena->capacity;
-
-        if (state->debugView.isDebugViewEnabled) {
-            f32 offset = 500.f;
-            state->editor.bounds.x = offset;
-            state->editor.bounds.width = GetScreenWidth() - offset;
-            state->debugView.bounds.width = offset;
-            state->debugView.bounds.height = GetScreenHeight();
-        } else {
-            state->editor.bounds.x = 0.f;
-            state->editor.bounds.width = GetScreenWidth();
-        }
     }
 #endif
 

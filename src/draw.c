@@ -36,11 +36,8 @@ void drawBuffer(Rectangle bounds, Buffer* b, AppFont* font, Color textColor, Col
     }
 
     for (i32 r = b->scrollOffset.y; r < b->length && r < b->numCellRows + b->scrollOffset.y; r++) {
-        for (i32 c = b->scrollOffset.x; c < b->lines[r]->length && c < b->numCellCols + b->scrollOffset.x;
-             c++) {
-            Vector2 curPos = {
-                (c - b->scrollOffset.x) * font->charWidth + bounds.x,
-                (r - b->scrollOffset.y) * font->charHeight + bounds.y};
+        for (i32 c = b->scrollOffset.x; c < b->lines[r]->length && c < b->numCellCols + b->scrollOffset.x; c++) {
+            Vector2 curPos = {(c - b->scrollOffset.x) * font->charWidth + bounds.x, (r - b->scrollOffset.y) * font->charHeight + bounds.y};
 
             i32 codepointByteCount = 0;
             char character = b->lines[r]->characters[c];
@@ -70,65 +67,55 @@ void draw(AppState* state)
         // state->color.border);
 
         // editor
-        drawBuffer(
-            state->editor.bounds,
-            state->editor.currentBuffer.buffer,
-            state->font,
-            state->color.foreground,
-            state->color.cursor);
+        Rectangle editorBounds =
+            (Rectangle){state->editor.bounds.x, state->editor.bounds.y, state->editor.bounds.width, state->editor.bounds.height - state->font->charHeight};
+        drawBuffer(editorBounds, state->editor.currentBuffer.buffer, state->font, state->color.foreground, state->color.cursor);
 
         // status line
-        DrawRectangleRec(state->editor.statusLine.bounds, state->color.statusLineBackGround);
+        {
+            Rectangle statusLineBounds =
+                (Rectangle){state->editor.bounds.x, GetScreenHeight() - state->font->charHeight, state->editor.bounds.width, state->font->charHeight};
+            DrawRectangleRec(statusLineBounds, state->color.statusLineBackGround);
 
-        if (state->currentMode == EDIT) {
             f32 curx = state->editor.bounds.x;
-            f32 cury = state->editor.statusLine.bounds.y;
-            Line* fileName = state->editor.currentBuffer.fileName;
-            Buffer* currentBuffer = state->editor.currentBuffer.buffer;
+            f32 cury = editorBounds.height + statusLineBounds.height;
+            if (state->currentMode == EDIT) {
+                Line* fileName = state->editor.currentBuffer.fileName;
+                Buffer* currentBuffer = state->editor.currentBuffer.buffer;
 
-            drawLine(fileName, state->font, state->color.statusLineForeGround, (Vector2){curx, cury});
-            curx += (fileName->length + 1) * state->font->charWidth;
+                drawLine(fileName, state->font, state->color.statusLineForeGround, (Vector2){curx, cury});
+                curx += (fileName->length + 1) * state->font->charWidth;
 
-            char str[128];
-            snprintf(
-                str,
-                sizeof(str),
-                "%dL %dC",
-                (i32)currentBuffer->cursorPosition.y + 1,
-                (i32)currentBuffer->cursorPosition.x + 1);
-            drawString(
-                str, strlen(str), state->font, state->color.statusLineForeGround, (Vector2){curx, cury});
-            curx += (1 + strlen(str)) * state->font->charWidth;
+                char str[128];
+                snprintf(str, sizeof(str), "%dL %dC", (i32)currentBuffer->cursorPosition.y + 1, (i32)currentBuffer->cursorPosition.x + 1);
+                drawString(str, strlen(str), state->font, state->color.statusLineForeGround, (Vector2){curx, cury});
+                curx += (1 + strlen(str)) * state->font->charWidth;
 
-            if (currentBuffer->isDirty && !currentBuffer->isScratch) {
-                f32 dirtyIndicatorOffsetY = state->editor.statusLine.bounds.y + state->font->charHeight / 2;
-                DrawCircleV((Vector2){curx, dirtyIndicatorOffsetY}, 2.f, state->color.statusLineForeGround);
+                if (currentBuffer->isDirty && !currentBuffer->isScratch) {
+                    f32 dirtyIndicatorOffsetY = state->editor.statusLine.bounds.y + state->font->charHeight / 2;
+                    DrawCircleV((Vector2){curx, dirtyIndicatorOffsetY}, 2.f, state->color.statusLineForeGround);
+                }
             }
-        }
 
-        if (state->currentMode == OPEN_FILE) {
-            char* str = "file: ";
-            drawString(
-                str,
-                strlen(str),
-                state->font,
-                state->color.statusLineForeGround,
-                (Vector2){state->editor.statusLine.bounds.x, state->editor.statusLine.bounds.y});
+            if (state->currentMode == OPEN_FILE) {
+                char* str = "file: ";
+                drawString(str, strlen(str), state->font, state->color.statusLineForeGround, (Vector2){state->editor.bounds.x, cury});
 
-            drawBuffer(
-                state->editor.bounds,
-                state->editor.statusLine.statusLineInput,
-                state->font,
-                state->color.statusLineForeGround,
-                state->color.statusLineCursor);
+                Rectangle fileDialogBounds = (Rectangle){
+                    .x = state->editor.bounds.x + strlen(str) * state->font->charWidth,
+                    .y = cury,
+                    .width = state->editor.bounds.width,
+                    .height = state->font->charHeight};
+                drawBuffer(
+                    fileDialogBounds, state->editor.statusLine.statusLineInput, state->font, state->color.statusLineForeGround, state->color.statusLineCursor);
+            }
         }
 
 #ifdef DEBUG
         // debug view
         if (state->debugView.isDebugViewEnabled) {
             Vector2 start = {state->debugView.bounds.width, 0};
-            Vector2 end = {
-                state->debugView.bounds.width, state->debugView.bounds.height - state->font->charHeight};
+            Vector2 end = {state->debugView.bounds.width, state->debugView.bounds.height};
             DrawLineEx(start, end, 2.f, state->color.foreground);
 
             char str[128];

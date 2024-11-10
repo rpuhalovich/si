@@ -12,6 +12,13 @@ i32 main()
     SetExitKey(0);
     SetTextureFilter(GetFontDefault().texture, TEXTURE_FILTER_POINT);
 
+    SetWindowMinSize(400, 400);
+    // RLAPI void SetWindowMaxSize(int width, int height);               // Set window maximum dimensions (for FLAG_WINDOW_RESIZABLE)
+    // RLAPI void SetWindowSize(int width, int height);                  // Set window dimensions
+
+    // use this to set callback
+    void* windowhandle = GetWindowHandle();
+
     Arena* arena = initArena(MEGABYTES(16));
     AppState* state = initState(arena);
 
