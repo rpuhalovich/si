@@ -57,31 +57,44 @@ void drawBuffer(Rectangle bounds, Buffer* b, AppFont* font, Color textColor, Col
     }
 }
 
-void draw(AppState* state)
+#if 0
+void drawButton(Rectangle bounds, Line* label)
+{
+    Vector2 mouse = GetMousePosition();
+    if (CheckCollisionPointRec(mouse, timeline_boundary)) {
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            float t = (mouse.x - timeline_boundary.x)/timeline_boundary.width;
+            SeekMusicStream(track->music, t*len);
+        }
+    }
+}
+#endif
+
+void drawApp(AppState* state)
 {
     ClearBackground(state->color.background);
 
     // editor view
     {
-        // DrawRectangleLinesEx(RectangleWiden(state->editor.currentBuffer.buffer->bounds, 8.f), 2.0f,
+        // DrawRectangleLinesEx(RectangleWiden(state->editorView.currentBuffer.buffer->bounds, 8.f), 2.0f,
         // state->color.border);
 
         // editor
-        Rectangle editorBounds =
-            (Rectangle){state->editor.bounds.x, state->editor.bounds.y, state->editor.bounds.width, state->editor.bounds.height - state->font->charHeight};
-        drawBuffer(editorBounds, state->editor.currentBuffer.buffer, state->font, state->color.foreground, state->color.cursor);
+        Rectangle editorBounds = (Rectangle){
+            state->editorView.bounds.x, state->editorView.bounds.y, state->editorView.bounds.width, state->editorView.bounds.height - state->font->charHeight};
+        drawBuffer(editorBounds, state->editorView.currentBuffer.buffer, state->font, state->color.foreground, state->color.cursor);
 
         // status line
         {
             Rectangle statusLineBounds =
-                (Rectangle){state->editor.bounds.x, GetScreenHeight() - state->font->charHeight, state->editor.bounds.width, state->font->charHeight};
+                (Rectangle){state->editorView.bounds.x, GetScreenHeight() - state->font->charHeight, state->editorView.bounds.width, state->font->charHeight};
             DrawRectangleRec(statusLineBounds, state->color.statusLineBackGround);
 
-            f32 curx = state->editor.bounds.x;
+            f32 curx = state->editorView.bounds.x;
             f32 cury = editorBounds.height + statusLineBounds.height;
-            if (state->currentMode == EDIT) {
-                Line* fileName = state->editor.currentBuffer.fileName;
-                Buffer* currentBuffer = state->editor.currentBuffer.buffer;
+            if (state->editorView.currentEditMode == EDITOR_MODE_EDIT) {
+                Line* fileName = state->editorView.currentBuffer.fileName;
+                Buffer* currentBuffer = state->editorView.currentBuffer.buffer;
 
                 drawLine(fileName, state->font, state->color.statusLineForeGround, (Vector2){curx, cury});
                 curx += (fileName->length + 1) * state->font->charWidth;
@@ -92,21 +105,21 @@ void draw(AppState* state)
                 curx += (1 + strlen(str)) * state->font->charWidth;
 
                 if (currentBuffer->isDirty && !currentBuffer->isScratch) {
-                    f32 dirtyIndicatorOffsetY = state->editor.statusLine.bounds.y + state->font->charHeight / 2;
+                    f32 dirtyIndicatorOffsetY = state->editorView.statusLine.bounds.y + state->font->charHeight / 2;
                     DrawCircleV((Vector2){curx, dirtyIndicatorOffsetY}, 2.f, state->color.statusLineForeGround);
                 }
             }
 
-            if (state->currentMode == OPEN_FILE) {
+            if (state->editorView.currentEditMode == EDITOR_MODE_OPEN_FILE) {
                 char* str = "file: ";
-                drawString(str, strlen(str), state->font, state->color.statusLineForeGround, (Vector2){state->editor.bounds.x, cury});
+                drawString(str, strlen(str), state->font, state->color.statusLineForeGround, (Vector2){state->editorView.bounds.x, cury});
 
                 Rectangle fileDialogBounds = (Rectangle){
-                    .x = state->editor.bounds.x + strlen(str) * state->font->charWidth,
+                    .x = state->editorView.bounds.x + strlen(str) * state->font->charWidth,
                     .y = cury,
-                    .width = state->editor.bounds.width,
+                    .width = state->editorView.bounds.width,
                     .height = state->font->charHeight};
-                drawBuffer(fileDialogBounds, state->editor.statusLine.statusLineInput, state->font, state->color.statusLineForeGround, state->color.cursor);
+                drawBuffer(fileDialogBounds, state->editorView.statusLine.statusLineInput, state->font, state->color.statusLineForeGround, state->color.cursor);
             }
         }
 
@@ -136,5 +149,19 @@ void draw(AppState* state)
             drawStringbg(str, strlen(str), state->font, WHITE, BLACK, pos);
         }
 #endif
+    }
+}
+
+void drawComponentCanvas(AppState* state)
+{
+    ClearBackground(state->color.background);
+}
+
+void draw(AppState* state)
+{
+    if (state->canvasView.isCanvasViewEnabled) {
+        drawComponentCanvas(state);
+    } else {
+        drawApp(state);
     }
 }

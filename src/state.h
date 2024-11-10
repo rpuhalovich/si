@@ -8,9 +8,14 @@
 #include "types.h"
 
 typedef enum {
-    EDIT,
-    OPEN_FILE
-} Mode;
+    EDITOR_MODE_EDIT,
+    EDITOR_MODE_OPEN_FILE
+} EditorMode;
+
+typedef enum {
+    APP_MODE_APP,
+    APP_MODE_COMPONENTCANVAS
+} AppView;
 
 typedef struct {
     Font font;
@@ -39,16 +44,9 @@ typedef struct {
             Buffer* buffer;
         } currentBuffer;
 
+        EditorMode currentEditMode;
         Rectangle bounds;
-    } editor;
-
-    ColorScheme color;
-
-    Mode currentMode;
-
-    AppFont* font;
-
-    i32 currentTargetFps;
+    } editorView;
 
 #ifdef DEBUG
     struct {
@@ -58,7 +56,19 @@ typedef struct {
 
         Rectangle bounds;
     } debugView;
+
+    struct {
+        bool isCanvasViewEnabled;
+    } canvasView;
 #endif
+
+    AppView currentAppView;
+
+    ColorScheme color;
+
+    AppFont* font;
+
+    i32 currentTargetFps;
 } AppState;
 
 #endif // STATE_H

@@ -28,7 +28,7 @@ AppState* initState(Arena* arena)
         f32 fontResolutionScale = 4.0f;
 
         state->font = allocate(arena, sizeof(AppFont));
-        state->font->font = LoadFontEx("res/JetBrainsMonoNL-Regular.ttf", 20 * fontResolutionScale, 0, 250);
+        state->font->font = LoadFontEx("res/JetBrainsMonoNL-Regular.ttf", 16 * fontResolutionScale, 0, 250);
         state->font->size = state->font->font.baseSize / fontResolutionScale;
         state->font->spacing = 1.0f;
         state->font->textLineSpacing = 1;
@@ -43,15 +43,15 @@ AppState* initState(Arena* arena)
     {
         Buffer* b = newBuffer(arena);
         b->isScratch = true;
-        state->editor.currentBuffer.buffer = b;
-        state->editor.currentBuffer.buffer->isActive = true;
-        state->editor.currentBuffer.fileName = newLine(arena);
+        state->editorView.currentBuffer.buffer = b;
+        state->editorView.currentBuffer.buffer->isActive = true;
+        state->editorView.currentBuffer.fileName = newLine(arena);
         char* scratchName = "[SCRATCH]";
-        insertString(arena, state->editor.currentBuffer.fileName, scratchName, strlen(scratchName), 0);
+        insertString(arena, state->editorView.currentBuffer.fileName, scratchName, strlen(scratchName), 0);
 
-        state->editor.statusLine.statusLineInput = newBuffer(arena);
+        state->editorView.statusLine.statusLineInput = newBuffer(arena);
 
-        state->editor.bounds = (Rectangle){.x = 0, .y = 0, .width = GetScreenWidth(), .height = GetScreenHeight()};
+        state->editorView.bounds = (Rectangle){.x = 0, .y = 0, .width = GetScreenWidth(), .height = GetScreenHeight()};
     }
 
     return state;
@@ -61,30 +61,30 @@ void run(Arena* arena, AppState* state)
 {
     // window resize
     {
-        state->editor.bounds = (Rectangle){.x = 0, .y = 0, .width = GetScreenWidth(), .height = GetScreenHeight() - state->font->charHeight};
+        state->editorView.bounds = (Rectangle){.x = 0, .y = 0, .width = GetScreenWidth(), .height = GetScreenHeight() - state->font->charHeight};
 
 #ifdef DEBUG
         if (state->debugView.isDebugViewEnabled) {
             f32 offset = 500.f;
 
-            state->editor.bounds.x = offset;
-            state->editor.bounds.width = GetScreenWidth() - offset;
+            state->editorView.bounds.x = offset;
+            state->editorView.bounds.width = GetScreenWidth() - offset;
             state->debugView.bounds.width = offset;
             state->debugView.bounds.height = GetScreenHeight();
         } else {
-            state->editor.bounds.x = 0.f;
-            state->editor.bounds.width = GetScreenWidth();
+            state->editorView.bounds.x = 0.f;
+            state->editorView.bounds.width = GetScreenWidth();
         }
 #endif
 
-        state->editor.currentBuffer.buffer->numCellCols = state->editor.bounds.width / state->font->charWidth - 1;
-        state->editor.currentBuffer.buffer->numCellRows = state->editor.bounds.height / state->font->charHeight;
+        state->editorView.currentBuffer.buffer->numCellCols = state->editorView.bounds.width / state->font->charWidth - 1;
+        state->editorView.currentBuffer.buffer->numCellRows = state->editorView.bounds.height / state->font->charHeight;
 
-        state->editor.statusLine.statusLineInput->numCellRows = 1;
-        state->editor.statusLine.statusLineInput->numCellCols = state->editor.currentBuffer.buffer->numCellCols;
+        state->editorView.statusLine.statusLineInput->numCellRows = 1;
+        state->editorView.statusLine.statusLineInput->numCellCols = state->editorView.currentBuffer.buffer->numCellCols;
 
-        state->editor.currentBuffer.buffer->numCellCols = state->editor.bounds.width / state->font->charWidth - 1;
-        state->editor.currentBuffer.buffer->numCellRows = state->editor.bounds.height / state->font->charHeight;
+        state->editorView.currentBuffer.buffer->numCellCols = state->editorView.bounds.width / state->font->charWidth - 1;
+        state->editorView.currentBuffer.buffer->numCellRows = state->editorView.bounds.height / state->font->charHeight;
 
 #ifdef RELEASE
         i32 monitorRefreshRate = GetMonitorRefreshRate(GetCurrentMonitor());
@@ -106,10 +106,10 @@ void run(Arena* arena, AppState* state)
     // input
     {
         Buffer* b;
-        if (state->currentMode == EDIT)
-            b = state->editor.currentBuffer.buffer;
-        if (state->currentMode == OPEN_FILE)
-            b = state->editor.statusLine.statusLineInput;
+        if (state->editorView.currentEditMode == EDITOR_MODE_EDIT)
+            b = state->editorView.currentBuffer.buffer;
+        if (state->editorView.currentEditMode == EDITOR_MODE_OPEN_FILE)
+            b = state->editorView.statusLine.statusLineInput;
 
         if (IsKeyPressed(KEY_RIGHT) || IsKeyPressedRepeat(KEY_RIGHT))
             moveCursorRight(b);
@@ -144,9 +144,9 @@ void run(Arena* arena, AppState* state)
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_A))
             moveCursorBeginningOfLine(b);
 
-        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S) && state->currentMode == EDIT) {
+        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S) && state->editorView.currentEditMode == EDITOR_MODE_EDIT) {
             zeroUnusedCapacity(b);
-            write(b, state->editor.currentBuffer.fileName);
+            write(b, state->editorView.currentBuffer.fileName);
             b->isDirty = false;
         }
 
@@ -159,31 +159,31 @@ void run(Arena* arena, AppState* state)
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O)) {
             b->isActive = false;
 
-            clearLine(state->editor.statusLine.statusLineInput->lines[0]);
-            state->editor.statusLine.statusLineInput->cursorPosition.x = 0;
-            state->editor.statusLine.statusLineInput->isActive = true;
-            state->currentMode = OPEN_FILE;
+            clearLine(state->editorView.statusLine.statusLineInput->lines[0]);
+            state->editorView.statusLine.statusLineInput->cursorPosition.x = 0;
+            state->editorView.statusLine.statusLineInput->isActive = true;
+            state->editorView.currentEditMode = EDITOR_MODE_OPEN_FILE;
         }
 
         if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressedRepeat(KEY_BACKSPACE))
             backspace(arena, b);
 
         if (IsKeyPressed(KEY_ENTER) || IsKeyPressedRepeat(KEY_ENTER)) {
-            if (state->currentMode == EDIT)
+            if (state->editorView.currentEditMode == EDITOR_MODE_EDIT)
                 enter(arena, b);
 
-            if (state->currentMode == OPEN_FILE) {
-                state->currentMode = EDIT;
+            if (state->editorView.currentEditMode == EDITOR_MODE_OPEN_FILE) {
+                state->editorView.currentEditMode = EDITOR_MODE_EDIT;
                 b->isActive = false;
 
-                Line* fileName = state->editor.statusLine.statusLineInput->lines[0];
+                Line* fileName = state->editorView.statusLine.statusLineInput->lines[0];
                 Buffer* newBuffer = load(arena, fileName);
                 if (newBuffer != NULL) {
-                    state->editor.currentBuffer.buffer = newBuffer;
-                    state->editor.currentBuffer.fileName = fileName;
+                    state->editorView.currentBuffer.buffer = newBuffer;
+                    state->editorView.currentBuffer.fileName = fileName;
                 }
 
-                state->editor.currentBuffer.buffer->isActive = true;
+                state->editorView.currentBuffer.buffer->isActive = true;
             }
         }
 
@@ -195,13 +195,16 @@ void run(Arena* arena, AppState* state)
         if (IsKeyPressed(KEY_F9))
             state->debugView.isDebugViewEnabled = !state->debugView.isDebugViewEnabled;
 
+        if (IsKeyPressed(KEY_F6))
+            state->canvasView.isCanvasViewEnabled = !state->canvasView.isCanvasViewEnabled;
+
         if (IsKeyPressed(KEY_F5)) {
             char str[128];
             snprintf(str, sizeof(str), "%s/tmp", getenv("HOME"));
             Line* fileName = newLines(arena, str);
-            state->editor.currentBuffer.buffer = load(arena, fileName);
-            state->editor.currentBuffer.fileName = fileName;
-            state->editor.currentBuffer.buffer->isActive = true;
+            state->editorView.currentBuffer.buffer = load(arena, fileName);
+            state->editorView.currentBuffer.fileName = fileName;
+            state->editorView.currentBuffer.buffer->isActive = true;
         }
 #endif
     }

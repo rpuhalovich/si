@@ -18,4 +18,8 @@ void drawBuffer(Rectangle bounds, Buffer* b, AppFont* font, Color textColor, Col
 
 void draw(AppState* state);
 
+void drawApp(AppState* state);
+
+void drawComponentCanvas(AppState* state);
+
 #endif // DRAW_H
