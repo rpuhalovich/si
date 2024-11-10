@@ -5,7 +5,9 @@
 #include "draw.h"
 #include "logic.h"
 
-i32 main()
+// TODO: make this usable on web
+
+i32 main(void)
 {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_HIGHDPI | FLAG_MSAA_4X_HINT);
     InitWindow(1280, 720, "");
@@ -17,7 +19,7 @@ i32 main()
     // RLAPI void SetWindowSize(int width, int height);                  // Set window dimensions
 
     // use this to set callback
-    void* windowhandle = GetWindowHandle();
+    // void* windowhandle = GetWindowHandle();
 
     Arena* arena = initArena(MEGABYTES(16));
     AppState* state = initState(arena);

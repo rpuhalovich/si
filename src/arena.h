@@ -16,8 +16,8 @@
 // clang-format on
 
 typedef struct {
-    void* memory;
-    void* ptr;
+    u8* memory;
+    u8* ptr;
     u64 capacity;
     u64 usedCapacity;
 } Arena;

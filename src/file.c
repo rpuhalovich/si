@@ -35,7 +35,7 @@ Buffer* load(Arena* arena, Line* filePath)
     return b;
 }
 
-void write(Arena* arena, Buffer* b, Line* filePath)
+void write(Buffer* b, Line* filePath)
 {
     if (!b->isDirty || b->isScratch)
         return;

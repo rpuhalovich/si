@@ -146,14 +146,14 @@ void run(Arena* arena, AppState* state)
 
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S) && state->currentMode == EDIT) {
             zeroUnusedCapacity(b);
-            write(arena, b, state->editor.currentBuffer.fileName);
+            write(b, state->editor.currentBuffer.fileName);
             b->isDirty = false;
         }
 
         if (IsKeyPressed(KEY_TAB) || IsKeyPressedRepeat(KEY_TAB))
             insertTab(arena, b);
 
-        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_K) || IsKeyPressedRepeat(KEY_K))
+        if ((IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_K)) || IsKeyPressedRepeat(KEY_K))
             killl(b);
 
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O)) {
