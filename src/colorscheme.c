@@ -12,7 +12,6 @@ ColorScheme GetTheme(ColorSchemeVariant variant)
             c.border = BEIGE;
             c.statusLineBackGround = BEIGE;
             c.statusLineForeGround = BLACK;
-            c.statusLineCursor = GRAY;
             return c;
         } break;
 

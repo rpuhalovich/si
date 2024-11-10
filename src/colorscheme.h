@@ -17,7 +17,6 @@ typedef struct {
     Color border;
     Color statusLineBackGround;
     Color statusLineForeGround;
-    Color statusLineCursor;
 } ColorScheme;
 
 ColorScheme GetTheme(ColorSchemeVariant variant);

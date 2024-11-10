@@ -106,8 +106,7 @@ void draw(AppState* state)
                     .y = cury,
                     .width = state->editor.bounds.width,
                     .height = state->font->charHeight};
-                drawBuffer(
-                    fileDialogBounds, state->editor.statusLine.statusLineInput, state->font, state->color.statusLineForeGround, state->color.statusLineCursor);
+                drawBuffer(fileDialogBounds, state->editor.statusLine.statusLineInput, state->font, state->color.statusLineForeGround, state->color.cursor);
             }
         }
 
