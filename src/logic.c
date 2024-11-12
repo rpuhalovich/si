@@ -187,8 +187,9 @@ void run(Arena* arena, AppState* state)
         }
 
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O)) {
-            if (b)
+            if (b) {
                 b->isActive = false;
+            }
 
             clearLine(state->editorView.statusLine.statusLineInput->lines[0]);
             state->editorView.statusLine.statusLineInput->cursorPosition.x = 0;
