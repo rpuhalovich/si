@@ -30,7 +30,8 @@ void moveCursorDown(Buffer* b)
     i32 len = b->lines[curline]->length;
     b->cursorPosition.x = fmin(b->cursorPosition.x, len);
 
-    if (b->cursorPosition.y > b->numCellRows - 1 + b->scrollOffset.y && b->cursorPosition.y < b->length)
+    if (b->cursorPosition.y > b->numCellRows - 1 + b->scrollOffset.y &&
+        b->cursorPosition.y < b->length)
         b->scrollOffset.y++;
 }
 
@@ -62,7 +63,8 @@ void moveCursorRight(Buffer* b)
     if (b->cursorPosition.x < b->lines[curline]->length)
         b->cursorPosition.x++;
 
-    if (b->cursorPosition.x > b->numCellCols + b->scrollOffset.x && b->cursorPosition.x <= b->lines[curline]->length)
+    if (b->cursorPosition.x > b->numCellCols + b->scrollOffset.x &&
+        b->cursorPosition.x <= b->lines[curline]->length)
         b->scrollOffset.x++;
 }
 
@@ -106,7 +108,12 @@ void backspace(Arena* arena, Buffer* b)
     if (column <= 0 && line > 0) {
         i32 oldlen = b->lines[line - 1]->length;
 
-        insertString(arena, b->lines[line - 1], b->lines[line]->characters, b->lines[line]->length, b->lines[line - 1]->length);
+        insertString(
+            arena,
+            b->lines[line - 1],
+            b->lines[line]->characters,
+            b->lines[line]->length,
+            b->lines[line - 1]->length);
 
         for (i32 i = line; i < b->length - 1; i++)
             b->lines[i] = b->lines[i + 1];
@@ -160,8 +167,11 @@ void enter(Arena* arena, Buffer* b)
         b->lines[curLine + 1]->length++;
 
         if (b->lines[curLine + 1]->length > b->lines[curLine + 1]->capacity) {
-            b->lines[curLine + 1]->characters =
-                reallocate(arena, b->lines[curLine + 1]->characters, b->lines[curLine + 1]->capacity, b->lines[curLine + 1]->capacity * 2);
+            b->lines[curLine + 1]->characters = reallocate(
+                arena,
+                b->lines[curLine + 1]->characters,
+                b->lines[curLine + 1]->capacity,
+                b->lines[curLine + 1]->capacity * 2);
 
             b->lines[curLine + 1]->capacity *= 2;
         }

@@ -7,7 +7,8 @@ void drawLine(Line* l, AppFont* font, Color color, Vector2 pos)
 
 void drawStringbg(char* str, i32 strLen, AppFont* font, Color color, Color bg, Vector2 pos)
 {
-    Rectangle r = {.x = pos.x, .y = pos.y, .width = strLen * font->charWidth, .height = font->charHeight};
+    Rectangle r = {
+        .x = pos.x, .y = pos.y, .width = strLen * font->charWidth, .height = font->charHeight};
     DrawRectangleRec(r, bg);
     drawString(str, strLen, font, color, pos);
 }
@@ -24,7 +25,8 @@ void drawString(char* str, i32 strLen, AppFont* font, Color color, Vector2 pos)
     }
 }
 
-void drawBuffer(Rectangle bounds, Buffer* b, AppFont* font, Color textColor, Color cursorColor)
+void drawBuffer(
+    Rectangle bounds, Buffer* restrict b, AppFont* font, Color textColor, Color cursorColor)
 {
     if (b->isActive) {
         Rectangle rec = {
@@ -36,8 +38,12 @@ void drawBuffer(Rectangle bounds, Buffer* b, AppFont* font, Color textColor, Col
     }
 
     for (i32 r = b->scrollOffset.y; r < b->length && r < b->numCellRows + b->scrollOffset.y; r++) {
-        for (i32 c = b->scrollOffset.x; c < b->lines[r]->length && c < b->numCellCols + b->scrollOffset.x; c++) {
-            Vector2 curPos = {(c - b->scrollOffset.x) * font->charWidth + bounds.x, (r - b->scrollOffset.y) * font->charHeight + bounds.y};
+        i32 curlen = b->lines[r]->length;
+        i32 scrollOffsetLeft = b->numCellCols + b->scrollOffset.x;
+        for (i32 c = b->scrollOffset.x; c < curlen && c < scrollOffsetLeft; c++) {
+            Vector2 curPos = {
+                (c - b->scrollOffset.x) * font->charWidth + bounds.x,
+                (r - b->scrollOffset.y) * font->charHeight + bounds.y};
 
             i32 codepointByteCount = 0;
             char character = b->lines[r]->characters[c];
@@ -81,13 +87,24 @@ void drawApp(AppState* state)
 
         // editor
         Rectangle editorBounds = (Rectangle){
-            state->editorView.bounds.x, state->editorView.bounds.y, state->editorView.bounds.width, state->editorView.bounds.height - state->font->charHeight};
-        drawBuffer(editorBounds, state->editorView.currentBuffer.buffer, state->font, state->color.foreground, state->color.cursor);
+            state->editorView.bounds.x,
+            state->editorView.bounds.y,
+            state->editorView.bounds.width,
+            state->editorView.bounds.height - state->font->charHeight};
+        drawBuffer(
+            editorBounds,
+            state->editorView.currentBuffer.buffer,
+            state->font,
+            state->color.foreground,
+            state->color.cursor);
 
         // status line
         {
-            Rectangle statusLineBounds =
-                (Rectangle){state->editorView.bounds.x, GetScreenHeight() - state->font->charHeight, state->editorView.bounds.width, state->font->charHeight};
+            Rectangle statusLineBounds = (Rectangle){
+                state->editorView.bounds.x,
+                GetScreenHeight() - state->font->charHeight,
+                state->editorView.bounds.width,
+                state->font->charHeight};
             DrawRectangleRec(statusLineBounds, state->color.statusLineBackGround);
 
             f32 curx = state->editorView.bounds.x;
@@ -96,30 +113,58 @@ void drawApp(AppState* state)
                 Line* fileName = state->editorView.currentBuffer.fileName;
                 Buffer* currentBuffer = state->editorView.currentBuffer.buffer;
 
-                drawLine(fileName, state->font, state->color.statusLineForeGround, (Vector2){curx, cury});
+                drawLine(
+                    fileName,
+                    state->font,
+                    state->color.statusLineForeGround,
+                    (Vector2){curx, cury});
                 curx += (fileName->length + 1) * state->font->charWidth;
 
                 char str[128];
-                snprintf(str, sizeof(str), "%dL %dC", (i32)currentBuffer->cursorPosition.y + 1, (i32)currentBuffer->cursorPosition.x + 1);
-                drawString(str, strlen(str), state->font, state->color.statusLineForeGround, (Vector2){curx, cury});
+                snprintf(
+                    str,
+                    sizeof(str),
+                    "%dL %dC",
+                    (i32)currentBuffer->cursorPosition.y + 1,
+                    (i32)currentBuffer->cursorPosition.x + 1);
+                drawString(
+                    str,
+                    strlen(str),
+                    state->font,
+                    state->color.statusLineForeGround,
+                    (Vector2){curx, cury});
                 curx += (1 + strlen(str)) * state->font->charWidth;
 
                 if (currentBuffer->isDirty && !currentBuffer->isScratch) {
-                    f32 dirtyIndicatorOffsetY = state->editorView.statusLine.bounds.y + state->font->charHeight / 2;
-                    DrawCircleV((Vector2){curx, dirtyIndicatorOffsetY}, 2.f, state->color.statusLineForeGround);
+                    f32 dirtyIndicatorOffsetY =
+                        state->editorView.statusLine.bounds.y + state->font->charHeight / 2;
+                    DrawCircleV(
+                        (Vector2){curx, dirtyIndicatorOffsetY},
+                        2.f,
+                        state->color.statusLineForeGround);
                 }
             }
 
             if (state->editorView.currentEditMode == EDITOR_MODE_OPEN_FILE) {
                 char* str = "file: ";
-                drawString(str, strlen(str), state->font, state->color.statusLineForeGround, (Vector2){state->editorView.bounds.x, cury});
+                drawString(
+                    str,
+                    strlen(str),
+                    state->font,
+                    state->color.statusLineForeGround,
+                    (Vector2){state->editorView.bounds.x, cury});
 
                 Rectangle fileDialogBounds = (Rectangle){
                     .x = state->editorView.bounds.x + strlen(str) * state->font->charWidth,
                     .y = cury,
                     .width = state->editorView.bounds.width,
                     .height = state->font->charHeight};
-                drawBuffer(fileDialogBounds, state->editorView.statusLine.statusLineInput, state->font, state->color.statusLineForeGround, state->color.cursor);
+                drawBuffer(
+                    fileDialogBounds,
+                    state->editorView.statusLine.statusLineInput,
+                    state->font,
+                    state->color.statusLineForeGround,
+                    state->color.cursor);
             }
         }
 
@@ -145,7 +190,11 @@ void drawApp(AppState* state)
             drawStringbg(str, strlen(str), state->font, WHITE, BLACK, pos);
             pos.y += state->font->charHeight;
 
-            snprintf(str, sizeof(str), "ARENA CAPACITY PERCENT USED: %f%%", state->debugView.usedCapacity);
+            snprintf(
+                str,
+                sizeof(str),
+                "ARENA CAPACITY PERCENT USED: %f%%",
+                state->debugView.usedCapacity);
             drawStringbg(str, strlen(str), state->font, WHITE, BLACK, pos);
         }
 #endif

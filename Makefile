@@ -2,8 +2,9 @@ build: makefile
 	cmake --build build
 
 makefile:
-	cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
-	ctags -R .
+	cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug
+	cp build/compile_commands.json compile_commands.json
+	ctags -R src
 
 xcode:
 	cmake -S . -B xcode -GXcode

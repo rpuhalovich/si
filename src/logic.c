@@ -22,19 +22,22 @@ AppState* initState(Arena* arena)
 
     // TODO: https://rodneylab.com/raylib-sdf-fonts/
     // TODO: https://devcodef1.com/news/1401333/raylib-freetype-font-rendering
+    // TODO: use this font for menus https://fonts.google.com/specimen/Inter
     // FIXME: raylibs font rendering is slow and shit
     // font
     {
         f32 fontResolutionScale = 4.0f;
 
         state->font = allocate(arena, sizeof(AppFont));
-        state->font->font = LoadFontEx("res/JetBrainsMonoNL-Regular.ttf", 16 * fontResolutionScale, 0, 250);
+        state->font->font =
+            LoadFontEx("res/JetBrainsMonoNL-Regular.ttf", 24 * fontResolutionScale, 0, 250);
         state->font->size = state->font->font.baseSize / fontResolutionScale;
         state->font->spacing = 1.0f;
         state->font->textLineSpacing = 1;
 
         Vector2 dpi = GetWindowScaleDPI();
-        Vector2 monospaceCharDimensions = MeasureTextEx(state->font->font, "x", state->font->size, dpi.x);
+        Vector2 monospaceCharDimensions =
+            MeasureTextEx(state->font->font, "x", state->font->size, dpi.x);
         state->font->charWidth = monospaceCharDimensions.x;
         state->font->charHeight = monospaceCharDimensions.y;
     }
@@ -47,11 +50,13 @@ AppState* initState(Arena* arena)
         state->editorView.currentBuffer.buffer->isActive = true;
         state->editorView.currentBuffer.fileName = newLine(arena);
         char* scratchName = "[SCRATCH]";
-        insertString(arena, state->editorView.currentBuffer.fileName, scratchName, strlen(scratchName), 0);
+        insertString(
+            arena, state->editorView.currentBuffer.fileName, scratchName, strlen(scratchName), 0);
 
         state->editorView.statusLine.statusLineInput = newBuffer(arena);
 
-        state->editorView.bounds = (Rectangle){.x = 0, .y = 0, .width = GetScreenWidth(), .height = GetScreenHeight()};
+        state->editorView.bounds =
+            (Rectangle){.x = 0, .y = 0, .width = GetScreenWidth(), .height = GetScreenHeight()};
     }
 
     return state;
@@ -61,7 +66,11 @@ void run(Arena* arena, AppState* state)
 {
     // window resize
     {
-        state->editorView.bounds = (Rectangle){.x = 0, .y = 0, .width = GetScreenWidth(), .height = GetScreenHeight() - state->font->charHeight};
+        state->editorView.bounds = (Rectangle){
+            .x = 0,
+            .y = 0,
+            .width = GetScreenWidth(),
+            .height = GetScreenHeight() - state->font->charHeight};
 
 #ifdef DEBUG
         if (state->debugView.isDebugViewEnabled) {
@@ -77,14 +86,19 @@ void run(Arena* arena, AppState* state)
         }
 #endif
 
-        state->editorView.currentBuffer.buffer->numCellCols = state->editorView.bounds.width / state->font->charWidth - 1;
-        state->editorView.currentBuffer.buffer->numCellRows = state->editorView.bounds.height / state->font->charHeight;
+        state->editorView.currentBuffer.buffer->numCellCols =
+            state->editorView.bounds.width / state->font->charWidth - 1;
+        state->editorView.currentBuffer.buffer->numCellRows =
+            state->editorView.bounds.height / state->font->charHeight;
 
         state->editorView.statusLine.statusLineInput->numCellRows = 1;
-        state->editorView.statusLine.statusLineInput->numCellCols = state->editorView.currentBuffer.buffer->numCellCols;
+        state->editorView.statusLine.statusLineInput->numCellCols =
+            state->editorView.currentBuffer.buffer->numCellCols;
 
-        state->editorView.currentBuffer.buffer->numCellCols = state->editorView.bounds.width / state->font->charWidth - 1;
-        state->editorView.currentBuffer.buffer->numCellRows = state->editorView.bounds.height / state->font->charHeight;
+        state->editorView.currentBuffer.buffer->numCellCols =
+            state->editorView.bounds.width / state->font->charWidth - 1;
+        state->editorView.currentBuffer.buffer->numCellRows =
+            state->editorView.bounds.height / state->font->charHeight;
 
 #ifdef RELEASE
         i32 monitorRefreshRate = GetMonitorRefreshRate(GetCurrentMonitor());
@@ -105,7 +119,7 @@ void run(Arena* arena, AppState* state)
 
     // input
     {
-        Buffer* b;
+        Buffer* b = NULL;
         if (state->editorView.currentEditMode == EDITOR_MODE_EDIT)
             b = state->editorView.currentBuffer.buffer;
         if (state->editorView.currentEditMode == EDITOR_MODE_OPEN_FILE)
@@ -144,7 +158,8 @@ void run(Arena* arena, AppState* state)
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_A))
             moveCursorBeginningOfLine(b);
 
-        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S) && state->editorView.currentEditMode == EDITOR_MODE_EDIT) {
+        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S) &&
+            state->editorView.currentEditMode == EDITOR_MODE_EDIT) {
             zeroUnusedCapacity(b);
             write(b, state->editorView.currentBuffer.fileName);
             b->isDirty = false;
@@ -157,7 +172,8 @@ void run(Arena* arena, AppState* state)
             killl(b);
 
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O)) {
-            b->isActive = false;
+            if (b)
+                b->isActive = false;
 
             clearLine(state->editorView.statusLine.statusLineInput->lines[0]);
             state->editorView.statusLine.statusLineInput->cursorPosition.x = 0;
@@ -174,7 +190,8 @@ void run(Arena* arena, AppState* state)
 
             if (state->editorView.currentEditMode == EDITOR_MODE_OPEN_FILE) {
                 state->editorView.currentEditMode = EDITOR_MODE_EDIT;
-                b->isActive = false;
+                if (b)
+                    b->isActive = false;
 
                 Line* fileName = state->editorView.statusLine.statusLineInput->lines[0];
                 Buffer* newBuffer = load(arena, fileName);
