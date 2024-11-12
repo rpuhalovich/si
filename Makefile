@@ -13,11 +13,9 @@ release:
 	cmake -S . -B release -DCMAKE_BUILD_TYPE=Release
 	cmake --build release --config Release
 
-format: tidy
+format:
 	find src -iname "*.h" -o -iname "*.c" | xargs clang-format -i --style=file
 
-# https://clang.llvm.org/docs/HowToSetupToolingForLLVM.html
-# https://clang.llvm.org/extra/clang-tidy/
 tidy:
 	find src -iname "*.h" -o -iname "*.c" | xargs clang-tidy
 
