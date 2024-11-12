@@ -20,8 +20,9 @@ Line* newLines(Arena* arena, char* str)
 {
     i32 len = strlen(str);
     i32 capacity = 1;
-    while (len > capacity)
+    while (len > capacity) {
         capacity *= 2;
+    }
     Line* l = newLinec(arena, capacity);
     l->length = len;
     memcpy(l->characters, str, len);
@@ -48,11 +49,13 @@ void insertString(Arena* arena, Line* l, char* str, u32 strlen, i32 column)
 
     i32 originalCapacity = l->capacity;
     l->length = l->length + strlen;
-    while (l->length > l->capacity)
+    while (l->length > l->capacity) {
         l->capacity *= 2;
+    }
 
-    if (originalCapacity < l->capacity)
+    if (originalCapacity < l->capacity) {
         l->characters = reallocate(arena, l->characters, l->capacity, l->capacity);
+    }
 
     memcpy(l->characters + column + strlen, l->characters + column, cutLen);
     memcpy(l->characters + column, str, strlen);
@@ -67,8 +70,9 @@ void typeChar(Arena* arena, Line* l, i32 column, char c)
         l->capacity *= 2;
     }
 
-    for (i32 i = l->length - 1; i > column; i--)
+    for (i32 i = l->length - 1; i > column; i--) {
         l->characters[i] = l->characters[i - 1];
+    }
 
     l->characters[column] = c;
 }

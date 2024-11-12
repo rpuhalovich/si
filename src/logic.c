@@ -120,43 +120,56 @@ void run(Arena* arena, AppState* state)
     // input
     {
         Buffer* b = NULL;
-        if (state->editorView.currentEditMode == EDITOR_MODE_EDIT)
+        if (state->editorView.currentEditMode == EDITOR_MODE_EDIT) {
             b = state->editorView.currentBuffer.buffer;
-        if (state->editorView.currentEditMode == EDITOR_MODE_OPEN_FILE)
+        }
+        if (state->editorView.currentEditMode == EDITOR_MODE_OPEN_FILE) {
             b = state->editorView.statusLine.statusLineInput;
+        }
 
-        if (IsKeyPressed(KEY_RIGHT) || IsKeyPressedRepeat(KEY_RIGHT))
+        if (IsKeyPressed(KEY_RIGHT) || IsKeyPressedRepeat(KEY_RIGHT)) {
             moveCursorRight(b);
+        }
 
-        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_F) || IsKeyPressedRepeat(KEY_F)))
+        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_F) || IsKeyPressedRepeat(KEY_F))) {
             moveCursorRight(b);
+        }
 
-        if (IsKeyPressed(KEY_LEFT) || IsKeyPressedRepeat(KEY_LEFT))
+        if (IsKeyPressed(KEY_LEFT) || IsKeyPressedRepeat(KEY_LEFT)) {
             moveCursorLeft(b);
+        }
 
-        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_B) || IsKeyPressedRepeat(KEY_B)))
+        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_B) || IsKeyPressedRepeat(KEY_B))) {
             moveCursorLeft(b);
+        }
 
-        if (IsKeyPressed(KEY_UP) || IsKeyPressedRepeat(KEY_UP))
+        if (IsKeyPressed(KEY_UP) || IsKeyPressedRepeat(KEY_UP)) {
             moveCursorUp(b);
+        }
 
-        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_P) || IsKeyPressedRepeat(KEY_P)))
+        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_P) || IsKeyPressedRepeat(KEY_P))) {
             moveCursorUp(b);
+        }
 
-        if (IsKeyPressed(KEY_DOWN) || IsKeyPressedRepeat(KEY_DOWN))
+        if (IsKeyPressed(KEY_DOWN) || IsKeyPressedRepeat(KEY_DOWN)) {
             moveCursorDown(b);
+        }
 
-        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_N) || IsKeyPressedRepeat(KEY_N)))
+        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_N) || IsKeyPressedRepeat(KEY_N))) {
             moveCursorDown(b);
+        }
 
-        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_D) || IsKeyPressedRepeat(KEY_D)))
+        if (IsKeyDown(KEY_LEFT_CONTROL) && (IsKeyPressed(KEY_D) || IsKeyPressedRepeat(KEY_D))) {
             deletec(b);
+        }
 
-        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_E))
+        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_E)) {
             moveCursorEndOfLine(b);
+        }
 
-        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_A))
+        if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_A)) {
             moveCursorBeginningOfLine(b);
+        }
 
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S) &&
             state->editorView.currentEditMode == EDITOR_MODE_EDIT) {
@@ -165,15 +178,18 @@ void run(Arena* arena, AppState* state)
             b->isDirty = false;
         }
 
-        if (IsKeyPressed(KEY_TAB) || IsKeyPressedRepeat(KEY_TAB))
+        if (IsKeyPressed(KEY_TAB) || IsKeyPressedRepeat(KEY_TAB)) {
             insertTab(arena, b);
+        }
 
-        if ((IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_K)) || IsKeyPressedRepeat(KEY_K))
+        if ((IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_K)) || IsKeyPressedRepeat(KEY_K)) {
             killl(b);
+        }
 
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_O)) {
-            if (b)
+            if (b) {
                 b->isActive = false;
+            }
 
             clearLine(state->editorView.statusLine.statusLineInput->lines[0]);
             state->editorView.statusLine.statusLineInput->cursorPosition.x = 0;
@@ -181,17 +197,20 @@ void run(Arena* arena, AppState* state)
             state->editorView.currentEditMode = EDITOR_MODE_OPEN_FILE;
         }
 
-        if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressedRepeat(KEY_BACKSPACE))
+        if (IsKeyPressed(KEY_BACKSPACE) || IsKeyPressedRepeat(KEY_BACKSPACE)) {
             backspace(arena, b);
+        }
 
         if (IsKeyPressed(KEY_ENTER) || IsKeyPressedRepeat(KEY_ENTER)) {
-            if (state->editorView.currentEditMode == EDITOR_MODE_EDIT)
+            if (state->editorView.currentEditMode == EDITOR_MODE_EDIT) {
                 enter(arena, b);
+            }
 
             if (state->editorView.currentEditMode == EDITOR_MODE_OPEN_FILE) {
                 state->editorView.currentEditMode = EDITOR_MODE_EDIT;
-                if (b)
+                if (b) {
                     b->isActive = false;
+                }
 
                 Line* fileName = state->editorView.statusLine.statusLineInput->lines[0];
                 Buffer* newBuffer = load(arena, fileName);
@@ -205,15 +224,18 @@ void run(Arena* arena, AppState* state)
         }
 
         char c;
-        while ((c = GetCharPressed()))
+        while ((c = GetCharPressed())) {
             typeCharb(arena, b, c);
+        }
 
 #ifdef DEBUG
-        if (IsKeyPressed(KEY_F9))
+        if (IsKeyPressed(KEY_F9)) {
             state->debugView.isDebugViewEnabled = !state->debugView.isDebugViewEnabled;
+        }
 
-        if (IsKeyPressed(KEY_F6))
+        if (IsKeyPressed(KEY_F6)) {
             state->canvasView.isCanvasViewEnabled = !state->canvasView.isCanvasViewEnabled;
+        }
 
         if (IsKeyPressed(KEY_F5)) {
             char str[128];

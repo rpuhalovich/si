@@ -13,7 +13,7 @@ release:
 	cmake -S . -B release -DCMAKE_BUILD_TYPE=Release
 	cmake --build release --config Release
 
-format:
+format: tidy
 	find src -iname "*.h" -o -iname "*.c" | xargs clang-format -i --style=file
 
 # https://clang.llvm.org/docs/HowToSetupToolingForLLVM.html
@@ -24,5 +24,5 @@ tidy:
 clean:
 	rm -rf build release xcode
 
-.PHONY: format xcode makefile build release clean
+.PHONY: format tidy xcode makefile build release clean
 .SILENT:

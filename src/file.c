@@ -11,8 +11,9 @@
 Buffer* load(Arena* arena, Line* filePath)
 {
     FILE* fp = fopen(filePath->characters, "r");
-    if (fp == NULL)
+    if (fp == NULL) {
         return NULL;
+    }
 
     Buffer* b = newBuffer(arena);
     b->length = 0;
@@ -34,14 +35,16 @@ Buffer* load(Arena* arena, Line* filePath)
 
 void write(Buffer* b, Line* filePath)
 {
-    if (!b || !filePath || !b->isDirty || b->isScratch)
+    if (!b || !filePath || !b->isDirty || b->isScratch) {
         return;
+    }
 
     // FIXME: there's a bug where line pointers are being mutated
 
     FILE* fp = fopen(filePath->characters, "w");
-    if (fp == NULL)
+    if (fp == NULL) {
         return;
+    }
 
     for (i32 i = 0; i < b->length; i++) {
         i32 len = b->lines[i]->length;

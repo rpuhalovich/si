@@ -5,7 +5,7 @@ void drawLine(Line* l, AppFont* font, Color color, Vector2 pos)
     drawString(l->characters, l->length, font, color, pos);
 }
 
-void drawStringbg(char* str, i32 strLen, AppFont* font, Color color, Color bg, Vector2 pos)
+void drawStringbg(const char* str, i32 strLen, AppFont* font, Color color, Color bg, Vector2 pos)
 {
     Rectangle r = {
         .x = pos.x, .y = pos.y, .width = strLen * font->charWidth, .height = font->charHeight};
@@ -13,7 +13,7 @@ void drawStringbg(char* str, i32 strLen, AppFont* font, Color color, Color bg, V
     drawString(str, strLen, font, color, pos);
 }
 
-void drawString(char* str, i32 strLen, AppFont* font, Color color, Vector2 pos)
+void drawString(const char* str, i32 strLen, AppFont* font, Color color, Vector2 pos)
 {
     Vector2 curPos = pos;
     for (i32 i = 0; i < strLen; i++) {
@@ -30,8 +30,8 @@ void drawBuffer(
 {
     if (b->isActive) {
         Rectangle rec = {
-            .x = (b->cursorPosition.x - b->scrollOffset.x) * font->charWidth + bounds.x,
-            .y = (b->cursorPosition.y - b->scrollOffset.y) * font->charHeight + bounds.y,
+            .x = ((b->cursorPosition.x - b->scrollOffset.x) * font->charWidth) + bounds.x,
+            .y = ((b->cursorPosition.y - b->scrollOffset.y) * font->charHeight) + bounds.y,
             .width = font->charWidth,
             .height = font->charHeight};
         DrawRectangleRec(rec, cursorColor);
@@ -42,8 +42,8 @@ void drawBuffer(
         i32 scrollOffsetLeft = b->numCellCols + b->scrollOffset.x;
         for (i32 c = b->scrollOffset.x; c < curlen && c < scrollOffsetLeft; c++) {
             Vector2 curPos = {
-                (c - b->scrollOffset.x) * font->charWidth + bounds.x,
-                (r - b->scrollOffset.y) * font->charHeight + bounds.y};
+                ((c - b->scrollOffset.x) * font->charWidth) + bounds.x,
+                ((r - b->scrollOffset.y) * font->charHeight) + bounds.y};
 
             i32 codepointByteCount = 0;
             char character = b->lines[r]->characters[c];
@@ -62,19 +62,6 @@ void drawBuffer(
         DrawTextCodepoint(font->font, codepoint, curPos, font->size, textColor);
     }
 }
-
-#if 0
-void drawButton(Rectangle bounds, Line* label)
-{
-    Vector2 mouse = GetMousePosition();
-    if (CheckCollisionPointRec(mouse, timeline_boundary)) {
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            float t = (mouse.x - timeline_boundary.x)/timeline_boundary.width;
-            SeekMusicStream(track->music, t*len);
-        }
-    }
-}
-#endif
 
 void drawApp(AppState* state)
 {
@@ -137,7 +124,7 @@ void drawApp(AppState* state)
 
                 if (currentBuffer->isDirty && !currentBuffer->isScratch) {
                     f32 dirtyIndicatorOffsetY =
-                        state->editorView.statusLine.bounds.y + state->font->charHeight / 2;
+                        state->editorView.statusLine.bounds.y + (state->font->charHeight / 2);
                     DrawCircleV(
                         (Vector2){curx, dirtyIndicatorOffsetY},
                         2.f,
@@ -155,7 +142,7 @@ void drawApp(AppState* state)
                     (Vector2){state->editorView.bounds.x, cury});
 
                 Rectangle fileDialogBounds = (Rectangle){
-                    .x = state->editorView.bounds.x + strlen(str) * state->font->charWidth,
+                    .x = state->editorView.bounds.x + (strlen(str) * state->font->charWidth),
                     .y = cury,
                     .width = state->editorView.bounds.width,
                     .height = state->font->charHeight};
