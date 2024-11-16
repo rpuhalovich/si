@@ -1,8 +1,8 @@
-build: makefile
+build:
 	cmake --build build
 
-makefile:
-	cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug
+ninja:
+	cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug -G Ninja
 	cp build/compile_commands.json compile_commands.json
 	ctags -R src
 

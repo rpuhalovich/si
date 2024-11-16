@@ -69,9 +69,6 @@ void drawApp(AppState* state)
 
     // editor view
     {
-        // DrawRectangleLinesEx(RectangleWiden(state->editorView.currentBuffer.buffer->bounds, 8.f), 2.0f,
-        // state->color.border);
-
         // editor
         Rectangle editorBounds = (Rectangle){
             state->editorView.bounds.x,

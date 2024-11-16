@@ -30,7 +30,7 @@ AppState* initState(Arena* arena)
 
         state->font = allocate(arena, sizeof(AppFont));
         state->font->font =
-            LoadFontEx("res/JetBrainsMonoNL-Regular.ttf", 24 * fontResolutionScale, 0, 250);
+            LoadFontEx("res/JetBrainsMonoNL-Regular.ttf", 20 * fontResolutionScale, 0, 250);
         state->font->size = state->font->font.baseSize / fontResolutionScale;
         state->font->spacing = 1.0f;
         state->font->textLineSpacing = 1;
