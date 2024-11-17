@@ -37,8 +37,6 @@ void drawThing(const Thing* t)
     f32 xpos = bounds.x + (bounds.width / 2);
     f32 ypos = bounds.y + (bounds.height / 2);
     DrawText(t->contents->characters, xpos, ypos, 8.f, BLUE);
-
-    DRAW_DEBUG_REC(t->box.bounds);
 }
 
 void draw(AppState* state)
@@ -49,11 +47,6 @@ void draw(AppState* state)
     drawThing(&state->thing);
 
 #ifdef DEBUG
-    Rectangle tb = state->thing.box.bounds;
-
-    Vector2 point = (Vector2){.x = tb.x + tb.width, .y = tb.y + tb.height};
-    DRAW_DEBUG_POINT(point);
-
     if (state->isMouseDown) {
         DrawRectangleRec(
             (Rectangle){
