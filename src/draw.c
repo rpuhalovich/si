@@ -7,7 +7,7 @@
 #define DRAW_DEBUG_POINT(p) drawDebugPoint(p)
 #else
 #define DRAW_DEBUG_REC(r)
-#define DRAW_DEBUG_POINT(p)
+#define DRAW_DEBUG_POINT(p, c)
 #endif
 
 void drawDebugRec(Rectangle r)
@@ -23,9 +23,22 @@ void drawDebugRec(Rectangle r)
     DrawRectangleLinesEx(r, 2.0f, PINK);
 }
 
-void drawDebugPoint(Vector2 pos)
+void drawDebugPoint(Vector2 p)
 {
-    DrawRectangleRec((Rectangle){.x = pos.x - 5, .y = pos.y - 5, .width = 10, .height = 10}, RED);
+    DrawRectangleRec((Rectangle){.x = p.x - 5, .y = p.y - 5, .width = 10, .height = 10}, RED);
+}
+
+void drawThing(const Thing* t)
+{
+    Rectangle bounds = t->box.bounds;
+
+    DrawRectangleRec(bounds, WHITE);
+
+    f32 xpos = bounds.x + (bounds.width / 2);
+    f32 ypos = bounds.y + (bounds.height / 2);
+    DrawText(t->contents->characters, xpos, ypos, 8.f, BLUE);
+
+    DRAW_DEBUG_REC(t->box.bounds);
 }
 
 void draw(AppState* state)
@@ -33,11 +46,7 @@ void draw(AppState* state)
     ClearBackground(BLACK);
     Vector2 scale = GetWindowScaleDPI();
 
-    // thing
-    {
-        DrawRectangleRec(state->thing.box.bounds, WHITE);
-        DRAW_DEBUG_REC(state->thing.box.bounds);
-    }
+    drawThing(&state->thing);
 
 #ifdef DEBUG
     Rectangle tb = state->thing.box.bounds;
