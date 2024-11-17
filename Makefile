@@ -13,6 +13,10 @@ release:
 	cmake -S . -B release -DCMAKE_BUILD_TYPE=Release -G Ninja
 	cmake --build release --config Release
 
+test: ninja
+	cmake --build build
+	ctest --test-dir build --output-on-failure
+
 format:
 	find src -iname "*.h" -o -iname "*.c" | xargs clang-format -i --style=file
 
@@ -22,5 +26,5 @@ tidy:
 clean:
 	rm -rf build release xcode
 
-.PHONY: format tidy xcode makefile build release clean
+.PHONY: format tidy xcode makefile build release clean ninja test
 .SILENT:

@@ -13,7 +13,7 @@ Line* newLinec(Arena* arena, i32 capacity)
 
 Line* newLine(Arena* arena)
 {
-    return newLinec(arena, 16);
+    return newLinec(arena, 256);
 }
 
 Line* newLines(Arena* arena, char* str)

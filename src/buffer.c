@@ -23,9 +23,8 @@ Buffer* newBufferc(Arena* arena, i32 capacity)
 
 void moveCursorDown(Buffer* b)
 {
-    if (b->cursorPosition.y < b->length - 1 && b->cursorPosition.y < b->maxLength) {
+    if (b->cursorPosition.y < b->length - 1 && b->cursorPosition.y < b->maxLength)
         b->cursorPosition.y++;
-    }
 
     i32 curline = (i32)b->cursorPosition.y;
     i32 len = b->lines[curline]->length;
@@ -39,36 +38,31 @@ void moveCursorDown(Buffer* b)
 
 void moveCursorUp(Buffer* b)
 {
-    if (b->cursorPosition.y > 0) {
+    if (b->cursorPosition.y > 0)
         b->cursorPosition.y--;
-    }
 
     i32 curline = (i32)b->cursorPosition.y;
     i32 len = b->lines[curline]->length;
     b->cursorPosition.x = fmin(b->cursorPosition.x, len);
 
-    if (b->cursorPosition.y < b->scrollOffset.y) {
+    if (b->cursorPosition.y < b->scrollOffset.y)
         b->scrollOffset.y--;
-    }
 }
 
 void moveCursorLeft(Buffer* b)
 {
-    if (b->cursorPosition.x > 0) {
+    if (b->cursorPosition.x > 0)
         b->cursorPosition.x--;
-    }
 
-    if (b->cursorPosition.x < b->scrollOffset.x) {
+    if (b->cursorPosition.x < b->scrollOffset.x)
         b->scrollOffset.x--;
-    }
 }
 
 void moveCursorRight(Buffer* b)
 {
     i32 curline = (i32)b->cursorPosition.y;
-    if (b->cursorPosition.x < b->lines[curline]->length) {
+    if (b->cursorPosition.x < b->lines[curline]->length)
         b->cursorPosition.x++;
-    }
 
     if (b->cursorPosition.x > b->numCellCols + b->scrollOffset.x &&
         b->cursorPosition.x <= b->lines[curline]->length) {
@@ -87,9 +81,8 @@ void moveCursorEndOfLine(Buffer* b)
     i32 curline = (i32)b->cursorPosition.y;
     b->cursorPosition.x = b->lines[curline]->length;
 
-    if (b->lines[curline]->length > b->scrollOffset.x + b->numCellCols) {
+    if (b->lines[curline]->length > b->scrollOffset.x + b->numCellCols)
         b->scrollOffset.x = b->lines[curline]->length - b->numCellCols;
-    }
 }
 
 void insertTab(Arena* arena, Buffer* b)
@@ -164,15 +157,13 @@ void enter(Arena* arena, Buffer* b)
     i32 curLine = (i32)b->cursorPosition.y;
     i32 curCol = (i32)b->cursorPosition.x;
 
-    if (b->length + 1 > b->maxLength) {
+    if (b->length + 1 > b->maxLength)
         return;
-    }
 
     b->length++;
 
-    for (i32 i = b->length - 1; i > curLine; i--) {
+    for (i32 i = b->length - 1; i > curLine; i--)
         b->lines[i] = b->lines[i - 1];
-    }
 
     b->lines[curLine + 1] = newLine(arena);
 
@@ -224,9 +215,8 @@ void deletec(Buffer* b)
     i32 line = (i32)b->cursorPosition.y;
     i32 col = (i32)b->cursorPosition.x;
 
-    for (i32 i = col + 1; i < b->lines[line]->length; i++) {
+    for (i32 i = col + 1; i < b->lines[line]->length; i++)
         b->lines[line]->characters[i - 1] = b->lines[line]->characters[i];
-    }
 
     b->lines[line]->length--;
     b->isDirty = true;
@@ -236,8 +226,7 @@ void zeroUnusedCapacity(Buffer* b)
 {
     for (i32 i = 0; i < b->length; i++) {
         Line* l = b->lines[i];
-        for (i32 c = l->length; c < l->capacity; c++) {
+        for (i32 c = l->length; c < l->capacity; c++)
             l->characters[c] = '\0';
-        }
     }
 }

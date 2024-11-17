@@ -45,15 +45,22 @@ AppState* initState(Arena* arena)
 
     // thing
     {
+        Rectangle newBounds =
+            (Rectangle){.x = 0, .y = 0, .width = 256, .height = GetScreenHeight()};
         state->thing = (Thing){
-            .box =
-                {.bounds = (Rectangle){.x = 100, .y = 100, .width = 100, .height = 100},
-                 .padding = 0.f,
-                 .margin = 0.f},
+            .box = {.bounds = newBounds, .padding = 0.f, .margin = 0.f},
             .contents = newLine(arena)};
 
         char* str = "hellofowiejfoiewjfoiwejfowie";
         insertString(arena, state->thing.contents, str, strlen(str), 0);
+    }
+
+    // requests
+    {
+        state->requestlist.requests = allocate(arena, sizeof(Request));
+        state->requestlist.length = 1;
+        state->requestlist.capacity = 1;
+        // state->requestlist.requests[0];
     }
 
     return state;
@@ -71,7 +78,7 @@ void run(Arena* arena, AppState* state)
 
         dragBox(&state->thing.box, state->mouseDownLocation);
 
-        if (state->thing.box.isDragging && IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
             dragBoxReleased(&state->thing.box, state->mouseDownLocation);
     }
 }

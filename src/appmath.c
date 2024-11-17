@@ -13,12 +13,12 @@ i32 iclamp(i32 val, i32 min, i32 max)
 
 i32 imin(i32 val, i32 min)
 {
-    return val < min ? min : val;
+    return val < min ? val : min;
 }
 
 i32 imax(i32 val, i32 max)
 {
-    return val > max ? max : val;
+    return val > max ? val : max;
 }
 
 Rectangle RectangleWiden(Rectangle r, f32 amt)

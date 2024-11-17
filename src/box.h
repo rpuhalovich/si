@@ -11,6 +11,7 @@ typedef struct {
     f32 padding;
     f32 margin;
     bool isDragging;
+    bool isDraggingRight;
 } Box;
 
 void dragBoxPressed(Box* b, Vector2 mouseLocation);

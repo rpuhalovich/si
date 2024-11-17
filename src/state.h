@@ -5,6 +5,7 @@
 
 #include "buffer.h"
 #include "colorscheme.h"
+#include "request.h"
 #include "thing.h"
 #include "types.h"
 
@@ -24,6 +25,13 @@ typedef struct {
 
     bool isMouseDown;
     Vector2 mouseDownLocation;
+
+    struct {
+        Request* requests;
+        u32 length;
+        u32 capacity;
+        Box bounds;
+    } requestlist;
 
     Thing thing;
 } AppState;
