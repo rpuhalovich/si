@@ -18,6 +18,7 @@ Checks:  >
   -readability-identifier-length,
 
   -readability-function-cognitive-complexity,
+  -readability-braces-around-statements,
 
   bugprone-*,
   -bugprone-narrowing-conversions,

@@ -11,9 +11,8 @@
 Buffer* load(Arena* arena, Line* filePath)
 {
     FILE* fp = fopen(filePath->characters, "r");
-    if (fp == NULL) {
+    if (fp == NULL)
         return NULL;
-    }
 
     Buffer* b = newBuffer(arena);
     b->length = 0;
