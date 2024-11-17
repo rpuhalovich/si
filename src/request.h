@@ -1,6 +1,8 @@
 #ifndef REQUEST_H
 #define REQUEST_H
 
+#include "line.h"
+
 typedef enum {
     GET,
     POST,

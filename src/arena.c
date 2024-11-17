@@ -2,10 +2,10 @@
 
 Arena* initArena(u64 size)
 {
-    Arena* a = malloc(sizeof(Arena));
+    Arena* a = (Arena*)malloc(sizeof(Arena));
     memset(a, 0, sizeof(Arena));
 
-    a->memory = malloc(size);
+    a->memory = (u8*)malloc(size);
     memset(a->memory, 0, size);
 
     a->ptr = a->memory;
@@ -16,10 +16,10 @@ Arena* initArena(u64 size)
 
 Arena* initArenaa(Arena* arena, u64 size)
 {
-    Arena* a = allocate(arena, size);
+    Arena* a = (Arena*)allocate(arena, size);
     memset(a, 0, sizeof(Arena));
 
-    a->memory = allocate(arena, size);
+    a->memory = (u8*)allocate(arena, size);
     memset(a->memory, 0, size);
 
     a->ptr = a->memory;

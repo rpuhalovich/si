@@ -4,7 +4,7 @@
 #include "arena.h"
 #include "types.h"
 
-// TODO: this should probably be renamed to String
+// TODO(rp): this should probably be renamed to String
 
 typedef struct {
     char* characters;
@@ -16,7 +16,7 @@ Line* newLine(Arena* arena);
 
 Line* newLinec(Arena* arena, i32 capacity);
 
-Line* newLines(Arena* arena, char* str);
+Line* newLines(Arena* arena, const char* str);
 
 Line* newLinel(Arena* arena, Line* l);
 

@@ -68,6 +68,8 @@ AppState* initState(Arena* arena)
 
 void run(Arena* arena, AppState* state)
 {
+    int x = 0;
+
     state->isMouseDown = IsMouseButtonDown(MOUSE_BUTTON_LEFT);
     state->mouseDownLocation = GetMousePosition();
 
