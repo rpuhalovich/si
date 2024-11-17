@@ -3,15 +3,9 @@
 
 #include <raylib.h>
 
+#include "box.h"
 #include "line.h"
 #include "types.h"
-
-typedef struct {
-    Rectangle bounds;
-    f32 padding;
-    f32 margin;
-    bool isDragging;
-} Box;
 
 typedef struct {
     Line* contents;
