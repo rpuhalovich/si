@@ -25,23 +25,24 @@ void drawDebugRec(Rectangle r)
 
 void drawDebugPoint(Vector2 pos)
 {
-    DrawRectangleRec((Rectangle) {.x = pos.x - 5, .y = pos.y - 5, .width = 10, .height = 10}, RED);
+    DrawRectangleRec((Rectangle){.x = pos.x - 5, .y = pos.y - 5, .width = 10, .height = 10}, RED);
 }
 
 void draw(AppState* state)
 {
     ClearBackground(BLACK);
+    Vector2 scale = GetWindowScaleDPI();
 
     // thing
     {
-        DrawRectangleRounded(state->thing.box.bounds, 0.1f, 16, WHITE);
+        DrawRectangleRec(state->thing.box.bounds, WHITE);
         DRAW_DEBUG_REC(state->thing.box.bounds);
     }
 
 #ifdef DEBUG
     Rectangle tb = state->thing.box.bounds;
 
-    Vector2 point = (Vector2) {.x = tb.x + tb.width, .y = tb.y + tb.height};
+    Vector2 point = (Vector2){.x = tb.x + tb.width, .y = tb.y + tb.height};
     DRAW_DEBUG_POINT(point);
 
     if (state->isMouseDown) {

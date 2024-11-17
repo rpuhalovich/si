@@ -44,17 +44,20 @@ AppState* initState(Arena* arena)
 
     // thing
     {
-        state->thing = (Thing) {
-            .box = {
-                .bounds = (Rectangle) {.x = 100, .y = 100, .width = 100, .height = 100},
-                .padding = 0.f,
-                .margin = 0.f
-            },
-            .contents = newLine(arena)
-        };
+        state->thing = (Thing){
+            .box =
+                {.bounds = (Rectangle){.x = 100, .y = 100, .width = 100, .height = 100},
+                 .padding = 0.f,
+                 .margin = 0.f},
+            .contents = newLine(arena)};
     }
 
     return state;
+}
+
+void dragBox(const Box* b)
+{
+
 }
 
 void run(Arena* arena, AppState* state)
@@ -62,18 +65,25 @@ void run(Arena* arena, AppState* state)
     state->isMouseDown = IsMouseButtonDown(MOUSE_BUTTON_LEFT);
     state->mouseDownLocation = GetMousePosition();
 
-    if (state->isMouseDown) {
+    // thing
+    {
         Rectangle tb = state->thing.box.bounds;
 
-        Rectangle boundary = (Rectangle) {
-                .x = state->mouseDownLocation.x + tb.x + tb.width - 5,
-                .y = state->mouseDownLocation.y + tb.y + tb.height - 5,
-                .width = 10,
-                .height = 10};
+        if (state->isMouseDown) {
+            Rectangle boundary = (Rectangle){
+                .x = tb.x + tb.width - 5, .y = tb.y + tb.height - 5, .width = 10, .height = 10};
 
-        int hoverover = CheckCollisionPointRec(state->mouseDownLocation, boundary);
-        if (hoverover)
-            state->thing.box.bounds.width = state->mouseDownLocation.x - (tb.width + tb.x);
+            int hoverover = CheckCollisionPointRec(state->mouseDownLocation, boundary);
+            if (hoverover)
+                state->thing.box.isDragging = true;
+        } else {
+            state->thing.box.isDragging = false;
+        }
+
+        if (state->thing.box.isDragging) {
+            state->thing.box.bounds.width = fmax(state->mouseDownLocation.x - tb.x, 50);
+            state->thing.box.bounds.height = fmax(state->mouseDownLocation.y - tb.y, 50);
+        }
     }
 }
 
