@@ -7,11 +7,12 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -DRELEASE -O3")
 
 set(SRC_DIR "${CMAKE_SOURCE_DIR}/src")
+set(GEN_DIR "${CMAKE_SOURCE_DIR}/gen")
 set(TEST_DIR "${CMAKE_SOURCE_DIR}/test")
 set(EXTERN_DIR "${CMAKE_SOURCE_DIR}/extern")
 
 # exe
-file(GLOB_RECURSE src ${SRC_DIR}/*.c ${SRC_DIR}/*.h)
+file(GLOB_RECURSE src ${SRC_DIR}/*.c ${SRC_DIR}/*.h ${GEN_DIR}/*.c ${GEN_DIR}/*.h)
 add_executable(${PROJECT_NAME} ${src})
 
 # google test

@@ -1,7 +1,11 @@
 build:
 	cmake --build build
 
-ninja:
+ctemplate:
+	./extern/ctemplate/ctemplate ./src/array.ctypes ./src/array.ht
+	./extern/ctemplate/ctemplate ./src/array.ctypes ./src/array.ct
+
+ninja: ctemplate
 	cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug -G Ninja
 	cp build/compile_commands.json compile_commands.json
 	ctags -R .
@@ -17,14 +21,12 @@ test: ninja
 	cmake --build build
 	ctest --test-dir build --output-on-failure
 
-format:
+check:
 	find src -iname "*.h" -o -iname "*.c" | xargs clang-format -i --style=file
-
-tidy:
 	find src -iname "*.h" -o -iname "*.c" | xargs clang-tidy
 
 clean:
 	rm -rf build release xcode
 
-.PHONY: format tidy xcode makefile build release clean ninja test
+.PHONY: check xcode makefile build release clean ninja test ctemplate
 .SILENT:

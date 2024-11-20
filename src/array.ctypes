@@ -1,0 +1,11 @@
+INCLUDE "line.h"
+INCLUDE "buffer.h"
+
+TYPE int
+TYPE float
+TYPE char
+TYPE double
+TYPE size_t
+
+TYPE Buffer
+TYPE Line
