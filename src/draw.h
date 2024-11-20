@@ -8,12 +8,18 @@
 #include "appmath.h"
 #include "state.h"
 
-void drawDebugRec(Rectangle r);
+void drawStringbg(const char* str, i32 strLen, AppFont* font, Color color, Color bg, Vector2 pos);
 
-void drawDebugPoint(Vector2 p);
+void drawLine(Line* l, AppFont* font, Color color, Vector2 pos);
 
-void drawThing(const Thing* t);
+void drawString(const char* str, i32 strLen, AppFont* font, Color color, Vector2 pos);
+
+void drawBuffer(Rectangle bounds, Buffer* b, AppFont* font, Color textColor, Color cursorColor);
 
 void draw(AppState* state);
+
+void drawApp(AppState* state);
+
+void drawComponentCanvas(AppState* state);
 
 #endif // DRAW_H
