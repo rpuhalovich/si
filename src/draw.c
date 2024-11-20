@@ -192,9 +192,10 @@ void drawComponentCanvas(AppState* state)
 
 void draw(AppState* state)
 {
-    if (state->canvasView.isCanvasViewEnabled) {
-        drawComponentCanvas(state);
-    } else {
-        drawApp(state);
-    }
+    // if (state->canvasView.isCanvasViewEnabled) {
+    //     drawComponentCanvas(state);
+    // } else {
+    //     drawApp(state);
+    // }
+    drawApp(state);
 }

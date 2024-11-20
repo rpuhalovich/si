@@ -1,13 +1,29 @@
 #include "array.h"
 
 %TEMPLATE_BEGIN%
-Array_%TYPE%* newArray_%TYPE%()
+Array_%TYPE%* newArray_%TYPE%(Arena* arena)
 {
-    Array_%TYPE%* a = malloc(sizeof(Array_%TYPE%));
-    a->items = malloc(sizeof(%TYPE%));
+    Array_%TYPE%* a = allocate(arena, sizeof(Array_%TYPE%));
     a->length = 1;
-    a->capacity = 1;
+    a->capacity = 16;
+    a->items = allocate(arena, sizeof(%TYPE%) * a->capacity);
     return a;
+}
+
+void appendArray_%TYPE%(Arena* arena, Array_%TYPE%* array, %TYPE% element)
+{
+    array->length++;
+    if (array->length >= array->capacity) {
+        array->items = (%TYPE%*)reallocate(arena, array->items, array->capacity, array->capacity);
+        array->capacity *= 2;
+    }
+    array->items[array->length] = element;
+}
+
+void popArray_%TYPE%(Array_%TYPE%* array)
+{
+    if (array->length - 1 > 0)
+        array->length--;
 }
 
 void freeArray_%TYPE%(Array_%TYPE%* a)

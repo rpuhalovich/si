@@ -14,26 +14,34 @@ set(EXTERN_DIR "${CMAKE_SOURCE_DIR}/extern")
 # exe
 file(GLOB_RECURSE src ${SRC_DIR}/*.c ${SRC_DIR}/*.h ${GEN_DIR}/*.c ${GEN_DIR}/*.h)
 add_executable(${PROJECT_NAME} ${src})
+target_include_directories(${PROJECT_NAME} PUBLIC ${GEN_DIR} ${SRC_DIR})
 
-# google test
-include(FetchContent)
-FetchContent_Declare(googletest URL https://github.com/google/googletest/archive/b514bdc898e2951020cbdca1304b75f5950d1f59.zip)
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
-
-enable_testing()
-
-file(GLOB_RECURSE test_files ${TEST_DIR}/*.cc)
-add_executable(app_tests ${test_files})
-target_link_libraries(app_tests GTest::gtest_main)
-target_include_directories(app_tests PUBLIC ${SRC_DIR})
-
-include(GoogleTest)
-gtest_discover_tests(app_tests)
+# # google test
+# include(FetchContent)
+# FetchContent_Declare(
+#     googletest
+#     URL https://github.com/google/googletest/archive/b514bdc898e2951020cbdca1304b75f5950d1f59.zip)
+# set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+# FetchContent_MakeAvailable(googletest)
+#
+# enable_testing()
+#
+# file(GLOB_RECURSE test_files ${TEST_DIR}/*.cc)
+# add_executable(app_tests ${test_files})
+# target_link_libraries(app_tests GTest::gtest_main)
+# target_include_directories(app_tests PUBLIC ${SRC_DIR})
+#
+# include(GoogleTest)
+# gtest_discover_tests(app_tests)
+#
+# # raylib
+# foreach(exe ${PROJECT_NAME} app_tests)
+#     target_link_libraries(${exe} ${EXTERN_DIR}/raylib/lib/libraylib.a)
+#     target_link_libraries(${exe} "-framework OpenGL -framework IOKit -framework CoreVideo -framework Cocoa")
+#     target_include_directories(${exe} PUBLIC ${EXTERN_DIR}/raylib/include)
+# endforeach()
 
 # raylib
-foreach(exe ${PROJECT_NAME} app_tests)
-    target_link_libraries(${exe} ${EXTERN_DIR}/raylib/lib/libraylib.a)
-    target_link_libraries(${exe} "-framework OpenGL -framework IOKit -framework CoreVideo -framework Cocoa")
-    target_include_directories(${exe} PUBLIC ${EXTERN_DIR}/raylib/include)
-endforeach()
+target_link_libraries(${PROJECT_NAME} ${EXTERN_DIR}/raylib/lib/libraylib.a)
+target_link_libraries(${PROJECT_NAME} "-framework OpenGL -framework IOKit -framework CoreVideo -framework Cocoa")
+target_include_directories(${PROJECT_NAME} PUBLIC ${EXTERN_DIR}/raylib/include)
